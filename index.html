@@ -25,6 +25,7 @@
 }
 
 * { box-sizing: border-box; }
+
 html { -webkit-text-size-adjust: 100%; }
 
 body {
@@ -32,9 +33,7 @@ body {
   padding: 18px 14px calc(35px + env(safe-area-inset-bottom));
   max-width: 480px;
   min-height: 100vh;
-  background: #10151f;
   background: var(--bg);
-  color: #f3f6fb;
   color: var(--text);
   font-family: Arial, "Noto Sans TC", "PingFang TC", sans-serif;
   overscroll-behavior-y: contain;
@@ -46,11 +45,8 @@ h1 { margin: 6px 0 4px; font-size: 26px; letter-spacing: .5px; }
 h2 { font-size: 17px; margin: 0 0 16px; }
 
 .card {
-  background: #1b2534;
   background: var(--card);
-  border: 1px solid #344256;
-  border-color: var(--border);
-  border-radius: 16px;
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 17px;
   margin-bottom: 15px;
@@ -58,7 +54,6 @@ h2 { font-size: 17px; margin: 0 0 16px; }
 
 label {
   display: block;
-  color: #aab7c8;
   color: var(--muted);
   font-size: 13px;
   margin: 12px 0 7px;
@@ -69,10 +64,8 @@ input[type="text"] {
   padding: 12px;
   min-height: 46px;
   color: #fff;
-  background: #111a27;
   background: var(--field);
-  border: 1px solid #405069;
-  border-color: var(--field-border);
+  border: 1px solid var(--field-border);
   border-radius: 9px;
   font-size: 16px;
   font-family: inherit;
@@ -99,7 +92,6 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 
 button:focus-visible,
 input:focus-visible {
-  outline: 2px solid #35d6a1;
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
@@ -119,42 +111,56 @@ input:focus-visible {
 .floor-btn.active {
   color: #8affd8;
   background: #125340;
-  border-color: #35d6a1;
   border-color: var(--accent);
 }
 
-.primary { width: 100%; background: #35d6a1; background: var(--accent); color: #082c21; color: var(--accent-ink); }
-.secondary { width: 100%; background: #1c3c5e; color: #b8dcff; margin-top: 9px; }
-.danger { width: 100%; background: #472831; color: #ffc2c2; margin-top: 9px; }
+.primary {
+  width: 100%;
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.secondary {
+  width: 100%;
+  background: #1c3c5e;
+  color: #b8dcff;
+  margin-top: 9px;
+}
+
+.danger {
+  width: 100%;
+  background: #472831;
+  color: #ffc2c2;
+  margin-top: 9px;
+}
 
 #status {
   min-height: 42px;
   padding: 10px 2px 0;
   text-align: center;
-  color: #aab7c8;
   color: var(--muted);
   font-size: 13px;
   line-height: 1.7;
 }
 
 .good { color: #73f1c3 !important; }
-.error { color: #ff9999 !important; color: var(--err) !important; }
-.warning { color: #ffcc66 !important; color: var(--warn) !important; }
+.error { color: var(--err) !important; }
+.warning { color: var(--warn) !important; }
 
 .info {
   display: flex;
   justify-content: space-between;
   gap: 12px;
   padding: 10px 0;
-  border-bottom: 1px solid #344256;
-  border-bottom-color: var(--border);
+  border-bottom: 1px solid var(--border);
   font-size: 14px;
 }
+
 .info:last-of-type { border-bottom: 0; }
-.info span:first-child { color: #aab7c8; color: var(--muted); flex-shrink: 0; }
+.info span:first-child { color: var(--muted); flex-shrink: 0; }
 .info span:last-child { text-align: right; overflow-wrap: anywhere; }
 
-.small { color: #aab7c8; color: var(--muted); font-size: 12px; line-height: 1.8; }
+.small { color: var(--muted); font-size: 12px; line-height: 1.8; }
 
 #photoPreview, #savedPhoto {
   display: none;
@@ -163,15 +169,13 @@ input:focus-visible {
   object-fit: contain;
   margin-top: 12px;
   border-radius: 10px;
-  background: #111a27;
   background: var(--field);
 }
 
 .compass {
   width: 190px;
   height: 190px;
-  border: 2px solid #405069;
-  border-color: var(--field-border);
+  border: 2px solid var(--field-border);
   border-radius: 50%;
   margin: 15px auto;
   display: flex;
@@ -185,7 +189,6 @@ input:focus-visible {
 
 #arrow {
   font-size: 68px;
-  color: #35d6a1;
   color: var(--accent);
   line-height: 1.15;
   transition: transform .25s ease-out;
@@ -193,7 +196,7 @@ input:focus-visible {
 }
 
 #distance { font-size: 23px; font-weight: bold; }
-#bearing { font-size: 12px; color: #aab7c8; color: var(--muted); margin-top: 5px; padding: 0 12px; text-align: center; }
+#bearing { font-size: 12px; color: var(--muted); margin-top: 5px; padding: 0 12px; text-align: center; }
 
 .mode-badge {
   display: inline-block;
@@ -203,14 +206,17 @@ input:focus-visible {
   font-weight: bold;
   margin-bottom: 10px;
   background: #233248;
-  color: #35d6a1;
   color: var(--accent);
-  border: 1px solid #35d6a1;
-  border-color: var(--accent);
+  border: 1px solid var(--accent);
   transition: color .2s, border-color .2s;
 }
 
-footer { text-align: center; color: #78879a; font-size: 11px; line-height: 1.8; }
+footer {
+  text-align: center;
+  color: #78879a;
+  font-size: 11px;
+  line-height: 1.8;
+}
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
@@ -331,376 +337,433 @@ footer { text-align: center; color: #78879a; font-size: 11px; line-height: 1.8; 
 (function () {
   "use strict";
 
-  /* =========================================================
-     全域錯誤顯示（方便排查：有任何錯誤會直接顯示在畫面底部）
-     ========================================================= */
-  function showFatal(msg) {
+  /* ============ 常數 ============ */
+  var KEY = "parking_v22";
+  var LEGACY_KEYS = ["parking_v21", "parking_v3", "parking_loc"];
+  var MAX_PHOTO_DIM = 1024;      // 照片最長邊
+  var PHOTO_QUALITY = 0.72;      // JPEG 壓縮品質
+  var MAX_FILE_SIZE = 15 * 1024 * 1024;
+  var NEAR_THRESHOLD = 8;        // 公尺
+
+  /* ============ 狀態 ============ */
+  var floor = "B1";
+  var saved = null;
+  var current = null;
+  var heading = null;
+  var watchId = null;
+  var photoData = "";
+  var busy = false;
+  var arrowRotation = 0;
+  var listeningOrientation = false;
+
+  function $(id) { return document.getElementById(id); }
+
+  /* ============ 訊息 ============ */
+  function say(message, type) {
+    var el = $("status");
+    el.textContent = message;
+    el.className = type || "";
+  }
+
+  function sayNav(message, type) {
+    var el = $("navStatus");
+    el.textContent = message;
+    el.className = "small " + (type || "");
+  }
+
+  function buzz(pattern) {
     try {
-      var box = document.getElementById("__err");
-      if (!box) {
-        box = document.createElement("div");
-        box.id = "__err";
-        box.style.cssText =
-          "position:fixed;left:10px;right:10px;bottom:10px;z-index:99999;" +
-          "background:#5a1e28;color:#ffd7d7;padding:12px 14px;border-radius:12px;" +
-          "font-size:13px;line-height:1.6;box-shadow:0 6px 20px rgba(0,0,0,.5);" +
-          "word-break:break-all;";
-        (document.body || document.documentElement).appendChild(box);
-      }
-      box.textContent = "⚠️ 程式錯誤：" + msg;
+      if (navigator.vibrate) navigator.vibrate(pattern);
     } catch (e) { /* 忽略 */ }
   }
 
-  window.addEventListener("error", function (e) {
-    showFatal((e && e.message) ? e.message : "未知錯誤");
-  });
-  window.addEventListener("unhandledrejection", function (e) {
-    var r = e && e.reason;
-    showFatal((r && r.message) ? r.message : String(r || "未處理的非同步錯誤"));
-  });
+  /* ============ 樓層 ============ */
+  function chooseFloor(value, silent) {
+    floor = value;
+    var buttons = document.querySelectorAll(".floor-btn");
 
-  /* =========================================================
-     小工具
-     ========================================================= */
-  function $(id) { return document.getElementById(id); }
-
-  function each(list, fn) {
-    if (!list) return;
-    if (typeof list.forEach === "function") { list.forEach(fn); return; }
-    for (var i = 0; i < list.length; i++) fn(list[i], i);
-  }
-
-  function isNum(v) {
-    return typeof v === "number" && isFinite(v);
-  }
-
-  function shallowCopy(obj, overrides) {
-    var out = {}, k;
-    for (k in obj) { if (Object.prototype.hasOwnProperty.call(obj, k)) out[k] = obj[k]; }
-    for (k in overrides) { if (Object.prototype.hasOwnProperty.call(overrides, k)) out[k] = overrides[k]; }
-    return out;
-  }
-
-  /* =========================================================
-     主程式（包在 try 裡，確保任何錯誤都能被看見）
-     ========================================================= */
-  try {
-    main();
-  } catch (err) {
-    showFatal((err && err.message) ? err.message : String(err));
-  }
-
-  function main() {
-
-    /* ---------- 常數 ---------- */
-    var KEY = "parking_v22";
-    var LEGACY_KEYS = ["parking_v21", "parking_v3", "parking_loc"];
-    var MAX_PHOTO_DIM = 1024;
-    var PHOTO_QUALITY = 0.72;
-    var MAX_FILE_SIZE = 15 * 1024 * 1024;
-    var NEAR_THRESHOLD = 8;
-
-    /* ---------- 狀態 ---------- */
-    var floor = "B1";
-    var saved = null;
-    var current = null;
-    var heading = null;
-    var watchId = null;
-    var photoData = "";
-    var busy = false;
-    var arrowRotation = 0;
-    var listeningOrientation = false;
-
-    /* ---------- 訊息 ---------- */
-    function say(message, type) {
-      var el = $("status");
-      if (!el) return;
-      el.textContent = message;
-      el.className = type || "";
+    for (var i = 0; i < buttons.length; i++) {
+      var active = buttons[i].getAttribute("data-floor") === value;
+      buttons[i].classList.toggle("active", active);
+      buttons[i].setAttribute("aria-pressed", String(active));
     }
 
-    function sayNav(message, type) {
-      var el = $("navStatus");
-      if (!el) return;
-      el.textContent = message;
-      el.className = "small " + (type || "");
-    }
+    if (!silent) say("目前選擇樓層：" + value, "good");
+  }
 
-    function buzz(pattern) {
-      try { if (navigator.vibrate) navigator.vibrate(pattern); } catch (e) { /* 忽略 */ }
-    }
-
-    /* ---------- 樓層 ---------- */
-    function chooseFloor(value, silent) {
-      floor = value;
-      var buttons = document.querySelectorAll(".floor-btn");
-      each(buttons, function (btn) {
-        var active = btn.getAttribute("data-floor") === value;
-        if (active) { btn.classList.add("active"); }
-        else { btn.classList.remove("active"); }
-        btn.setAttribute("aria-pressed", active ? "true" : "false");
-      });
-      if (!silent) say("目前選擇樓層：" + value, "good");
-    }
-
-    each(document.querySelectorAll(".floor-btn"), function (btn) {
-      btn.addEventListener("click", function () {
-        chooseFloor(btn.getAttribute("data-floor"));
-      });
+  document.querySelectorAll(".floor-btn").forEach(function (button) {
+    button.addEventListener("click", function () {
+      chooseFloor(button.getAttribute("data-floor"));
     });
+  });
 
-    /* ---------- 幾何 / 判斷 ---------- */
-    function validPoint(data) {
-      return !!data &&
-        isNum(data.lat) && isNum(data.lng) &&
-        Math.abs(data.lat) <= 90 && Math.abs(data.lng) <= 180;
-    }
+  /* ============ 工具 ============ */
+  function validPoint(data) {
+    return !!data &&
+      typeof data.lat === "number" && Number.isFinite(data.lat) &&
+      typeof data.lng === "number" && Number.isFinite(data.lng) &&
+      Math.abs(data.lat) <= 90 && Math.abs(data.lng) <= 180;
+  }
 
-    function isBasement(f) {
-      return typeof f === "string" && /^B/i.test(f);
-    }
+  function isBasement(f) {
+    return typeof f === "string" && /^B/i.test(f);
+  }
 
-    function isIndoorMode() {
-      if (!saved) return true;
-      if (isBasement(saved.floor)) return true;
-      if (!validPoint(saved)) return true;
-      if (isNum(saved.accuracy) && saved.accuracy > 50) return true;
-      return false;
-    }
+  /* 室內模式：地下室、或沒有可用 GPS 座標、或精度太差 */
+  function isIndoorMode() {
+    if (!saved) return true;
+    if (isBasement(saved.floor)) return true;
+    if (!validPoint(saved)) return true;
+    if (typeof saved.accuracy === "number" && saved.accuracy > 50) return true;
+    return false;
+  }
 
-    /* ---------- 儲存 ---------- */
-    function persist(data) {
-      try {
-        localStorage.setItem(KEY, JSON.stringify(data));
-        saved = data;
-        return data;
-      } catch (error) {
-        if (data.photo) {
-          var slim = shallowCopy(data, { photo: "" });
-          try {
-            localStorage.setItem(KEY, JSON.stringify(slim));
-            saved = slim;
-            say("照片過大無法儲存，已保留文字紀錄。", "warning");
-            return slim;
-          } catch (e2) { /* 繼續往下 */ }
-        }
-        say("儲存失敗：瀏覽器空間不足或處於隱私模式。", "error");
-        return null;
-      }
-    }
-
-    /* ---------- 模式徽章 ---------- */
-    function updateNavModeUI() {
-      var badge = $("navModeBadge");
-      var arrow = $("arrow");
-      if (!badge || !arrow) return;
-
-      if (!saved) {
-        badge.textContent = "模式：尚未記錄車位";
-        badge.style.color = "";
-        badge.style.borderColor = "";
-        arrow.textContent = "↑";
-        return;
-      }
-
-      if (isIndoorMode()) {
-        badge.textContent = "🏠 室內地標與照片指引模式（防誤導）";
-        badge.style.color = "#ffcc66";
-        badge.style.borderColor = "#ffcc66";
-        arrow.textContent = "🅿️";
-        arrow.style.transform = "none";
-        arrowRotation = 0;
-        var b = $("bearing");
-        if (b) b.textContent = "地下室請依樓層與照片尋車";
-      } else {
-        badge.textContent = "🛰️ GPS 戶外直線導航模式";
-        badge.style.color = "#35d6a1";
-        badge.style.borderColor = "#35d6a1";
-        arrow.textContent = "↑";
-      }
-    }
-
-    /* ---------- 渲染上次紀錄 ---------- */
-    function render(data) {
+  /* ============ 儲存 ============ */
+  function persist(data) {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(data));
       saved = data;
-
-      var empty = $("empty");
-      var panel = $("savedPanel");
-      if (empty) empty.hidden = true;
-      if (panel) panel.hidden = false;
-
-      $("sFloor").textContent = data.floor || "未知";
-      $("sZone").textContent = data.zone || "未填寫";
-      $("sNote").textContent = data.note || "無";
-      $("sTime").textContent = data.timestamp
-        ? new Date(data.timestamp).toLocaleString("zh-TW")
-        : (data.time || "未知");
-
-      if (validPoint(data)) {
-        var acc = Math.round(data.accuracy || 0);
-        var level = acc < 15 ? "高精度" : (acc < 50 ? "中精度" : "低精度（建議核對照片）");
-        $("sAccuracy").textContent = "約 " + acc + " 公尺（" + level + "）";
-      } else {
-        $("sAccuracy").textContent = "無 GPS 座標（純室內紀錄）";
-      }
-
-      var photoEl = $("savedPhoto");
+      return data;
+    } catch (error) {
+      // 常見原因：照片 base64 超過配額 → 退化為純文字紀錄
       if (data.photo) {
-        photoEl.src = data.photo;
-        photoEl.style.display = "block";
-      } else {
-        photoEl.removeAttribute("src");
-        photoEl.style.display = "none";
+        var slim = Object.assign({}, data, { photo: "" });
+        try {
+          localStorage.setItem(KEY, JSON.stringify(slim));
+          saved = slim;
+          say("照片過大無法儲存，已保留文字紀錄。", "warning");
+          return slim;
+        } catch (e2) { /* 繼續往下 */ }
       }
+      say("儲存失敗：瀏覽器空間不足或處於隱私模式。", "error");
+      return null;
+    }
+  }
 
-      $("zone").value = data.zone || "";
-      $("note").value = data.note || "";
+  /* ============ 渲染 ============ */
+  function updateNavModeUI() {
+    var badge = $("navModeBadge");
+    var arrow = $("arrow");
 
-      chooseFloor(data.floor || "B1", true);
-      updateNavModeUI();
+    if (!saved) {
+      badge.textContent = "模式：尚未記錄車位";
+      badge.style.color = "var(--muted)";
+      badge.style.borderColor = "var(--field-border)";
+      arrow.textContent = "↑";
+      return;
     }
 
-    /* ---------- 讀取舊資料 ---------- */
-    function loadSaved() {
-      var raw = null;
-      try {
-        raw = localStorage.getItem(KEY);
-        if (!raw) {
-          for (var i = 0; i < LEGACY_KEYS.length; i++) {
-            raw = localStorage.getItem(LEGACY_KEYS[i]);
-            if (raw) break;
-          }
+    if (isIndoorMode()) {
+      badge.textContent = "🏠 室內地標與照片指引模式（防誤導）";
+      badge.style.color = "var(--warn)";
+      badge.style.borderColor = "var(--warn)";
+      arrow.textContent = "🅿️";
+      arrow.style.transform = "none";
+      arrowRotation = 0;
+      $("bearing").textContent = "地下室請依樓層與照片尋車";
+    } else {
+      badge.textContent = "🛰️ GPS 戶外直線導航模式";
+      badge.style.color = "var(--accent)";
+      badge.style.borderColor = "var(--accent)";
+      arrow.textContent = "↑";
+    }
+  }
+
+  function render(data) {
+    saved = data;
+
+    $("empty").hidden = true;
+    $("savedPanel").hidden = false;
+
+    $("sFloor").textContent = data.floor || "未知";
+    $("sZone").textContent = data.zone || "未填寫";
+    $("sNote").textContent = data.note || "無";
+    $("sTime").textContent = data.timestamp
+      ? new Date(data.timestamp).toLocaleString("zh-TW")
+      : (data.time || "未知");
+
+    if (validPoint(data)) {
+      var acc = Math.round(data.accuracy || 0);
+      var level = acc < 15 ? "高精度" : acc < 50 ? "中精度" : "低精度（建議核對照片）";
+      $("sAccuracy").textContent = "約 " + acc + " 公尺（" + level + "）";
+    } else {
+      $("sAccuracy").textContent = "無 GPS 座標（純室內紀錄）";
+    }
+
+    var photoEl = $("savedPhoto");
+    if (data.photo) {
+      photoEl.src = data.photo;
+      photoEl.style.display = "block";
+    } else {
+      photoEl.removeAttribute("src");
+      photoEl.style.display = "none";
+    }
+
+    $("zone").value = data.zone || "";
+    $("note").value = data.note || "";
+
+    chooseFloor(data.floor || "B1", true);
+    updateNavModeUI();
+  }
+
+  /* ============ 讀取舊資料 ============ */
+  function loadSaved() {
+    var raw = null;
+    try {
+      raw = localStorage.getItem(KEY);
+      if (!raw) {
+        for (var i = 0; i < LEGACY_KEYS.length; i++) {
+          raw = localStorage.getItem(LEGACY_KEYS[i]);
+          if (raw) break;
         }
-      } catch (e) {
-        say("無法存取瀏覽器儲存空間。", "error");
-        return;
       }
-      if (!raw) return;
-
-      try {
-        var data = JSON.parse(raw);
-        data.floor = String(data.floor || "B1");
-        data.zone = String(data.zone || "");
-        data.note = String(data.note || "");
-        data.photo = typeof data.photo === "string" ? data.photo : "";
-        if (!isNum(data.lat)) data.lat = null;
-        if (!isNum(data.lng)) data.lng = null;
-
-        render(data);
-        say("已載入上次停車紀錄。", "good");
-      } catch (error) {
-        say("舊紀錄格式無法讀取，請重新記錄。", "warning");
-      }
+    } catch (e) {
+      say("無法存取瀏覽器儲存空間。", "error");
+      return;
     }
 
-    /* ---------- 照片壓縮 ---------- */
-    function compressImage(file) {
-      return new Promise(function (resolve, reject) {
-        var reader = new FileReader();
+    if (!raw) return;
 
-        reader.onload = function () {
-          var img = new Image();
+    try {
+      var data = JSON.parse(raw);
+      data.floor = String(data.floor || "B1");
+      data.zone = String(data.zone || "");
+      data.note = String(data.note || "");
+      data.photo = typeof data.photo === "string" ? data.photo : "";
+      if (typeof data.lat !== "number") data.lat = null;
+      if (typeof data.lng !== "number") data.lng = null;
 
-          img.onload = function () {
-            try {
-              var w = img.naturalWidth || img.width;
-              var h = img.naturalHeight || img.height;
-              if (!w || !h) { reject(new Error("圖片尺寸無效")); return; }
+      render(data);
+      say("已載入上次停車紀錄。", "good");
+    } catch (error) {
+      say("舊紀錄格式無法讀取，請重新記錄。", "warning");
+    }
+  }
 
-              var scale = Math.min(1, MAX_PHOTO_DIM / Math.max(w, h));
-              var tw = Math.max(1, Math.round(w * scale));
-              var th = Math.max(1, Math.round(h * scale));
+  /* ============ 照片壓縮 ============ */
+  function compressImage(file) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
 
-              var canvas = document.createElement("canvas");
-              canvas.width = tw;
-              canvas.height = th;
+      reader.onload = function () {
+        var img = new Image();
 
-              var ctx = canvas.getContext("2d");
-              ctx.fillStyle = "#ffffff";
-              ctx.fillRect(0, 0, tw, th);
-              ctx.drawImage(img, 0, 0, tw, th);
+        img.onload = function () {
+          try {
+            var w = img.naturalWidth || img.width;
+            var h = img.naturalHeight || img.height;
+            if (!w || !h) return reject(new Error("圖片尺寸無效"));
 
-              resolve(canvas.toDataURL("image/jpeg", PHOTO_QUALITY));
-            } catch (err) {
-              reject(err);
-            }
-          };
+            var scale = Math.min(1, MAX_PHOTO_DIM / Math.max(w, h));
+            var tw = Math.max(1, Math.round(w * scale));
+            var th = Math.max(1, Math.round(h * scale));
 
-          img.onerror = function () { reject(new Error("圖片解析失敗")); };
-          img.src = reader.result;
+            var canvas = document.createElement("canvas");
+            canvas.width = tw;
+            canvas.height = th;
+
+            var ctx = canvas.getContext("2d");
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, tw, th);
+            ctx.drawImage(img, 0, 0, tw, th);
+
+            resolve(canvas.toDataURL("image/jpeg", PHOTO_QUALITY));
+          } catch (err) {
+            reject(err);
+          }
         };
 
-        reader.onerror = function () { reject(new Error("檔案讀取失敗")); };
-        reader.readAsDataURL(file);
-      });
+        img.onerror = function () { reject(new Error("圖片解析失敗")); };
+        img.src = reader.result;
+      };
+
+      reader.onerror = function () { reject(new Error("檔案讀取失敗")); };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  $("photo").addEventListener("change", function (event) {
+    var file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    if (!file.type || file.type.indexOf("image/") !== 0) {
+      say("請選擇有效的圖片檔。", "error");
+      event.target.value = "";
+      return;
     }
 
-    $("photo").addEventListener("change", function (event) {
-      var file = event.target.files && event.target.files[0];
-      if (!file) return;
+    if (file.size > MAX_FILE_SIZE) {
+      say("照片太大，請選擇 15 MB 以下的圖片。", "error");
+      event.target.value = "";
+      return;
+    }
 
-      if (!file.type || file.type.indexOf("image/") !== 0) {
-        say("請選擇有效的圖片檔。", "error");
-        event.target.value = "";
-        return;
-      }
-      if (file.size > MAX_FILE_SIZE) {
-        say("照片太大，請選擇 15 MB 以下的圖片。", "error");
-        event.target.value = "";
-        return;
-      }
+    say("正在處理照片……");
 
-      say("正在處理照片……");
-
-      compressImage(file).then(function (dataUrl) {
+    compressImage(file)
+      .then(function (dataUrl) {
         photoData = dataUrl;
-        var pv = $("photoPreview");
-        pv.src = dataUrl;
-        pv.style.display = "block";
+        $("photoPreview").src = dataUrl;
+        $("photoPreview").style.display = "block";
         var kb = Math.round(dataUrl.length * 0.75 / 1024);
         say("照片已壓縮完成（約 " + kb + " KB）。", "good");
-      }).catch(function (err) {
+      })
+      .catch(function (err) {
         say("照片處理失敗：" + err.message, "error");
         event.target.value = "";
       });
-    });
+  });
 
-    /* ---------- 儲存紀錄 ---------- */
-    function saveRecord(position) {
-      var now = Date.now();
-      var prev = saved || {};
-      var hasFix = !!position;
+  /* ============ 儲存紀錄 ============ */
+  function saveRecord(position) {
+    var now = Date.now();
+    var prev = saved || {};
+    var hasFix = !!position;
 
-      var lat = hasFix ? position.coords.latitude : null;
-      var lng = hasFix ? position.coords.longitude : null;
-      var acc = hasFix ? position.coords.accuracy : null;
+    var lat = hasFix ? position.coords.latitude : null;
+    var lng = hasFix ? position.coords.longitude : null;
+    var acc = hasFix ? position.coords.accuracy : null;
 
-      /* 沒拿到新座標但樓層沒變 → 沿用舊座標（單純更新備註的情況） */
-      if (!hasFix && validPoint(prev) && prev.floor === floor) {
-        lat = prev.lat; lng = prev.lng; acc = prev.accuracy;
+    // 沒拿到新座標，但樓層沒變 → 沿用舊座標（單純更新備註的情況）
+    if (!hasFix && validPoint(prev) && prev.floor === floor) {
+      lat = prev.lat;
+      lng = prev.lng;
+      acc = prev.accuracy;
+    }
+
+    var data = {
+      lat: lat,
+      lng: lng,
+      accuracy: acc,
+      floor: floor,
+      zone: $("zone").value.trim(),
+      note: $("note").value.trim(),
+      timestamp: now,
+      time: new Date(now).toLocaleString("zh-TW"),
+      photo: photoData || prev.photo || ""
+    };
+
+    var stored = persist(data);
+    if (!stored) return;
+
+    render(stored);
+    buzz([30, 40, 30]);
+
+    if (isBasement(floor)) {
+      say("已記錄地下室車位！已切換為室內地標指引模式。", "good");
+    } else if (validPoint(stored)) {
+      if (stored.accuracy > 50) {
+        say("已儲存，但 GPS 訊號較弱，請務必核對車位照片。", "warning");
+      } else {
+        say("戶外停車紀錄與 GPS 已成功儲存！", "good");
       }
+    } else {
+      say("已儲存樓層與車位資料（無 GPS 座標）。", "good");
+    }
+  }
 
-      var data = {
-        lat: lat,
-        lng: lng,
-        accuracy: acc,
-        floor: floor,
-        zone: $("zone").value.trim(),
-        note: $("note").value.trim(),
-        timestamp: now,
-        time: new Date(now).toLocaleString("zh-TW"),
-        photo: photoData || prev.photo || ""
-      };
+  $("saveBtn").addEventListener("click", function () {
+    if (busy) return;
 
-      var stored = persist(data);
-      if (!stored) return;
+    // 地下室：不等待 GPS，秒速儲存
+    if (isBasement(floor)) {
+      saveRecord(null);
+      return;
+    }
 
-      render(stored);
-      buzz([30, 40, 30]);
+    if (!navigator.geolocation || !window.isSecureContext) {
+      saveRecord(null);
+      say("已儲存手動紀錄（此環境無法使用 GPS）。", "warning");
+      return;
+    }
 
-      if (isBasement(floor)) {
-        say("已記錄地下室車位！已切換為室內地標指引模式。", "good");
-      } else if (validPoint(stored)) {
-        if (stored.accuracy > 50) {
-          say("已儲存，但 GPS 訊號較弱，請務必核對車位照片。", "warning");
-     
+    busy = true;
+    $("saveBtn").disabled = true;
+    say("正在取得高精度 GPS……");
+
+    navigator.geolocation.getCurrentPosition(
+      function (position) {
+        try {
+          saveRecord(position);
+        } catch (err) {
+          say("儲存時發生錯誤：" + err.message, "error");
+        } finally {
+          busy = false;
+          $("saveBtn").disabled = false;
+        }
+      },
+      function () {
+        busy = false;
+        $("saveBtn").disabled = false;
+        saveRecord(null);
+        say("無法取得 GPS，已自動儲存為室內／手動車位紀錄。", "warning");
+      },
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+    );
+  });
+
+  /* ============ 地理計算 ============ */
+  function distance(a, b) {
+    var rad = Math.PI / 180;
+    var dLat = (b.lat - a.lat) * rad;
+    var dLng = (b.lng - a.lng) * rad;
+    var lat1 = a.lat * rad;
+    var lat2 = b.lat * rad;
+
+    var h = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1) * Math.cos(lat2) *
+      Math.sin(dLng / 2) * Math.sin(dLng / 2);
+
+    return 6371000 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+  }
+
+  function bearing(a, b) {
+    var rad = Math.PI / 180;
+    var lat1 = a.lat * rad;
+    var lat2 = b.lat * rad;
+    var dLng = (b.lng - a.lng) * rad;
+
+    var y = Math.sin(dLng) * Math.cos(lat2);
+    var x = Math.cos(lat1) * Math.sin(lat2) -
+      Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+
+    return (Math.atan2(y, x) / rad + 360) % 360;
+  }
+
+  /* 平滑旋轉，避免 359° → 0° 時箭頭反轉一圈 */
+  function setArrowRotation(deg) {
+    var diff = ((deg - arrowRotation) % 360 + 540) % 360 - 180;
+    arrowRotation += diff;
+    $("arrow").style.transform = "rotate(" + arrowRotation + "deg)";
+  }
+
+  /* ============ 導航更新 ============ */
+  function updateNavigation() {
+    if (!saved) {
+      $("distance").textContent = "--";
+      $("bearing").textContent = "請先記錄車位";
+      return;
+    }
+
+    if (isIndoorMode()) {
+      $("distance").textContent = saved.floor || "地下室";
+      $("bearing").textContent =
+        "區域：" + (saved.zone || "未填寫") + "｜備註：" + (saved.note || "無");
+      sayNav(
+        "室內模式：請先前往【" + (saved.floor || "紀錄樓層") + "】樓層，尋找【" +
+        (saved.zone || "記錄區域") + "】，並對照下方車位照片尋車。",
+        "warning"
+      );
+      return;
+    }
+
+    if (!current || !validPoint(current)) {
+      $("distance").textContent = "--";
+      $("bearing").textContent = "正在搜尋目前 GPS…";
+      return;
+    }
+
+    var d = distance(current, saved);
+    var b = bearing(current, saved);
+
+    $("distance").textContent = d
