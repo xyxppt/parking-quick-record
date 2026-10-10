@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#10151f">
-<title>極速記車位 2.3</title>
+<title>極速記車位 2.4</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
@@ -65,7 +65,7 @@ footer{text-align:center;color:#78879a;font-size:11px;line-height:1.8}
 <header>
   <div class="logo">🚗</div>
   <h1>極速記車位</h1>
-  <p class="small">2.3｜戶外地圖尋車・多點取樣定位</p>
+  <p class="small">2.4｜戶外地圖尋車・定位平滑濾波</p>
 </header>
 
 <section class="card">
@@ -399,13 +399,13 @@ window.addEventListener("error",function(e){var el=document.getElementById("stat
 
   // 連續取樣約 10 秒，挑精度最好的一筆
   function sampleBest(onTick, done) {
-    var best = null, start = Date.now(), id = null, finished = false, lastErr = null, tk = null;
+    var best = null, start = Date.now(), id = null, finished = false, lastErr = null, tk = null, samples = [];
     function finish() {
       if (finished) return;
       finished = true;
       if (id !== null) navigator.geolocation.clearWatch(id);
       clearInterval(tk);
-      done(best, lastErr);
+      done(best, lastErr, samples);
     }
     tk = setInterval(function () {
       var sec = Math.round((Date.now() - start) / 1000);
@@ -414,6 +414,7 @@ window.addEventListener("error",function(e){var el=document.getElementById("stat
     }, 500);
     id = navigator.geolocation.watchPosition(
       function (p) {
+        samples.push(p);
         if (!best || p.coords.accuracy < best.coords.accuracy) best = p;
         if (best.coords.accuracy <= 5 && Date.now() - start >= 3000) finish();
       },
@@ -435,10 +436,14 @@ window.addEventListener("error",function(e){var el=document.getElementById("stat
         say("取樣定位中 " + sec + " 秒" +
           (best ? "｜目前最佳 ±" + Math.round(best.coords.accuracy) + " m" : "｜等待訊號…"));
       },
-      function (best, err) {
+      function (best, err, samples) {
         busy = false; $("saveBtn").disabled = false;
         if (best) {
-          try { saveRecord(best); }
+          try {
+            var avg = averagePos(samples, best);
+            saveRecord(avg);
+            $("status").textContent += "（" + avg.coords.n + " 筆取樣加權平均）";
+          }
           catch (e) { say("儲存時發生錯誤：" + e.message, "error"); }
         } else {
           saveRecord(null);
@@ -460,6 +465,62 @@ window.addEventListener("error",function(e){var el=document.getElementById("stat
     var y = Math.sin(dLng) * Math.cos(l2);
     var x = Math.cos(l1) * Math.sin(l2) - Math.sin(l1) * Math.cos(l2) * Math.cos(dLng);
     return (Math.atan2(y, x) / r + 360) % 360;
+  }
+
+  // ---------- 定位平滑 ----------
+  // 記錄用：剔除誤差大與位置離群的點，再依 1/誤差² 加權平均
+  function averagePos(samples, best) {
+    var bestAcc = Math.max(best.coords.accuracy, 1);
+    var cutoff = Math.max(bestAcc * 3, 10);
+    var kept = samples.filter(function (p) { return p.coords.accuracy <= cutoff; });
+    if (!kept.length) kept = [best];
+
+    function mean(list) {
+      var sw = 0, la = 0, ln = 0;
+      list.forEach(function (p) {
+        var w = 1 / Math.pow(Math.max(p.coords.accuracy, 1), 2);
+        sw += w; la += w * p.coords.latitude; ln += w * p.coords.longitude;
+      });
+      return { lat: la / sw, lng: ln / sw, sw: sw };
+    }
+
+    var m = mean(kept);
+    var maxOff = Math.max(15, bestAcc * 2);
+    var inliers = kept.filter(function (p) {
+      return distance(m, { lat: p.coords.latitude, lng: p.coords.longitude }) <= maxOff;
+    });
+    if (inliers.length >= 1 && inliers.length < kept.length) { kept = inliers; m = mean(kept); }
+
+    var acc = Math.max(bestAcc * 0.8, 1 / Math.sqrt(m.sw));
+    return { coords: { latitude: m.lat, longitude: m.lng, accuracy: acc, n: kept.length } };
+  }
+
+  // 導航用：卡爾曼濾波、離群值剔除、靜止時降低跳動
+  var kf = null;
+  function filterFix(p) {
+    var lat = p.coords.latitude, lng = p.coords.longitude;
+    var acc = Math.max(p.coords.accuracy, 1), t = p.timestamp || Date.now();
+    function out() { return { lat: kf.lat, lng: kf.lng, accuracy: Math.max(Math.sqrt(kf.v), acc * 0.5) }; }
+
+    if (!kf) { kf = { lat: lat, lng: lng, v: acc * acc, t: t, jump: 0 }; return out(); }
+
+    var dt = Math.max((t - kf.t) / 1000, 0);
+    kf.v += dt * 9;                       // 預測：不確定性隨時間增加（約 3 m/s）
+    var d = distance({ lat: kf.lat, lng: kf.lng }, { lat: lat, lng: lng });
+    var maxMove = Math.max(dt * 5, 5) + Math.sqrt(kf.v) + acc;
+
+    if (d > maxMove && kf.jump < 3) {     // 瞬間跳太遠：視為離群值，暫不採用
+      kf.jump++; kf.t = t; return out();
+    }
+    if (d > maxMove) { kf = { lat: lat, lng: lng, v: acc * acc, t: t, jump: 0 }; return out(); }
+
+    var K = kf.v / (kf.v + acc * acc);
+    if (d < Math.max(2, acc * 0.25)) K *= 0.3;   // 幾乎沒動：降低位置抖動
+    kf.lat += K * (lat - kf.lat);
+    kf.lng += K * (lng - kf.lng);
+    kf.v = (1 - K) * kf.v;
+    kf.t = t; kf.jump = 0;
+    return out();
   }
 
   // ---------- 地圖 ----------
@@ -682,9 +743,10 @@ window.addEventListener("error",function(e){var el=document.getElementById("stat
       startSensors();
       if (watchId !== null) navigator.geolocation.clearWatch(watchId);
       fitted = false;
+      kf = null;
       watchId = navigator.geolocation.watchPosition(
         function (p) {
-          current = { lat: p.coords.latitude, lng: p.coords.longitude, accuracy: p.coords.accuracy };
+          current = filterFix(p);
           lastFix = Date.now();
           updateNavigation();
           if (!fitted) { fitted = true; updateMap(true); }
