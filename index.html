@@ -1,1 +1,698 @@
 
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#10151f">
+  <meta name="description" content="快速記錄停車樓層、位置與備註，方便找回愛車。">
+  <title>極速記車位</title>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #10151f;
+      --card: #1a2230;
+      --card2: #232e3e;
+      --text: #f1f5f9;
+      --muted: #9ba9bb;
+      --green: #20c997;
+      --blue: #3995ff;
+      --red: #ff7272;
+      --border: #344154;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0 auto;
+      padding: 22px 16px 36px;
+      max-width: 480px;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at top, #1c2d3d 0%, var(--bg) 55%);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Noto Sans TC",
+                   "Microsoft JhengHei", sans-serif;
+    }
+
+    button, input { font: inherit; }
+
+    button {
+      min-height: 46px;
+      border: 0;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 650;
+      transition: filter .15s, transform .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:active { transform: scale(.98); }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+
+    button:focus-visible, input:focus-visible {
+      outline: 2px solid var(--green);
+      outline-offset: 3px;
+    }
+
+    header {
+      text-align: center;
+      padding: 10px 0 22px;
+    }
+
+    .logo {
+      font-size: 42px;
+      margin-bottom: 6px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 27px;
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .card {
+      background: rgba(26, 34, 48, .96);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 19px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px #00000020;
+    }
+
+    .section-title {
+      margin: 0 0 15px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .floor-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .floor-btn {
+      background: var(--card2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 10px 2px;
+    }
+
+    .floor-btn.active {
+      background: #124d42;
+      color: #6df0c4;
+      border-color: var(--green);
+      box-shadow: inset 0 0 0 1px #20c99740;
+    }
+
+    input {
+      width: 100%;
+      min-height: 48px;
+      margin-top: 15px;
+      padding: 12px;
+      color: var(--text);
+      background: #111925;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    input::placeholder { color: #78879a; }
+
+    .primary {
+      width: 100%;
+      min-height: 56px;
+      color: #062b21;
+      background: linear-gradient(135deg, #35e0a9, #20c997);
+      font-size: 17px;
+      box-shadow: 0 5px 18px #20c99725;
+    }
+
+    .secondary {
+      width: 100%;
+      background: #17385c;
+      color: #8bc5ff;
+      border: 1px solid #2d5c8b;
+      margin-top: 10px;
+    }
+
+    .danger {
+      width: 100%;
+      background: #38232b;
+      color: #ffaaaa;
+      border: 1px solid #69404b;
+      margin-top: 10px;
+    }
+
+    #status {
+      min-height: 25px;
+      margin: 12px 0 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .status-success { color: #6df0c4 !important; }
+    .status-error { color: #ff9292 !important; }
+
+    .saved-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .saved-header .section-title { margin: 0; }
+
+    .tag {
+      padding: 5px 9px;
+      border-radius: 7px;
+      color: #6df0c4;
+      background: #124d42;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    #emptyState {
+      padding: 15px 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    #savedDetails { display: none; }
+
+    .floor-display {
+      padding: 17px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #163f3a, #1b3041);
+      margin-bottom: 15px;
+    }
+
+    .floor-caption {
+      font-size: 12px;
+      color: #a7d7cb;
+    }
+
+    #savedFloor {
+      margin-top: 5px;
+      font-size: 32px;
+      font-weight: 800;
+      color: #6df0c4;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .info-row:last-child { border-bottom: 0; }
+
+    .info-label {
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .info-value {
+      text-align: right;
+      overflow-wrap: anywhere;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.8;
+      margin: 14px 0 0;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 11px;
+      color: #728096;
+      line-height: 1.8;
+      padding: 5px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo">🚗</div>
+    <h1>極速記車位</h1>
+    <div class="subtitle">記住停車位置，不再繞圈找車</div>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2 class="section-title">📍 記錄停車位置</h2>
+
+      <label class="label">選擇樓層 / 區域</label>
+      <div class="floor-grid" id="floorGrid">
+        <button type="button" class="floor-btn" data-floor="B4">B4</button>
+        <button type="button" class="floor-btn" data-floor="B3">B3</button>
+        <button type="button" class="floor-btn" data-floor="B2">B2</button>
+        <button type="button" class="floor-btn" data-floor="B1">B1</button>
+        <button type="button" class="floor-btn" data-floor="1F">1F</button>
+        <button type="button" class="floor-btn" data-floor="2F">2F</button>
+        <button type="button" class="floor-btn" data-floor="3F">3F</button>
+        <button type="button" class="floor-btn" data-floor="其他">其他</button>
+      </div>
+
+      <label class="label" for="noteInput" style="margin-top:18px">
+        停車備註（選填）
+      </label>
+      <input
+        type="text"
+        id="noteInput"
+        maxlength="200"
+        placeholder="例如：C 區、B-12 柱、電梯旁"
+      >
+    </section>
+
+    <button type="button" class="primary" id="saveBtn">
+      📍 記錄目前位置
+    </button>
+    <div id="status" role="status" aria-live="polite">
+      選好樓層後，按下按鈕記錄位置
+    </div>
+
+    <section class="card">
+      <div class="saved-header">
+        <h2 class="section-title">🅿️ 上次停放資訊</h2>
+        <span class="tag" id="recordTag">尚無紀錄</span>
+      </div>
+
+      <div id="emptyState">
+        <div style="font-size:34px;margin-bottom:8px">🚙</div>
+        還沒有停車紀錄
+      </div>
+
+      <div id="savedDetails">
+        <div class="floor-display">
+          <div class="floor-caption">你的愛車停在</div>
+          <div id="savedFloor">B1</div>
+        </div>
+
+        <div class="info-row">
+          <span class="info-label">備註</span>
+          <span class="info-value" id="savedNote">無</span>
+        </div>
+
+        <div class="info-row">
+          <span class="info-label">記錄時間</span>
+          <span class="info-value" id="savedTime">—</span>
+        </div>
+
+        <div class="info-row">
+          <span class="info-label">定位精度</span>
+          <span class="info-value" id="savedAccuracy">—</span>
+        </div>
+
+        <button type="button" class="secondary" id="navBtn">
+          🗺️ 開啟 Google Maps 導航
+        </button>
+        <button type="button" class="secondary" id="copyBtn">
+          📋 複製停車資訊
+        </button>
+        <button type="button" class="danger" id="clearBtn">
+          🗑️ 清除停車紀錄
+        </button>
+      </div>
+
+      <p class="hint">
+        提醒：地下停車場可能收不到 GPS。
+        建議同時記錄區域、柱號或電梯位置，找車會更方便。
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    停車紀錄只儲存在目前瀏覽器的本機空間。<br>
+    清除瀏覽器資料或更換裝置後，紀錄可能會消失。
+  </footer>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const STORAGE_KEY = "parking_loc_v2";
+      const OLD_KEY = "parking_loc";
+
+      let selectedFloor = "B1";
+      let savedData = null;
+      let busy = false;
+
+      const $ = id => document.getElementById(id);
+
+      const floorButtons = [
+        ...document.querySelectorAll(".floor-btn")
+      ];
+
+      function setStatus(message, type = "") {
+        const el = $("status");
+        el.textContent = message;
+        el.className = type;
+      }
+
+      function setFloor(floor) {
+        selectedFloor = floor;
+
+        floorButtons.forEach(btn => {
+          const active = btn.dataset.floor === floor;
+          btn.classList.toggle("active", active);
+          btn.setAttribute("aria-pressed", String(active));
+        });
+      }
+
+      function getStoredData() {
+        try {
+          let raw = localStorage.getItem(STORAGE_KEY);
+
+          // 相容原本的舊版紀錄
+          if (!raw) {
+            raw = localStorage.getItem(OLD_KEY);
+          }
+
+          if (!raw) return null;
+
+          const data = JSON.parse(raw);
+
+          if (
+            !data ||
+            typeof data.lat !== "number" ||
+            typeof data.lng !== "number" ||
+            !Number.isFinite(data.lat) ||
+            !Number.isFinite(data.lng) ||
+            Math.abs(data.lat) > 90 ||
+            Math.abs(data.lng) > 180
+          ) {
+            return null;
+          }
+
+          return {
+            lat: data.lat,
+            lng: data.lng,
+            floor: String(data.floor || "未知"),
+            note: String(data.note || ""),
+            time: data.time || "",
+            timestamp: data.timestamp || null,
+            accuracy: Number.isFinite(data.accuracy)
+              ? data.accuracy
+              : null
+          };
+        } catch (error) {
+          console.error("讀取停車紀錄失敗", error);
+          return null;
+        }
+      }
+
+      function persist(data) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+          savedData = data;
+          return true;
+        } catch (error) {
+          console.error("儲存停車紀錄失敗", error);
+          return false;
+        }
+      }
+
+      function formatTime(timestamp, fallback) {
+        if (timestamp && Number.isFinite(timestamp)) {
+          return new Date(timestamp).toLocaleString("zh-TW", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false
+          });
+        }
+
+        return fallback || "未知";
+      }
+
+      function updateDisplay(data) {
+        savedData = data;
+
+        $("emptyState").style.display = "none";
+        $("savedDetails").style.display = "block";
+        $("recordTag").textContent = "已儲存";
+
+        $("savedFloor").textContent = data.floor;
+        $("savedNote").textContent = data.note.trim() || "無備註";
+        $("savedTime").textContent =
+          formatTime(data.timestamp, data.time);
+
+        $("savedAccuracy").textContent =
+          data.accuracy !== null
+            ? `約 ${Math.round(data.accuracy)} 公尺`
+            : "未提供";
+
+        setFloor(
+          floorButtons.some(b => b.dataset.floor === data.floor)
+            ? data.floor
+            : "B1"
+        );
+
+        $("noteInput").value = data.note;
+      }
+
+      function handlePosition(position) {
+        const now = Date.now();
+
+        const data = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+          floor: selectedFloor,
+          note: $("noteInput").value.trim(),
+          timestamp: now,
+          time: new Date(now).toLocaleString("zh-TW"),
+          accuracy: Number.isFinite(position.coords.accuracy)
+            ? position.coords.accuracy
+            : null
+        };
+
+        if (!Number.isFinite(data.lat) ||
+            !Number.isFinite(data.lng)) {
+          setStatus("定位資料無效，請重新嘗試。", "status-error");
+          return;
+        }
+
+        if (!persist(data)) {
+          setStatus(
+            "定位成功，但無法儲存。請檢查瀏覽器儲存空間或隱私設定。",
+            "status-error"
+          );
+          return;
+        }
+
+        updateDisplay(data);
+
+        const accuracyText = data.accuracy !== null
+          ? `（定位精度約 ${Math.round(data.accuracy)} 公尺）`
+          : "";
+
+        setStatus(
+          `✅ 停車位置已儲存！${accuracyText}`,
+          "status-success"
+        );
+      }
+
+      function handleLocationError(error) {
+        const messages = {
+          1: "定位權限被拒絕，請在瀏覽器設定中允許定位。",
+          2: "目前無法取得位置，請確認 GPS 或網路連線。",
+          3: "定位逾時。地下停車場可能收不到訊號，請移到訊號較好的地方再試。"
+        };
+
+        setStatus(
+          messages[error.code] || "定位失敗，請稍後再試。",
+          "status-error"
+        );
+      }
+
+      function saveLocation() {
+        if (busy) return;
+
+        if (!navigator.geolocation) {
+          setStatus(
+            "這個瀏覽器不支援定位功能。",
+            "status-error"
+          );
+          return;
+        }
+
+        if (!window.isSecureContext) {
+          setStatus(
+            "定位通常需要 HTTPS 或 localhost。請透過安全連線開啟網頁。",
+            "status-error"
+          );
+          return;
+        }
+
+        busy = true;
+        $("saveBtn").disabled = true;
+        $("saveBtn").textContent = "⏳ 正在取得 GPS...";
+        setStatus("正在取得位置，請稍候…");
+
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            try {
+              handlePosition(position);
+            } finally {
+              busy = false;
+              $("saveBtn").disabled = false;
+              $("saveBtn").textContent = "📍 記錄目前位置";
+            }
+          },
+          error => {
+            handleLocationError(error);
+            busy = false;
+            $("saveBtn").disabled = false;
+            $("saveBtn").textContent = "📍 記錄目前位置";
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0
+          }
+        );
+      }
+
+      function openNav() {
+        if (!savedData) {
+          setStatus("目前沒有可導航的停車紀錄。", "status-error");
+          return;
+        }
+
+        const { lat, lng } = savedData;
+
+        const url = new URL("https://www.google.com/maps/dir/");
+        url.searchParams.set("api", "1");
+        url.searchParams.set("destination", `${lat},${lng}`);
+        url.searchParams.set("travelmode", "walking");
+
+        window.open(url.href, "_blank", "noopener,noreferrer");
+      }
+
+      async function copyInfo() {
+        if (!savedData) return;
+
+        const data = savedData;
+        const text = [
+          "🚗 停車紀錄",
+          `樓層：${data.floor}`,
+          `備註：${data.note || "無"}`,
+          `時間：${formatTime(data.timestamp, data.time)}`,
+          `座標：${data.lat}, ${data.lng}`,
+          `Google Maps：https://www.google.com/maps?q=${data.lat},${data.lng}`
+        ].join("\n");
+
+        try {
+          if (!navigator.clipboard ||
+              !navigator.clipboard.writeText) {
+            throw new Error("Clipboard API unavailable");
+          }
+
+          await navigator.clipboard.writeText(text);
+          setStatus("✅ 停車資訊已複製！", "status-success");
+        } catch (error) {
+          // 相容不支援 Clipboard API 的環境
+          const textarea = document.createElement("textarea");
+          textarea.value = text;
+          textarea.readOnly = true;
+          textarea.style.position = "fixed";
+          textarea.style.opacity = "0";
+          document.body.appendChild(textarea);
+          textarea.select();
+
+          let success = false;
+          try {
+            success = document.execCommand("copy");
+          } catch (_) {
+            success = false;
+          }
+
+          textarea.remove();
+
+          setStatus(
+            success
+              ? "✅ 停車資訊已複製！"
+              : "無法自動複製，請改用座標或地圖連結。",
+            success ? "status-success" : "status-error"
+          );
+        }
+      }
+
+      function clearRecord() {
+        if (!savedData) return;
+
+        if (!confirm("確定要清除上次的停車紀錄嗎？")) {
+          return;
+        }
+
+        try {
+          localStorage.removeItem(STORAGE_KEY);
+          localStorage.removeItem(OLD_KEY);
+          savedData = null;
+
+          $("emptyState").style.display = "block";
+          $("savedDetails").style.display = "none";
+          $("recordTag").textContent = "尚無紀錄";
+          $("noteInput").value = "";
+
+          setFloor("B1");
+          setStatus("已清除停車紀錄。", "status-success");
+        } catch (error) {
+          setStatus(
+            "無法清除紀錄，請檢查瀏覽器設定。",
+            "status-error"
+          );
+        }
+      }
+
+      floorButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          setFloor(btn.dataset.floor);
+        });
+      });
+
+      $("saveBtn").addEventListener("click", saveLocation);
+      $("navBtn").addEventListener("click", openNav);
+      $("copyBtn").addEventListener("click", copyInfo);
+      $("clearBtn").addEventListener("click", clearRecord);
+
+      setFloor("B1");
+
+      const existing = getStoredData();
+
+      if (existing) {
+        updateDisplay(existing);
+        setStatus("已載入上次的停車紀錄。");
+      }
+    })();
+  </script>
+</body>
+</html>
+
