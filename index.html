@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#0c111b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
 <title>極速記車位 2.7</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -69,10 +72,20 @@ body{
 .loader-text{margin-top:18px;font-size:13px;color:#6b7c92;letter-spacing:1px}
 
 /* ===== 主畫面 ===== */
-header{text-align:center;padding:22px 0 18px}
+header{text-align:center;padding:22px 0 14px}
 header .logo{font-size:36px;margin-bottom:2px}
 h1{font-size:24px;font-weight:700;letter-spacing:.5px}
 .sub{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* 加到桌面按鈕 */
+.install-btn{
+  display:block;width:100%;margin:12px 0 6px;
+  background:linear-gradient(135deg,#1a3a5c,#0d4a3a);
+  color:#8affd8;border:1px solid #2ee6a8;
+  border-radius:12px;font-size:14px;font-weight:600;
+  min-height:44px;
+}
+.install-btn.hidden{display:none}
 
 .card{
   background:var(--card);border:1px solid var(--border);
@@ -194,6 +207,24 @@ button:disabled{opacity:.45}
 .btn-stack{display:flex;flex-direction:column;gap:8px;margin-top:14px}
 .small{color:var(--muted);font-size:12px;line-height:1.7}
 footer{text-align:center;color:#5a6a7e;font-size:11px;line-height:1.7;margin-top:8px}
+
+/* 捷徑說明彈窗 */
+.modal-mask{
+  position:fixed;inset:0;background:rgba(0,0,0,.72);
+  z-index:10000;display:flex;align-items:center;justify-content:center;
+  padding:20px;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s;
+}
+.modal-mask.show{opacity:1;visibility:visible}
+.modal{
+  background:#161e2c;border:1px solid #2a364a;border-radius:16px;
+  padding:22px;max-width:340px;width:100%;
+}
+.modal h3{font-size:17px;margin-bottom:12px;color:#2ee6a8}
+.modal p{font-size:14px;line-height:1.7;color:#c8d4e4;margin-bottom:10px}
+.modal ol{padding-left:20px;margin:10px 0 16px;font-size:14px;line-height:1.8;color:#c8d4e4}
+.modal .close-btn{
+  width:100%;background:#1e3a5f;color:#b8dcff;margin-top:8px;
+}
 </style>
 </head>
 <body>
@@ -207,10 +238,20 @@ footer{text-align:center;color:#5a6a7e;font-size:11px;line-height:1.7;margin-top
   <div class="loader-text">極速記車位</div>
 </div>
 
+<!-- 捷徑說明彈窗 -->
+<div class="modal-mask" id="installModal">
+  <div class="modal">
+    <h3 id="modalTitle">加到手機桌面</h3>
+    <div id="modalContent"></div>
+    <button type="button" class="close-btn" id="closeModal">我知道了</button>
+  </div>
+</div>
+
 <header>
   <div class="logo">🚗</div>
   <h1>極速記車位</h1>
   <div class="sub">2.7｜精簡介面 × 快速操作</div>
+  <button type="button" class="install-btn" id="installBtn">📲 加到手機桌面（捷徑）</button>
 </header>
 
 <section class="card">
@@ -322,32 +363,122 @@ footer{text-align:center;color:#5a6a7e;font-size:11px;line-height:1.7;margin-top
 </footer>
 
 <script>
-// ===== 載入動畫隱藏（多重保險）=====
+// ===== 載入動畫隱藏 =====
 (function hideLoader() {
   var loader = document.getElementById("loader");
   if (!loader) return;
-
   function doHide() {
     loader.classList.add("hide");
-    // 動畫結束後真正移除，避免殘留
     setTimeout(function () {
-      if (loader && loader.parentNode) {
-        loader.parentNode.removeChild(loader);
-      }
+      if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
     }, 600);
   }
-
-  // 1.6 秒後強制隱藏
   setTimeout(doHide, 1600);
-
-  // 頁面完全載入後也確保隱藏（雙重保險）
   if (document.readyState === "complete") {
     setTimeout(doHide, 1600);
   } else {
-    window.addEventListener("load", function () {
-      setTimeout(doHide, 400);
-    });
+    window.addEventListener("load", function () { setTimeout(doHide, 400); });
   }
+})();
+
+// ===== 加到桌面捷徑功能 =====
+(function () {
+  var deferredPrompt = null;
+  var installBtn = document.getElementById("installBtn");
+  var modal = document.getElementById("installModal");
+  var modalTitle = document.getElementById("modalTitle");
+  var modalContent = document.getElementById("modalContent");
+  var closeModal = document.getElementById("closeModal");
+
+  // 捕捉 Android / Chrome 的安裝事件
+  window.addEventListener("beforeinstallprompt", function (e) {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.classList.remove("hidden");
+  });
+
+  // 已安裝則隱藏按鈕
+  window.addEventListener("appinstalled", function () {
+    deferredPrompt = null;
+    installBtn.classList.add("hidden");
+  });
+
+  function isIOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  }
+  function isAndroid() {
+    return /Android/i.test(navigator.userAgent);
+  }
+  function isStandalone() {
+    return window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone === true;
+  }
+
+  // 如果已經是捷徑模式，就隱藏按鈕
+  if (isStandalone()) {
+    installBtn.classList.add("hidden");
+  }
+
+  installBtn.addEventListener("click", function () {
+    // Android / Chrome 有原生提示
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function (choice) {
+        if (choice.outcome === "accepted") {
+          installBtn.classList.add("hidden");
+        }
+        deferredPrompt = null;
+      });
+      return;
+    }
+
+    // iOS 顯示教學
+    if (isIOS()) {
+      modalTitle.textContent = "加入 iPhone / iPad 桌面";
+      modalContent.innerHTML = `
+        <p>請依照以下步驟操作：</p>
+        <ol>
+          <li>點擊底部的 <b>分享按鈕</b>（方框＋向上箭頭）</li>
+          <li>向下滑動，找到並點選 <b>「加入主畫面」</b></li>
+          <li>確認名稱後點「加入」</li>
+        </ol>
+        <p style="color:#8affd8;font-size:13px">完成後就能像 App 一樣從桌面直接開啟！</p>
+      `;
+      modal.classList.add("show");
+      return;
+    }
+
+    // Android 其他瀏覽器
+    if (isAndroid()) {
+      modalTitle.textContent = "加入 Android 桌面";
+      modalContent.innerHTML = `
+        <p>請依照以下步驟操作：</p>
+        <ol>
+          <li>點擊瀏覽器右上角的 <b>⋮ 選單</b></li>
+          <li>選擇 <b>「加入主畫面」</b> 或 <b>「安裝應用程式」</b></li>
+          <li>確認後即可完成</li>
+        </ol>
+      `;
+      modal.classList.add("show");
+      return;
+    }
+
+    // 其他裝置
+    modalTitle.textContent = "設為捷徑";
+    modalContent.innerHTML = `
+      <p>目前瀏覽器不支援一鍵安裝。</p>
+      <p>請使用手機的 Chrome 或 Safari，並從瀏覽器選單中選擇「加入主畫面」或「加到主畫面」。</p>
+    `;
+    modal.classList.add("show");
+  });
+
+  closeModal.addEventListener("click", function () {
+    modal.classList.remove("show");
+  });
+  modal.addEventListener("click", function (e) {
+    if (e.target === modal) modal.classList.remove("show");
+  });
 })();
 
 window.addEventListener("error", function (e) {
@@ -1095,4 +1226,4 @@ window.addEventListener("error", function (e) {
 })();
 </script>
 </body>
-</html>
+  </html>
