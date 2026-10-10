@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#10151f">
-<title>極速記車位 2.5</title>
+<title>極速記車位 2.6</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
@@ -66,7 +66,7 @@ footer{text-align:center;color:#78879a;font-size:11px;line-height:1.8}
 <header>
   <div class="logo">🚗</div>
   <h1>極速記車位</h1>
-  <p class="small">2.5｜下拉選單快速輸入</p>
+  <p class="small">2.6｜精度門檻與靜止偵測</p>
 </header>
 
 <section class="card">
@@ -426,7 +426,40 @@ window.addEventListener("error",function(e){var el=document.getElementById("stat
     }
   }
 
-  // 連續取樣約 10 秒，挑精度最好的一筆
+  // ---------- 靜止偵測（加速度計）----------
+  var motion = { got: false, mag: [] };
+  function motionHandler(e) {
+    var a = e.accelerationIncludingGravity;
+    if (!a || a.x == null || a.y == null || a.z == null) return;
+    var now = Date.now();
+    motion.got = true;
+    motion.mag.push([now, Math.sqrt(a.x * a.x + a.y * a.y + a.z * a.z)]);
+    motion.mag = motion.mag.filter(function (r) { return r[0] > now - 1500; });
+  }
+  // 回傳 true＝移動中、false＝靜止、null＝不支援或資料不足
+  function isMoving() {
+    if (!motion.got || motion.mag.length < 5) return null;
+    var vals = motion.mag.map(function (r) { return r[1]; });
+    var avg = vals.reduce(function (x, y) { return x + y; }, 0) / vals.length;
+    var sd = Math.sqrt(vals.reduce(function (x, y) { return x + (y - avg) * (y - avg); }, 0) / vals.length);
+    return sd > 0.8;
+  }
+  function startMotion(cb) {
+    motion = { got: false, mag: [] };
+    var D = window.DeviceMotionEvent;
+    function bind() { window.addEventListener("devicemotion", motionHandler); }
+    if (D && typeof D.requestPermission === "function") {
+      D.requestPermission().then(function (r) { if (r === "granted") bind(); cb(); })
+        .catch(function () { cb(); });
+    } else {
+      if (D) bind();
+      cb();
+    }
+  }
+  function stopMotion() { window.removeEventListener("devicemotion", motionHandler); }
+
+  // ---------- 連續取樣 ----------
+  // 誤差 5 m 內最快 3 秒完成；10 秒後精度仍未到 15 m 就延長，最多 20 秒
   function sampleBest(onTick, done) {
     var best = null, start = Date.now(), id = null, finished = false, lastErr = null, tk = null, samples = [];
     function finish() {
@@ -439,13 +472,13 @@ window.addEventListener("error",function(e){var el=document.getElementById("stat
     tk = setInterval(function () {
       var sec = Math.round((Date.now() - start) / 1000);
       onTick(sec, best);
-      if ((best && best.coords.accuracy <= 5 && sec >= 3) || (sec >= 10 && best) || sec >= 20) finish();
+      var acc = best ? best.coords.accuracy : Infinity;
+      if ((acc <= 5 && sec >= 3) || (sec >= 10 && acc <= 15) || sec >= 20) finish();
     }, 500);
     id = navigator.geolocation.watchPosition(
       function (p) {
-        samples.push(p);
+        samples.push({ coords: p.coords, mv: isMoving() === true });
         if (!best || p.coords.accuracy < best.coords.accuracy) best = p;
-        if (best.coords.accuracy <= 5 && Date.now() - start >= 3000) finish();
       },
       function (e) { lastErr = e; if (e.code === 1) finish(); },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
@@ -459,28 +492,39 @@ window.addEventListener("error",function(e){var el=document.getElementById("stat
       say("已儲存手動紀錄。此環境無法使用 GPS，請依地標與照片找車。", "good");
       return;
     }
-    busy = true; $("saveBtn").disabled = true; say("正在取得 GPS……");
-    sampleBest(
-      function (sec, best) {
-        say("取樣定位中 " + sec + " 秒" +
-          (best ? "｜目前最佳 ±" + Math.round(best.coords.accuracy) + " m" : "｜等待訊號…"));
-      },
-      function (best, err, samples) {
-        busy = false; $("saveBtn").disabled = false;
-        if (best) {
-          try {
-            var avg = averagePos(samples, best);
-            saveRecord(avg);
-            $("status").textContent += "（" + avg.coords.n + " 筆取樣加權平均）";
+    busy = true; $("saveBtn").disabled = true; say("正在取得 GPS……請站穩不要走動");
+    startMotion(function () {
+      sampleBest(
+        function (sec, best) {
+          var moving = isMoving() === true;
+          var m = "取樣定位中 " + sec + " 秒" +
+            (best ? "｜目前最佳 ±" + Math.round(best.coords.accuracy) + " m" : "｜等待訊號…");
+          if (moving) m += "｜請站穩不要走動";
+          else if (sec >= 10 && best && best.coords.accuracy > 15) m += "｜精度不足，延長取樣中…";
+          say(m, moving ? "warn" : "");
+        },
+        function (best, err, samples) {
+          stopMotion();
+          busy = false; $("saveBtn").disabled = false;
+          if (best) {
+            try {
+              var avg = averagePos(samples, best);
+              saveRecord(avg);
+              var extra = "（" + avg.coords.n + " 筆取樣平均，誤差約 ±" + Math.round(avg.coords.accuracy) + " m）";
+              if (avg.coords.accuracy > 15) {
+                extra += " GPS 誤差偏大，請以照片和車位編號為準。";
+                if ($("status").className !== "error") $("status").className = "warn";
+              }
+              $("status").textContent += extra;
+            } catch (e) { say("儲存時發生錯誤：" + e.message, "error"); }
+          } else {
+            saveRecord(null);
+            var m = err && err.code === 1 ? "定位權限遭拒絕" : "無法取得 GPS（逾時）";
+            say(m + "，已保留手動停車紀錄。", "error");
           }
-          catch (e) { say("儲存時發生錯誤：" + e.message, "error"); }
-        } else {
-          saveRecord(null);
-          var m = err && err.code === 1 ? "定位權限遭拒絕" : "無法取得 GPS（逾時）";
-          say(m + "，已保留手動停車紀錄。", "error");
         }
-      }
-    );
+      );
+    });
   });
 
   // ---------- 計算 ----------
@@ -499,6 +543,8 @@ window.addEventListener("error",function(e){var el=document.getElementById("stat
   // ---------- 定位平滑 ----------
   // 記錄用：剔除誤差大與位置離群的點，再依 1/誤差² 加權平均
   function averagePos(samples, best) {
+    var still = samples.filter(function (p) { return !p.mv; });
+    if (still.length >= 3) samples = still;   // 走動時的取樣不採用（至少要有 3 筆靜止樣本）
     var bestAcc = Math.max(best.coords.accuracy, 1);
     var cutoff = Math.max(bestAcc * 3, 10);
     var kept = samples.filter(function (p) { return p.coords.accuracy <= cutoff; });
