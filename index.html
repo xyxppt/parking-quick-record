@@ -161,6 +161,7 @@ footer{text-align:center;color:#78879a;font-size:11px;line-height:1.8}
 </footer>
 
 <script>
+window.addEventListener("error",function(e){var el=document.getElementById("status");if(el){el.textContent="程式錯誤："+e.message;el.className="error";}});
 (function () {
   "use strict";
 
@@ -490,4 +491,138 @@ footer{text-align:center;color:#78879a;font-size:11px;line-height:1.8}
       }, 3000);
     }
     var DOE = window.DeviceOrientationEvent;
-    if (DOE && typeof DOE.requestPermission === "fun
+    if (DOE && typeof DOE.requestPermission === "function") {
+      // iOS 必須在點擊事件中要求權限
+      DOE.requestPermission().then(function (s) {
+        if (s === "granted") bind();
+        else sayRaw("sensorStatus", "方向權限被拒絕，請改用「地標路線」。", "error");
+      }).catch(function () {
+        sayRaw("sensorStatus", "無法取得方向權限。", "error");
+      });
+    } else {
+      bind();
+    }
+  }
+
+  function stopSensors() {
+    window.removeEventListener("deviceorientation", orientationHandler);
+    window.removeEventListener("deviceorientationabsolute", orientationHandler);
+    clearTimeout(sensorTimer);
+    heading = null; lastHeadingAt = 0;
+  }
+
+  // ---------- 開始 / 停止 ----------
+  $("startBtn").addEventListener("click", function () {
+    if (!saved) { sayNav("請先記錄位置。", "error"); return; }
+
+    var noGps = !validPoint(saved);
+    var ug = underground(saved.floor);
+    var hasRoute = saved.steps && saved.steps.length;
+
+    // 自動切換模式
+    if ((noGps || ug) && hasRoute) {
+      setMode("route"); navIdx = 0; showRoute();
+      sayNav(noGps ? "沒有 GPS 座標，已切換為地標路線。" : "地下樓層，已切換為地標路線。", "warn");
+    } else if (noGps) {
+      setMode("route");
+      sayNav("沒有 GPS 座標也沒有地標，請依樓層、車位編號和照片尋車。", "error");
+      return;
+    } else {
+      setMode("gps");
+    }
+
+    if (noGps) return;
+    if (!navigator.geolocation || !window.isSecureContext) {
+      sayNav("目前環境不支援 GPS。請用 HTTPS 網站測試。", "error");
+      return;
+    }
+
+    try {
+      startSensors();
+      if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+      watchId = navigator.geolocation.watchPosition(
+        function (p) {
+          current = { lat: p.coords.latitude, lng: p.coords.longitude, accuracy: p.coords.accuracy };
+          lastFix = Date.now();
+          updateNavigation();
+        },
+        function () { sayNav("定位失敗，請檢查權限或 GPS 訊號。", "error"); },
+        { enableHighAccuracy: true, maximumAge: 1000, timeout: 20000 }
+      );
+      clearInterval(ticker);
+      ticker = setInterval(function () { refreshGpsInfo(); if (mode === "gps") updateNavigation(); }, 1000);
+      if (mode === "gps") sayNav("正在更新目前位置……");
+    } catch (e) { sayNav("無法啟動導航：" + e.message, "error"); }
+  });
+
+  $("stopBtn").addEventListener("click", function () {
+    if (watchId !== null && navigator.geolocation) {
+      navigator.geolocation.clearWatch(watchId); watchId = null;
+    }
+    clearInterval(ticker);
+    stopSensors();
+    $("arrow").classList.add("dim");
+    sayRaw("sensorStatus", "方向感測器：已停止");
+    sayNav("已停止即時定位。");
+  });
+
+  // ---------- 其他按鈕 ----------
+  $("mapsBtn").addEventListener("click", function () {
+    if (!saved || !validPoint(saved)) { say("這筆紀錄沒有 GPS 座標，請依地標與照片尋車。", "error"); return; }
+    window.open("https://www.google.com/maps/dir/?api=1&destination=" +
+      encodeURIComponent(saved.lat + "," + saved.lng) + "&travelmode=walking", "_blank");
+  });
+
+  $("copyBtn").addEventListener("click", function () {
+    if (!saved) return;
+    var lines = [
+      "極速記車位",
+      "樓層：" + saved.floor,
+      "區域：" + (saved.zone || "未填寫"),
+      "備註：" + (saved.note || "無"),
+      "時間：" + (saved.time || "")
+    ];
+    if (saved.steps && saved.steps.length) {
+      lines.push("路線（車位→出口）：" + saved.steps.join(" → "));
+    }
+    lines.push(validPoint(saved) ? "座標：" + saved.lat + "," + saved.lng : "無 GPS 座標");
+    var text = lines.join("\n");
+
+    var a = document.createElement("textarea");
+    a.value = text; a.style.position = "fixed"; a.style.left = "-9999px";
+    document.body.appendChild(a); a.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    a.remove();
+    if (ok) say("已複製停車資訊。", "good");
+    else window.prompt("請長按以下文字並複製：", text);
+  });
+
+  $("clearBtn").addEventListener("click", function () {
+    if (!window.confirm("確定要清除停車紀錄嗎？")) return;
+    try {
+      localStorage.removeItem(KEY);
+      OLD_KEYS.forEach(function (k) { localStorage.removeItem(k); });
+      saved = null; current = null; photoData = ""; steps = []; lastFix = 0;
+      renderSteps(); refreshGpsInfo();
+      $("savedPanel").hidden = true; $("empty").hidden = false;
+      $("photoPreview").style.display = "none";
+      $("savedPhoto").style.display = "none";
+      $("photo").value = ""; $("zone").value = ""; $("note").value = "";
+      chooseFloor("B1");
+      $("distance").textContent = "--";
+      $("bearing").textContent = "尚未開始導航";
+      $("arrow").style.transform = "rotate(0deg)";
+      $("arrow").classList.add("dim");
+      setMode("gps");
+      say("紀錄已清除。", "good");
+    } catch (e) { say("清除失敗，請檢查瀏覽器儲存設定。", "error"); }
+  });
+
+  chooseFloor("B1");
+  loadSaved();
+  say("程式已正常啟動，可以操作。", "good");
+})();
+</script>
+</body>
+</html>
