@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#10151f">
-<title>極速記車位 2.2 智能升級版</title>
+<title>極速記車位 2.2 穩定修復版</title>
 
 <style>
 * { box-sizing: border-box; }
@@ -210,7 +210,7 @@ footer {
 <header>
   <div class="logo">🚗</div>
   <h1>極速記車位</h1>
-  <p class="small">2.2 智能導航升級版｜室內與室外雙模尋車助手</p>
+  <p class="small">2.2 穩定修復版｜室內與室外雙模尋車助手</p>
 </header>
 
 <section class="card">
@@ -247,7 +247,7 @@ footer {
   </button>
 
   <div id="status" role="status" aria-live="polite">
-    程式已載入，請選擇樓層並記錄車位。
+    程式載入中……
   </div>
 </section>
 
@@ -332,33 +332,49 @@ footer {
   }
 
   function say(message, type) {
-    $("status").textContent = message;
-    $("status").className = type || "";
+    var el = $("status");
+    if (el) {
+      el.textContent = message;
+      el.className = type || "";
+    }
   }
 
   function sayNav(message, type) {
-    $("navStatus").textContent = message;
-    $("navStatus").className = "small " + (type || "");
+    var el = $("navStatus");
+    if (el) {
+      el.textContent = message;
+      el.className = "small " + (type || "");
+    }
   }
 
   function chooseFloor(value) {
     floor = value;
     var buttons = document.querySelectorAll(".floor-btn");
 
-    buttons.forEach(function (button) {
+    for (var i = 0; i < buttons.length; i++) {
+      var button = buttons[i];
       var active = button.getAttribute("data-floor") === value;
-      button.classList.toggle("active", active);
-      button.setAttribute("aria-pressed", String(active));
-    });
+      if (active) {
+        button.classList.add("active");
+        button.setAttribute("aria-pressed", "true");
+      } else {
+        button.classList.remove("active");
+        button.setAttribute("aria-pressed", "false");
+      }
+    }
 
     say("目前選擇樓層：" + value, "good");
   }
 
-  document.querySelectorAll(".floor-btn").forEach(function (button) {
-    button.addEventListener("click", function () {
-      chooseFloor(button.getAttribute("data-floor"));
-    });
-  });
+  // 綁定樓層按鈕
+  var floorButtons = document.querySelectorAll(".floor-btn");
+  for (var i = 0; i < floorButtons.length; i++) {
+    (function(btn) {
+      btn.addEventListener("click", function () {
+        chooseFloor(btn.getAttribute("data-floor"));
+      });
+    })(floorButtons[i]);
+  }
 
   function validPoint(data) {
     return data &&
@@ -381,16 +397,17 @@ footer {
     }
   }
 
-  // 判斷是否為地下室或室內無 GPS 狀態
   function isIndoorMode() {
     if (!saved) return true;
-    var isBasement = saved.floor && saved.floor.startsWith("B");
+    var isBasement = saved.floor && saved.floor.indexOf("B") === 0;
     var noValidGps = !validPoint(saved) || (saved.accuracy && saved.accuracy > 50);
     return isBasement || noValidGps;
   }
 
   function updateNavModeUI() {
     var badge = $("navModeBadge");
+    if (!badge) return;
+
     if (!saved) {
       badge.textContent = "模式：尚未記錄車位";
       badge.style.color = "#aab7c8";
@@ -402,42 +419,50 @@ footer {
       badge.textContent = "🏠 室內地標與照片指引模式 (防誤導)";
       badge.style.color = "#ffcc66";
       badge.style.borderColor = "#ffcc66";
-      $("arrow").textContent = "🅿️";
-      $("bearing").textContent = "地下室請依樓層與照片尋車";
+      var arrowEl = $("arrow");
+      var bearingEl = $("bearing");
+      if (arrowEl) arrowEl.textContent = "🅿️";
+      if (bearingEl) bearingEl.textContent = "地下室請依樓層與照片尋車";
     } else {
       badge.textContent = "🛰️ GPS 戶外直線導航模式";
       badge.style.color = "#35d6a1";
       badge.style.borderColor = "#35d6a1";
-      $("arrow").textContent = "↑";
+      var arrowEl = $("arrow");
+      if (arrowEl) arrowEl.textContent = "↑";
     }
   }
 
   function render(data) {
     saved = data;
 
-    $("empty").hidden = true;
-    $("savedPanel").hidden = false;
+    var emptyEl = $("empty");
+    var panelEl = $("savedPanel");
+    if (emptyEl) emptyEl.hidden = true;
+    if (panelEl) panelEl.hidden = false;
 
-    $("sFloor").textContent = data.floor || "未知";
-    $("sZone").textContent = data.zone || "未填寫";
-    $("sNote").textContent = data.note || "無";
-    $("sTime").textContent = data.timestamp
+    if ($("sFloor")) $("sFloor").textContent = data.floor || "未知";
+    if ($("sZone")) $("sZone").textContent = data.zone || "未填寫";
+    if ($("sNote")) $("sNote").textContent = data.note || "無";
+    if ($("sTime")) $("sTime").textContent = data.timestamp
       ? new Date(data.timestamp).toLocaleString("zh-TW")
       : (data.time || "未知");
 
     if (validPoint(data)) {
       var acc = Math.round(data.accuracy || 0);
       var level = acc < 15 ? "高精度 (<15m)" : acc < 50 ? "中精度 (<50m)" : "低精度 (>50m)";
-      $("sAccuracy").textContent = "約 " + acc + " 公尺 (" + level + ")";
+      if ($("sAccuracy")) $("sAccuracy").textContent = "約 " + acc + " 公尺 (" + level + ")";
     } else {
-      $("sAccuracy").textContent = "無 GPS 座標 (純室內紀錄)";
+      if ($("sAccuracy")) $("sAccuracy").textContent = "無 GPS 座標 (純室內紀錄)";
     }
 
-    $("savedPhoto").style.display = data.photo ? "block" : "none";
-    if (data.photo) $("savedPhoto").src = data.photo;
+    var savedPhotoEl = $("savedPhoto");
+    if (savedPhotoEl) {
+      savedPhotoEl.style.display = data.photo ? "block" : "none";
+      if (data.photo) savedPhotoEl.src = data.photo;
+    }
 
-    $("zone").value = data.zone || "";
-    $("note").value = data.note || "";
+    if ($("zone")) $("zone").value = data.zone || "";
+    if ($("note")) $("note").value = data.note || "";
 
     chooseFloor(data.floor || "B1");
     updateNavModeUI();
@@ -446,6 +471,7 @@ footer {
   function loadSaved() {
     try {
       var raw = localStorage.getItem(KEY) ||
+                localStorage.getItem("parking_v22") ||
                 localStorage.getItem("parking_v21") ||
                 localStorage.getItem("parking_v3") ||
                 localStorage.getItem("parking_loc");
@@ -466,32 +492,38 @@ footer {
   }
 
   // 照片預覽處理
-  $("photo").addEventListener("change", function (event) {
-    var file = event.target.files && event.target.files[0];
-    if (!file) return;
+  var photoInput = $("photo");
+  if (photoInput) {
+    photoInput.addEventListener("change", function (event) {
+      var file = event.target.files && event.target.files[0];
+      if (!file) return;
 
-    if (!file.type || file.type.indexOf("image/") !== 0) {
-      say("請選擇有效的圖片。", "error");
-      return;
-    }
+      if (!file.type || file.type.indexOf("image/") !== 0) {
+        say("請選擇有效的圖片。", "error");
+        return;
+      }
 
-    if (file.size > 12 * 1024 * 1024) {
-      say("照片太大，請選擇 12 MB 以下的圖片。", "error");
-      return;
-    }
+      if (file.size > 12 * 1024 * 1024) {
+        say("照片太大，請選擇 12 MB 以下的圖片。", "error");
+        return;
+      }
 
-    var reader = new FileReader();
-    reader.onload = function () {
-      photoData = reader.result;
-      $("photoPreview").src = photoData;
-      $("photoPreview").style.display = "block";
-      say("照片預覽成功。", "good");
-    };
-    reader.onerror = function () {
-      say("照片讀取失敗。", "error");
-    };
-    reader.readAsDataURL(file);
-  });
+      var reader = new FileReader();
+      reader.onload = function () {
+        photoData = reader.result;
+        var preview = $("photoPreview");
+        if (preview) {
+          preview.src = photoData;
+          preview.style.display = "block";
+        }
+        say("照片預覽成功。", "good");
+      };
+      reader.onerror = function () {
+        say("照片讀取失敗。", "error");
+      };
+      reader.readAsDataURL(file);
+    });
+  }
 
   function saveRecord(position) {
     var now = Date.now();
@@ -500,8 +532,8 @@ footer {
       lng: position ? position.coords.longitude : (saved ? saved.lng : null),
       accuracy: position ? position.coords.accuracy : (saved ? saved.accuracy : null),
       floor: floor,
-      zone: $("zone").value.trim(),
-      note: $("note").value.trim(),
+      zone: $("zone") ? $("zone").value.trim() : "",
+      note: $("note") ? $("note").value.trim() : "",
       timestamp: now,
       time: new Date(now).toLocaleString("zh-TW"),
       photo: photoData || (saved && saved.photo ? saved.photo : "")
@@ -510,7 +542,7 @@ footer {
     if (!persist(data)) return;
     render(data);
 
-    if (floor.startsWith("B")) {
+    if (floor.indexOf("B") === 0) {
       say("已成功記錄地下室車位！已啟動室內地標指引模式。", "good");
     } else if (validPoint(data)) {
       if (data.accuracy > 50) {
@@ -523,49 +555,51 @@ footer {
     }
   }
 
-  $("saveBtn").addEventListener("click", function () {
-    if (busy) return;
+  var saveBtn = $("saveBtn");
+  if (saveBtn) {
+    saveBtn.addEventListener("click", function () {
+      if (busy) return;
 
-    // 若選擇地下室，直接略過 GPS 耗時等待，秒速儲存
-    if (floor.startsWith("B")) {
-      saveRecord(null);
-      return;
-    }
-
-    if (!navigator.geolocation || !window.isSecureContext) {
-      saveRecord(null);
-      say("已儲存手動紀錄。此環境無法使用 GPS。", "good");
-      return;
-    }
-
-    busy = true;
-    $("saveBtn").disabled = true;
-    say("正在取得高精度 GPS……");
-
-    navigator.geolocation.getCurrentPosition(
-      function (position) {
-        try {
-          saveRecord(position);
-        } catch (error) {
-          say("儲存時發生錯誤：" + error.message, "error");
-        } finally {
-          busy = false;
-          $("saveBtn").disabled = false;
-        }
-      },
-      function (error) {
-        busy = false;
-        $("saveBtn").disabled = false;
+      if (floor.indexOf("B") === 0) {
         saveRecord(null);
-        say("無法取得 GPS，已自動儲存為室內/手動車位紀錄。", "warning");
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 12000,
-        maximumAge: 0
+        return;
       }
-    );
-  });
+
+      if (!navigator.geolocation || !window.isSecureContext) {
+        saveRecord(null);
+        say("已儲存手動紀錄。此環境無法使用 GPS。", "good");
+        return;
+      }
+
+      busy = true;
+      saveBtn.disabled = true;
+      say("正在取得高精度 GPS……");
+
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          try {
+            saveRecord(position);
+          } catch (error) {
+            say("儲存時發生錯誤：" + error.message, "error");
+          } finally {
+            busy = false;
+            saveBtn.disabled = false;
+          }
+        },
+        function (error) {
+          busy = false;
+          saveBtn.disabled = false;
+          saveRecord(null);
+          say("無法取得 GPS，已自動儲存為室內/手動車位紀錄。", "warning");
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 12000,
+          maximumAge: 0
+        }
+      );
+    });
+  }
 
   function distance(a, b) {
     var rad = Math.PI / 180;
@@ -596,36 +630,38 @@ footer {
 
   function updateNavigation() {
     if (!saved) {
-      $("distance").textContent = "--";
-      $("bearing").textContent = "請先記錄車位";
+      if ($("distance")) $("distance").textContent = "--";
+      if ($("bearing")) $("bearing").textContent = "請先記錄車位";
       return;
     }
 
-    // 若是室內模式或沒有有效 GPS，提供清晰的地標指引
     if (isIndoorMode()) {
-      $("distance").textContent = saved.floor || "地下室";
-      $("bearing").textContent = "區域: " + (saved.zone || "未填寫") + " | 備註: " + (saved.note || "無");
-      sayNav("目前在室內/地下室：請先搭電梯至【" + saved.floor + "】樓層，尋找【" + (saved.zone || "記錄區域") + "】，並對照下方照片尋車。", "warning");
+      if ($("distance")) $("distance").textContent = saved.floor || "地下室";
+      if ($("bearing")) $("bearing").textContent = "區域: " + (saved.zone || "未填寫") + " | 備註: " + (saved.note || "無");
+      sayNav("目前在室內/地下室：請先前往【" + saved.floor + "】樓層，尋找【" + (saved.zone || "記錄區域") + "】，並對照下方照片尋車。", "warning");
       return;
     }
 
     if (!current || !validPoint(current)) {
-      $("distance").textContent = "--";
-      $("bearing").textContent = "正在搜尋目前 GPS...";
+      if ($("distance")) $("distance").textContent = "--";
+      if ($("bearing")) $("bearing").textContent = "正在搜尋目前 GPS...";
       return;
     }
 
     var d = distance(current, saved);
     var b = bearing(current, saved);
 
-    $("distance").textContent = d < 1000 ? Math.round(d) + " m" : (d / 1000).toFixed(2) + " km";
+    if ($("distance")) {
+      $("distance").textContent = d < 1000 ? Math.round(d) + " m" : (d / 1000).toFixed(2) + " km";
+    }
 
     if (heading !== null) {
       var relative = (b - heading + 360) % 360;
-      $("arrow").style.transform = "rotate(" + relative + "deg)";
+      var arrowEl = $("arrow");
+      if (arrowEl) arrowEl.style.transform = "rotate(" + relative + "deg)";
     }
 
-    $("bearing").textContent = "目標方位 " + Math.round(b) + "°";
+    if ($("bearing")) $("bearing").textContent = "目標方位 " + Math.round(b) + "°";
 
     if (d < 8) {
       sayNav("✨ 您已接近目標車位座標！請核對車位號碼【" + (saved.zone || "未填寫") + "】與照片。", "good");
@@ -636,12 +672,12 @@ footer {
 
   function orientationHandler(event) {
     var value = null;
-    if (Number.isFinite(event.webkitCompassHeading)) {
+    if (typeof event.webkitCompassHeading === "number" && !isNaN(event.webkitCompassHeading)) {
       value = event.webkitCompassHeading;
-    } else if (event.absolute && Number.isFinite(event.alpha)) {
-      var angle = screen.orientation ? screen.orientation.angle || 0 : 0;
+    } else if (event.absolute && typeof event.alpha === "number" && !isNaN(event.alpha)) {
+      var angle = (screen && screen.orientation) ? screen.orientation.angle || 0 : 0;
       value = (360 - event.alpha + angle + 360) % 360;
-    } else if (Number.isFinite(event.alpha)) {
+    } else if (typeof event.alpha === "number" && !isNaN(event.alpha)) {
       value = (360 - event.alpha) % 360;
     }
 
@@ -651,156 +687,100 @@ footer {
     }
   }
 
-  // 檢查並處理 iOS 13+ 指南針權限授權
   function initCompassPermissions() {
     if (typeof DeviceOrientationEvent !== "undefined" &&
         typeof DeviceOrientationEvent.requestPermission === "function") {
-      $("iosPermBtn").style.display = "block";
+      var permBtn = $("iosPermBtn");
+      if (permBtn) permBtn.style.display = "block";
     }
   }
 
-  $("iosPermBtn").addEventListener("click", function () {
-    DeviceOrientationEvent.requestPermission()
-      .then(function (response) {
-        if (response === "granted") {
-          window.addEventListener("deviceorientation", orientationHandler);
-          $("iosPermBtn").style.display = "none";
-          sayNav("指南針權限已授權成功！", "good");
-        } else {
-          sayNav("指南針權限被拒絕，將無法旋轉箭頭。", "error");
-        }
-      })
-      .catch(function () {
-        sayNav("無法取得裝置方向權限。", "error");
-      });
-  });
+  var iosPermBtn = $("iosPermBtn");
+  if (iosPermBtn) {
+    iosPermBtn.addEventListener("click", function () {
+      if (typeof DeviceOrientationEvent.requestPermission === "function") {
+        DeviceOrientationEvent.requestPermission()
+          .then(function (response) {
+            if (response === "granted") {
+              window.addEventListener("deviceorientation", orientationHandler);
+              if (iosPermBtn) iosPermBtn.style.display = "none";
+              sayNav("指南針權限已授權成功！", "good");
+            } else {
+              sayNav("指南針權限被拒絕，將無法旋轉箭頭。", "error");
+            }
+          })
+          .catch(function () {
+            sayNav("無法取得裝置方向權限。", "error");
+          });
+      }
+    });
+  }
 
-  $("startBtn").addEventListener("click", function () {
-    if (!saved) {
-      sayNav("沒有車位紀錄。請先記錄車位。", "error");
-      return;
-    }
-
-    if (isIndoorMode()) {
-      updateNavigation();
-      return;
-    }
-
-    try {
-      window.addEventListener("deviceorientation", orientationHandler);
-      window.addEventListener("deviceorientationabsolute", orientationHandler);
-
-      if (watchId !== null) {
-        navigator.geolocation.clearWatch(watchId);
+  var startBtn = $("startBtn");
+  if (startBtn) {
+    startBtn.addEventListener("click", function () {
+      if (!saved) {
+        sayNav("沒有車位紀錄。請先記錄車位。", "error");
+        return;
       }
 
-      watchId = navigator.geolocation.watchPosition(
-        function (position) {
-          current = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-            accuracy: position.coords.accuracy
-          };
-          updateNavigation();
-        },
-        function (error) {
-          sayNav("GPS 定位失敗，請確認戶外訊號。", "error");
-        },
-        {
-          enableHighAccuracy: true,
-          maximumAge: 1000,
-          timeout: 15000
+      if (isIndoorMode()) {
+        updateNavigation();
+        return;
+      }
+
+      try {
+        window.addEventListener("deviceorientation", orientationHandler);
+        window.addEventListener("deviceorientationabsolute", orientationHandler);
+
+        if (watchId !== null && navigator.geolocation) {
+          navigator.geolocation.clearWatch(watchId);
         }
-      );
 
-      sayNav("正在進行即時精準定位……");
-    } catch (error) {
-      sayNav("無法啟動導航：" + error.message, "error");
-    }
-  });
+        if (navigator.geolocation) {
+          watchId = navigator.geolocation.watchPosition(
+            function (position) {
+              current = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+                accuracy: position.coords.accuracy
+              };
+              updateNavigation();
+            },
+            function (error) {
+              sayNav("GPS 定位失敗，請確認戶外訊號。", "error");
+            },
+            {
+              enableHighAccuracy: true,
+              maximumAge: 1000,
+              timeout: 15000
+            }
+          );
+        }
 
-  $("stopBtn").addEventListener("click", function () {
-    if (watchId !== null && navigator.geolocation) {
-      navigator.geolocation.clearWatch(watchId);
-      watchId = null;
-    }
+        sayNav("正在進行即時精準定位……");
+      } catch (error) {
+        sayNav("無法啟動導航：" + error.message, "error");
+      }
+    });
+  }
 
-    window.removeEventListener("deviceorientation", orientationHandler);
-    window.removeEventListener("deviceorientationabsolute", orientationHandler);
+  var stopBtn = $("stopBtn");
+  if (stopBtn) {
+    stopBtn.addEventListener("click", function () {
+      if (watchId !== null && navigator.geolocation) {
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+      }
 
-    sayNav("已停止即時定位與感測器。");
-  });
+      window.removeEventListener("deviceorientation", orientationHandler);
+      window.removeEventListener("deviceorientationabsolute", orientationHandler);
 
-  $("mapsBtn").addEventListener("click", function () {
-    if (!saved || !validPoint(saved)) {
-      say("此紀錄為室內/地下室，沒有戶外 GPS 座標。請依照片尋車。", "error");
-      return;
-    }
+      sayNav("已停止即時定位與感測器。");
+    });
+  }
 
-    var url = "https://www.google.com/maps/dir/?api=1" +
-      "&destination=" + encodeURIComponent(saved.lat + "," + saved.lng) +
-      "&travelmode=walking";
-
-    window.open(url, "_blank");
-  });
-
-  $("copyBtn").addEventListener("click", function () {
-    if (!saved) return;
-
-    var text = [
-      "🚗 極速記車位資訊",
-      "樓層：" + saved.floor,
-      "區域：" + (saved.zone || "未填寫"),
-      "備註：" + (saved.note || "無"),
-      "時間：" + (saved.time || ""),
-      validPoint(saved) ? "座標：" + saved.lat + "," + saved.lng : "無 GPS 座標 (室內車位)"
-    ].join("\n");
-
-    var area = document.createElement("textarea");
-    area.value = text;
-    area.style.position = "fixed";
-    area.style.left = "-9999px";
-    document.body.appendChild(area);
-    area.select();
-
-    var copied = false;
-    try {
-      copied = document.execCommand("copy");
-    } catch (e) {
-      copied = false;
-    }
-    area.remove();
-
-    if (copied) {
-      say("已複製停車資訊至剪貼簿。", "good");
-    } else {
-      window.prompt("請長按以下文字複製：", text);
-    }
-  });
-
-  $("clearBtn").addEventListener("click", function () {
-    if (!window.confirm("確定要清除目前的停車紀錄嗎？")) return;
-
-    try {
-      localStorage.removeItem(KEY);
-      localStorage.removeItem("parking_v21");
-      localStorage.removeItem("parking_v3");
-      localStorage.removeItem("parking_loc");
-
-      saved = null;
-      current = null;
-      photoData = "";
-
-      $("savedPanel").hidden = true;
-      $("empty").hidden = false;
-      $("photoPreview").style.display = "none";
-      $("savedPhoto").style.display = "none";
-      $("photo").value = "";
-      $("zone").value = "";
-      $("note").value = "";
-
-      chooseFloor("B1");
-      updateNavModeUI();
-      $("distance").textContent = "--";
-      $("bearing").textContent = "尚未開始導航";
-      $("arrow").style.transform = "rotat
+  var mapsBtn = $("mapsBtn");
+  if (mapsBtn) {
+    mapsBtn.addEventListener("click", function () {
+      if (!saved || !
