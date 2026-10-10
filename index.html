@@ -2,768 +2,492 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#10151f">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>極速記車位 2.2 智能升級版</title>
-
+<title>極速記車位 2.2</title>
 <style>
-:root {
-  --bg: #10151f;
-  --card: #1b2534;
-  --border: #344256;
-  --field: #111a27;
-  --field-border: #405069;
-  --text: #f3f6fb;
-  --muted: #aab7c8;
-  --accent: #35d6a1;
-  --accent-ink: #082c21;
-  --warn: #ffcc66;
-  --err: #ff9999;
-  --radius: 16px;
-}
-
-* { box-sizing: border-box; }
-
-html { -webkit-text-size-adjust: 100%; }
-
-body {
-  margin: 0 auto;
-  padding: 18px 14px calc(35px + env(safe-area-inset-bottom));
-  max-width: 480px;
-  min-height: 100vh;
-  background: var(--bg);
-  color: var(--text);
-  font-family: Arial, "Noto Sans TC", "PingFang TC", sans-serif;
-  overscroll-behavior-y: contain;
-}
-
-header { text-align: center; padding: 12px 0 22px; }
-header .logo { font-size: 42px; line-height: 1; }
-h1 { margin: 6px 0 4px; font-size: 26px; letter-spacing: .5px; }
-h2 { font-size: 17px; margin: 0 0 16px; }
-
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 17px;
-  margin-bottom: 15px;
-}
-
-label {
-  display: block;
-  color: var(--muted);
-  font-size: 13px;
-  margin: 12px 0 7px;
-}
-
-input[type="text"] {
-  width: 100%;
-  padding: 12px;
-  min-height: 46px;
-  color: #fff;
-  background: var(--field);
-  border: 1px solid var(--field-border);
-  border-radius: 9px;
-  font-size: 16px;
-  font-family: inherit;
-}
-
-input[type="text"]::placeholder { color: #66788f; }
-
-button {
-  font-family: inherit;
-  font-size: 15px;
-  font-weight: bold;
-  min-height: 46px;
-  padding: 11px 8px;
-  border: 0;
-  border-radius: 10px;
-  cursor: pointer;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  transition: filter .15s, transform .08s;
-}
-
-button:active:not(:disabled) { filter: brightness(.82); transform: scale(.985); }
-button:disabled { opacity: .5; cursor: not-allowed; }
-
-button:focus-visible,
-input:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-.floor-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.floor-btn {
-  color: #fff;
-  background: #303d50;
-  border: 1px solid #43516a;
-}
-
-.floor-btn.active {
-  color: #8affd8;
-  background: #125340;
-  border-color: var(--accent);
-}
-
-.primary {
-  width: 100%;
-  background: var(--accent);
-  color: var(--accent-ink);
-}
-
-.secondary {
-  width: 100%;
-  background: #1c3c5e;
-  color: #b8dcff;
-  margin-top: 9px;
-}
-
-.danger {
-  width: 100%;
-  background: #472831;
-  color: #ffc2c2;
-  margin-top: 9px;
-}
-
-#status {
-  min-height: 42px;
-  padding: 10px 2px 0;
-  text-align: center;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.7;
-}
-
-.good { color: #73f1c3 !important; }
-.error { color: var(--err) !important; }
-.warning { color: var(--warn) !important; }
-
-.info {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 14px;
-}
-
-.info:last-of-type { border-bottom: 0; }
-.info span:first-child { color: var(--muted); flex-shrink: 0; }
-.info span:last-child { text-align: right; overflow-wrap: anywhere; }
-
-.small { color: var(--muted); font-size: 12px; line-height: 1.8; }
-
-#photoPreview, #savedPhoto {
-  display: none;
-  width: 100%;
-  max-height: 260px;
-  object-fit: contain;
-  margin-top: 12px;
-  border-radius: 10px;
-  background: var(--field);
-}
-
-.compass {
-  width: 190px;
-  height: 190px;
-  border: 2px solid var(--field-border);
-  border-radius: 50%;
-  margin: 15px auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(circle at 50% 40%, #16202f, #0d141d);
-  position: relative;
-  overflow: hidden;
-}
-
-#arrow {
-  font-size: 68px;
-  color: var(--accent);
-  line-height: 1.15;
-  transition: transform .25s ease-out;
-  will-change: transform;
-}
-
-#distance { font-size: 23px; font-weight: bold; }
-#bearing { font-size: 12px; color: var(--muted); margin-top: 5px; padding: 0 12px; text-align: center; }
-
-.mode-badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  background: #233248;
-  color: var(--accent);
-  border: 1px solid var(--accent);
-  transition: color .2s, border-color .2s;
-}
-
-footer {
-  text-align: center;
-  color: #78879a;
-  font-size: 11px;
-  line-height: 1.8;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; animation: none !important; }
-}
+*{box-sizing:border-box}
+body{margin:0 auto;padding:18px 14px 35px;max-width:480px;min-height:100vh;background:#10151f;color:#f3f6fb;font-family:Arial,"Noto Sans TC",sans-serif}
+header{text-align:center;padding:12px 0 22px}
+header .logo{font-size:42px}
+h1{margin:4px 0;font-size:26px}
+h2{font-size:17px;margin:0 0 16px}
+p{line-height:1.7}
+.card{background:#1b2534;border:1px solid #344256;border-radius:16px;padding:17px;margin-bottom:15px}
+label{display:block;color:#aab7c8;font-size:13px;margin:12px 0 7px}
+input[type=text]{width:100%;padding:12px;min-height:46px;color:#fff;background:#111a27;border:1px solid #405069;border-radius:9px;font-size:16px}
+button{font-family:inherit;font-size:15px;font-weight:bold;min-height:46px;padding:11px 8px;border:0;border-radius:10px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+button:active{filter:brightness(.8)}
+button:disabled{opacity:.5}
+button:focus-visible,input:focus-visible{outline:2px solid #35d6a1;outline-offset:2px}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.floor-btn,.mode-btn{color:#fff;background:#303d50;border:1px solid #43516a}
+.floor-btn.active,.mode-btn.active{color:#8affd8;background:#125340;border-color:#35d6a1}
+.primary{width:100%;background:#35d6a1;color:#082c21}
+.secondary{width:100%;background:#1c3c5e;color:#b8dcff;margin-top:9px}
+.danger{width:100%;background:#472831;color:#ffc2c2;margin-top:9px}
+#status{min-height:42px;padding:10px 2px;text-align:center;color:#aab7c8;font-size:13px;line-height:1.7}
+.good{color:#73f1c3!important}
+.warn{color:#ffd37a!important}
+.error{color:#ff9999!important}
+.info{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #344256;font-size:14px}
+.info span:first-child{color:#aab7c8;flex-shrink:0}
+.info span:last-child{text-align:right;overflow-wrap:anywhere}
+.small{color:#aab7c8;font-size:12px;line-height:1.8}
+#photoPreview,#savedPhoto{display:none;width:100%;max-height:260px;object-fit:contain;margin-top:12px;border-radius:10px;background:#111a27}
+.compass{width:190px;height:190px;border:2px solid #405069;border-radius:50%;margin:15px auto;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#111a27}
+#arrow{font-size:68px;color:#35d6a1;line-height:1.2;transition:opacity .2s}
+#arrow.dim{opacity:.25}
+#distance{font-size:23px;font-weight:bold}
+#bearing{font-size:12px;color:#aab7c8;margin-top:5px}
+.gps{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#aab7c8;padding:8px 10px;background:#111a27;border-radius:9px;margin-bottom:10px}
+.gps b{color:#f3f6fb}
+.steps{list-style:none;margin:10px 0 0;padding:0}
+.steps li{display:flex;align-items:center;gap:8px;padding:9px 10px;margin-bottom:6px;background:#111a27;border:1px solid #344256;border-radius:9px;font-size:14px}
+.steps li span{flex:1;overflow-wrap:anywhere}
+.steps li button{min-height:34px;padding:4px 10px;background:#472831;color:#ffc2c2;font-size:13px}
+.addrow{display:flex;gap:8px}
+.addrow input{flex:1}
+.addrow button{width:76px;background:#1c3c5e;color:#b8dcff}
+#routeBox{padding:14px;background:#111a27;border:1px solid #35d6a1;border-radius:12px;margin-top:12px}
+#routeStep{font-size:18px;line-height:1.6;font-weight:bold;margin:4px 0 12px;overflow-wrap:anywhere}
+footer{text-align:center;color:#78879a;font-size:11px;line-height:1.8}
 </style>
 </head>
-
 <body>
 
 <header>
-  <div class="logo" aria-hidden="true">🚗</div>
+  <div class="logo">🚗</div>
   <h1>極速記車位</h1>
-  <p class="small">2.2 智能導航升級版｜室內與室外雙模尋車助手</p>
+  <p class="small">2.2｜GPS 精度提示・方向校正・地標路線</p>
 </header>
 
 <section class="card">
   <h2>📍 記錄停車位置</h2>
 
-  <label id="floorLabel">選擇樓層</label>
-  <div class="floor-grid" id="floorGrid" role="group" aria-labelledby="floorLabel">
-    <button type="button" class="floor-btn" data-floor="B4" aria-pressed="false">B4</button>
-    <button type="button" class="floor-btn" data-floor="B3" aria-pressed="false">B3</button>
-    <button type="button" class="floor-btn" data-floor="B2" aria-pressed="false">B2</button>
-    <button type="button" class="floor-btn active" data-floor="B1" aria-pressed="true">B1</button>
-    <button type="button" class="floor-btn" data-floor="1F" aria-pressed="false">1F</button>
-    <button type="button" class="floor-btn" data-floor="2F" aria-pressed="false">2F</button>
-    <button type="button" class="floor-btn" data-floor="3F" aria-pressed="false">3F</button>
-    <button type="button" class="floor-btn" data-floor="其他" aria-pressed="false">其他</button>
+  <label>選擇樓層</label>
+  <div class="grid4" id="floorGrid">
+    <button type="button" class="floor-btn" data-floor="B4">B4</button>
+    <button type="button" class="floor-btn" data-floor="B3">B3</button>
+    <button type="button" class="floor-btn" data-floor="B2">B2</button>
+    <button type="button" class="floor-btn active" data-floor="B1">B1</button>
+    <button type="button" class="floor-btn" data-floor="1F">1F</button>
+    <button type="button" class="floor-btn" data-floor="2F">2F</button>
+    <button type="button" class="floor-btn" data-floor="3F">3F</button>
+    <button type="button" class="floor-btn" data-floor="其他">其他</button>
   </div>
 
   <label for="zone">區域或車位號碼</label>
-  <input id="zone" type="text" maxlength="100" autocomplete="off"
-         placeholder="例如：C區、C12、P3-128">
+  <input id="zone" type="text" maxlength="100" placeholder="例如：C區、C12、P3-128">
 
   <label for="note">備註</label>
-  <input id="note" type="text" maxlength="200" autocomplete="off"
-         placeholder="例如：電梯旁、靠近柱子柱號 B-12">
+  <input id="note" type="text" maxlength="200" placeholder="例如：電梯旁、靠近出口">
 
-  <label for="photo">拍攝車位照片（建議必填）</label>
+  <label for="stepInput">路線地標（從車位走到出口，一步一個）</label>
+  <div class="addrow">
+    <input id="stepInput" type="text" maxlength="80" placeholder="例如：往綠色柱子走">
+    <button type="button" id="addStepBtn">加入</button>
+  </div>
+  <ol class="steps" id="stepList"></ol>
+
+  <label for="photo">拍攝車位照片（選填）</label>
   <input id="photo" type="file" accept="image/*" capture="environment">
-
   <img id="photoPreview" alt="照片預覽">
 
-  <button type="button" class="primary" id="saveBtn" style="margin-top:16px">
-    📍 記錄目前位置
-  </button>
-
-  <div id="status" role="status" aria-live="polite">
-    程式已載入，請選擇樓層並記錄車位。
-  </div>
+  <button type="button" class="primary" id="saveBtn" style="margin-top:16px">📍 記錄目前位置</button>
+  <div id="status" role="status" aria-live="polite">程式已載入，請選擇樓層。</div>
 </section>
 
 <section class="card">
-  <h2>🧭 智慧尋車導航</h2>
+  <h2>🧭 尋車導航</h2>
 
-  <div style="text-align:center;">
-    <span id="navModeBadge" class="mode-badge">模式：尚未記錄車位</span>
+  <div class="grid2">
+    <button type="button" class="mode-btn active" id="modeGps">📡 GPS 箭頭</button>
+    <button type="button" class="mode-btn" id="modeRoute">🏷️ 地標路線</button>
   </div>
 
-  <div class="compass" id="compassContainer">
-    <div id="arrow" aria-hidden="true">↑</div>
-    <div id="distance">--</div>
-    <div id="bearing">尚未開始導航</div>
+  <div class="gps" id="gpsInfo" style="margin-top:12px">
+    <span>精度 <b id="gAcc">--</b></span>
+    <span>更新 <b id="gAge">--</b></span>
+    <span>可信度 <b id="gTrust">--</b></span>
   </div>
 
-  <button type="button" class="secondary" id="iosPermBtn"
-          style="display:none; margin-bottom:9px;">
-    🔓 啟用手機指南針權限 (iOS)
-  </button>
+  <div id="gpsBox">
+    <div class="compass">
+      <div id="arrow" class="dim">↑</div>
+      <div id="distance">--</div>
+      <div id="bearing">尚未開始導航</div>
+    </div>
+    <p id="sensorStatus" class="small">方向感測器：尚未啟動</p>
+  </div>
 
-  <button type="button" class="primary" id="startBtn">
-    🧭 開始導航 / 取得即時位置
-  </button>
+  <div id="routeBox" hidden>
+    <div class="small" id="routeCount"></div>
+    <div id="routeStep"></div>
+    <div class="grid2">
+      <button type="button" class="mode-btn" id="prevStep">← 上一步</button>
+      <button type="button" class="primary" id="nextStep">下一步 →</button>
+    </div>
+  </div>
 
-  <button type="button" class="secondary" id="stopBtn">
-    停止定位
-  </button>
-
-  <p id="navStatus" class="small" style="margin-top:10px;">
-    請先記錄位置，再開始導航。
-  </p>
+  <button type="button" class="primary" id="startBtn" style="margin-top:12px">🧭 開始導航</button>
+  <button type="button" class="secondary" id="stopBtn">停止定位</button>
+  <p id="navStatus" class="small">請先記錄位置，再開始導航。</p>
+  <p class="small">方向不準時：拿著手機在空中畫「8」字數次，再遠離金屬與喇叭。</p>
 </section>
 
 <section class="card">
   <h2>🅿️ 上次停車紀錄</h2>
-
   <div id="empty" class="small">目前沒有紀錄。</div>
 
   <div id="savedPanel" hidden>
     <div class="info"><span>樓層</span><span id="sFloor"></span></div>
     <div class="info"><span>區域／車位</span><span id="sZone"></span></div>
     <div class="info"><span>備註</span><span id="sNote"></span></div>
+    <div class="info"><span>路線地標</span><span id="sSteps"></span></div>
     <div class="info"><span>時間</span><span id="sTime"></span></div>
-    <div class="info"><span>GPS 狀態</span><span id="sAccuracy"></span></div>
-
+    <div class="info"><span>GPS 誤差</span><span id="sAccuracy"></span></div>
     <img id="savedPhoto" alt="停車照片">
-
-    <button type="button" class="secondary" id="mapsBtn">
-      🗺️ Google Maps 戶外導航
-    </button>
-
-    <button type="button" class="secondary" id="copyBtn">
-      📋 複製紀錄
-    </button>
-
-    <button type="button" class="danger" id="clearBtn">
-      🗑️ 清除紀錄
-    </button>
+    <button type="button" class="secondary" id="mapsBtn">🗺️ Google Maps</button>
+    <button type="button" class="secondary" id="copyBtn">📋 複製紀錄</button>
+    <button type="button" class="danger" id="clearBtn">🗑️ 清除紀錄</button>
   </div>
 </section>
 
 <footer>
   紀錄儲存在目前瀏覽器中。<br>
-  地下室將自動切換為室內地標與照片指引模式。
+  地下停車場 GPS 可能失效，請同時記錄車位編號、地標與照片。
 </footer>
 
 <script>
 (function () {
   "use strict";
 
-  /* ============ 常數 ============ */
   var KEY = "parking_v22";
-  var LEGACY_KEYS = ["parking_v21", "parking_v3", "parking_loc"];
-  var MAX_PHOTO_DIM = 1024;      // 照片最長邊
-  var PHOTO_QUALITY = 0.72;      // JPEG 壓縮品質
-  var MAX_FILE_SIZE = 15 * 1024 * 1024;
-  var NEAR_THRESHOLD = 8;        // 公尺
-
-  /* ============ 狀態 ============ */
-  var floor = "B1";
-  var saved = null;
-  var current = null;
-  var heading = null;
-  var watchId = null;
-  var photoData = "";
-  var busy = false;
-  var arrowRotation = 0;
-  var listeningOrientation = false;
+  var OLD_KEYS = ["parking_v21", "parking_v3", "parking_loc"];
+  var floor = "B1", saved = null, current = null, heading = null;
+  var watchId = null, photoData = "", busy = false;
+  var steps = [], mode = "gps", navIdx = 0;
+  var lastFix = 0, lastHeadingAt = 0, sensorTimer = null, ticker = null;
 
   function $(id) { return document.getElementById(id); }
+  function say(m, t) { $("status").textContent = m; $("status").className = t || ""; }
+  function sayNav(m, t) { $("navStatus").textContent = m; $("navStatus").className = "small " + (t || ""); }
+  function sayRaw(el, m, t) { $(el).textContent = m; $(el).className = "small " + (t || ""); }
 
-  /* ============ 訊息 ============ */
-  function say(message, type) {
-    var el = $("status");
-    el.textContent = message;
-    el.className = type || "";
-  }
-
-  function sayNav(message, type) {
-    var el = $("navStatus");
-    el.textContent = message;
-    el.className = "small " + (type || "");
-  }
-
-  function buzz(pattern) {
-    try {
-      if (navigator.vibrate) navigator.vibrate(pattern);
-    } catch (e) { /* 忽略 */ }
-  }
-
-  /* ============ 樓層 ============ */
-  function chooseFloor(value, silent) {
-    floor = value;
-    var buttons = document.querySelectorAll(".floor-btn");
-
-    for (var i = 0; i < buttons.length; i++) {
-      var active = buttons[i].getAttribute("data-floor") === value;
-      buttons[i].classList.toggle("active", active);
-      buttons[i].setAttribute("aria-pressed", String(active));
-    }
-
-    if (!silent) say("目前選擇樓層：" + value, "good");
-  }
-
-  document.querySelectorAll(".floor-btn").forEach(function (button) {
-    button.addEventListener("click", function () {
-      chooseFloor(button.getAttribute("data-floor"));
+  // ---------- 樓層 ----------
+  function chooseFloor(v) {
+    floor = v;
+    document.querySelectorAll(".floor-btn").forEach(function (b) {
+      var on = b.getAttribute("data-floor") === v;
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-pressed", String(on));
     });
+    say("目前選擇樓層：" + v, "good");
+  }
+  document.querySelectorAll(".floor-btn").forEach(function (b) {
+    b.addEventListener("click", function () { chooseFloor(b.getAttribute("data-floor")); });
   });
 
-  /* ============ 工具 ============ */
-  function validPoint(data) {
-    return !!data &&
-      typeof data.lat === "number" && Number.isFinite(data.lat) &&
-      typeof data.lng === "number" && Number.isFinite(data.lng) &&
-      Math.abs(data.lat) <= 90 && Math.abs(data.lng) <= 180;
+  function validPoint(d) {
+    return d && typeof d.lat === "number" && typeof d.lng === "number" &&
+      Number.isFinite(d.lat) && Number.isFinite(d.lng) &&
+      Math.abs(d.lat) <= 90 && Math.abs(d.lng) <= 180;
   }
+  function underground(f) { return /^B/.test(f || ""); }
 
-  function isBasement(f) {
-    return typeof f === "string" && /^B/i.test(f);
+  // ---------- GPS 可信度 ----------
+  function trust(acc, ageSec) {
+    if (!Number.isFinite(acc)) return { t: "未知", c: "warn" };
+    if (ageSec > 30) return { t: "過期", c: "error" };
+    if (acc <= 15) return { t: "高", c: "good" };
+    if (acc <= 50) return { t: "中", c: "warn" };
+    return { t: "低", c: "error" };
   }
-
-  /* 室內模式：地下室、或沒有可用 GPS 座標、或精度太差 */
-  function isIndoorMode() {
-    if (!saved) return true;
-    if (isBasement(saved.floor)) return true;
-    if (!validPoint(saved)) return true;
-    if (typeof saved.accuracy === "number" && saved.accuracy > 50) return true;
-    return false;
-  }
-
-  /* ============ 儲存 ============ */
-  function persist(data) {
-    try {
-      localStorage.setItem(KEY, JSON.stringify(data));
-      saved = data;
-      return data;
-    } catch (error) {
-      // 常見原因：照片 base64 超過配額 → 退化為純文字紀錄
-      if (data.photo) {
-        var slim = Object.assign({}, data, { photo: "" });
-        try {
-          localStorage.setItem(KEY, JSON.stringify(slim));
-          saved = slim;
-          say("照片過大無法儲存，已保留文字紀錄。", "warning");
-          return slim;
-        } catch (e2) { /* 繼續往下 */ }
-      }
-      say("儲存失敗：瀏覽器空間不足或處於隱私模式。", "error");
-      return null;
-    }
-  }
-
-  /* ============ 渲染 ============ */
-  function updateNavModeUI() {
-    var badge = $("navModeBadge");
-    var arrow = $("arrow");
-
-    if (!saved) {
-      badge.textContent = "模式：尚未記錄車位";
-      badge.style.color = "var(--muted)";
-      badge.style.borderColor = "var(--field-border)";
-      arrow.textContent = "↑";
+  function refreshGpsInfo() {
+    if (!current || !lastFix) {
+      $("gAcc").textContent = "--"; $("gAge").textContent = "--"; $("gTrust").textContent = "--";
       return;
     }
-
-    if (isIndoorMode()) {
-      badge.textContent = "🏠 室內地標與照片指引模式（防誤導）";
-      badge.style.color = "var(--warn)";
-      badge.style.borderColor = "var(--warn)";
-      arrow.textContent = "🅿️";
-      arrow.style.transform = "none";
-      arrowRotation = 0;
-      $("bearing").textContent = "地下室請依樓層與照片尋車";
-    } else {
-      badge.textContent = "🛰️ GPS 戶外直線導航模式";
-      badge.style.color = "var(--accent)";
-      badge.style.borderColor = "var(--accent)";
-      arrow.textContent = "↑";
-    }
+    var age = Math.round((Date.now() - lastFix) / 1000);
+    var tr = trust(current.accuracy, age);
+    $("gAcc").textContent = "±" + Math.round(current.accuracy) + " m";
+    $("gAge").textContent = age + " 秒前";
+    $("gTrust").textContent = tr.t;
+    $("gTrust").className = tr.c;
+  }
+  function gpsReliable() {
+    return current && lastFix && Number.isFinite(current.accuracy) &&
+      current.accuracy <= 50 && (Date.now() - lastFix) < 30000;
   }
 
-  function render(data) {
-    saved = data;
+  // ---------- 地標路線 ----------
+  function renderSteps() {
+    var ol = $("stepList");
+    ol.innerHTML = "";
+    steps.forEach(function (text, i) {
+      var li = document.createElement("li");
+      var sp = document.createElement("span");
+      sp.textContent = (i + 1) + ". " + text;
+      var del = document.createElement("button");
+      del.type = "button"; del.textContent = "刪除";
+      del.addEventListener("click", function () { steps.splice(i, 1); renderSteps(); });
+      li.appendChild(sp); li.appendChild(del);
+      ol.appendChild(li);
+    });
+  }
+  function addStep() {
+    var v = $("stepInput").value.trim();
+    if (!v) return;
+    if (steps.length >= 20) { say("最多 20 個地標。", "error"); return; }
+    steps.push(v);
+    $("stepInput").value = "";
+    renderSteps();
+  }
+  $("addStepBtn").addEventListener("click", addStep);
+  $("stepInput").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); addStep(); }
+  });
 
-    $("empty").hidden = true;
-    $("savedPanel").hidden = false;
-
-    $("sFloor").textContent = data.floor || "未知";
-    $("sZone").textContent = data.zone || "未填寫";
-    $("sNote").textContent = data.note || "無";
-    $("sTime").textContent = data.timestamp
-      ? new Date(data.timestamp).toLocaleString("zh-TW")
-      : (data.time || "未知");
-
-    if (validPoint(data)) {
-      var acc = Math.round(data.accuracy || 0);
-      var level = acc < 15 ? "高精度" : acc < 50 ? "中精度" : "低精度（建議核對照片）";
-      $("sAccuracy").textContent = "約 " + acc + " 公尺（" + level + "）";
-    } else {
-      $("sAccuracy").textContent = "無 GPS 座標（純室內紀錄）";
+  // 導航時反向：從出口走回車位
+  function routeBack() {
+    return saved && saved.steps ? saved.steps.slice().reverse() : [];
+  }
+  function showRoute() {
+    var list = routeBack();
+    if (!list.length) {
+      $("routeCount").textContent = "";
+      $("routeStep").textContent = "沒有路線地標。請依樓層、車位編號和照片尋車。";
+      $("prevStep").disabled = $("nextStep").disabled = true;
+      return;
     }
-
-    var photoEl = $("savedPhoto");
-    if (data.photo) {
-      photoEl.src = data.photo;
-      photoEl.style.display = "block";
+    navIdx = Math.max(0, Math.min(navIdx, list.length));
+    $("prevStep").disabled = navIdx === 0;
+    if (navIdx >= list.length) {
+      $("routeCount").textContent = "路線完成";
+      $("routeStep").textContent = "應該已到達 " + (saved.floor || "") + " " +
+        (saved.zone || "") + "，請核對車位編號或照片。";
+      $("nextStep").disabled = true;
     } else {
-      photoEl.removeAttribute("src");
-      photoEl.style.display = "none";
+      $("routeCount").textContent = "從出口走回車位｜第 " + (navIdx + 1) + " / " + list.length + " 步";
+      $("routeStep").textContent = "從「" + (navIdx === 0 ? "出口" : list[navIdx - 1]) +
+        "」→ 前往「" + list[navIdx] + "」";
+      $("nextStep").disabled = false;
     }
+  }
+  $("prevStep").addEventListener("click", function () { navIdx--; showRoute(); });
+  $("nextStep").addEventListener("click", function () { navIdx++; showRoute(); });
 
-    $("zone").value = data.zone || "";
-    $("note").value = data.note || "";
+  // ---------- 模式 ----------
+  function setMode(m) {
+    mode = m;
+    $("modeGps").classList.toggle("active", m === "gps");
+    $("modeRoute").classList.toggle("active", m === "route");
+    $("gpsBox").hidden = m !== "gps";
+    $("routeBox").hidden = m !== "route";
+    if (m === "route") showRoute(); else updateNavigation();
+  }
+  $("modeGps").addEventListener("click", function () { setMode("gps"); });
+  $("modeRoute").addEventListener("click", function () { setMode("route"); });
 
-    chooseFloor(data.floor || "B1", true);
-    updateNavModeUI();
+  // ---------- 儲存 / 載入 ----------
+  function persist(d) {
+    try { localStorage.setItem(KEY, JSON.stringify(d)); saved = d; return true; }
+    catch (e) { say("儲存失敗，可能是瀏覽器空間不足。", "error"); return false; }
   }
 
-  /* ============ 讀取舊資料 ============ */
+  function render(d) {
+    saved = d;
+    $("empty").hidden = true; $("savedPanel").hidden = false;
+    $("sFloor").textContent = d.floor || "未知";
+    $("sZone").textContent = d.zone || "未填寫";
+    $("sNote").textContent = d.note || "無";
+    $("sSteps").textContent = d.steps && d.steps.length ? d.steps.length + " 個" : "無";
+    $("sTime").textContent = d.timestamp ? new Date(d.timestamp).toLocaleString("zh-TW") : (d.time || "未知");
+    $("sAccuracy").textContent = Number.isFinite(d.accuracy) ? "約 " + Math.round(d.accuracy) + " 公尺" : "未知";
+    $("savedPhoto").style.display = d.photo ? "block" : "none";
+    if (d.photo) $("savedPhoto").src = d.photo;
+    $("zone").value = d.zone || "";
+    $("note").value = d.note || "";
+    steps = (d.steps || []).slice(); renderSteps();
+    chooseFloor(d.floor || "B1");
+  }
+
   function loadSaved() {
-    var raw = null;
     try {
-      raw = localStorage.getItem(KEY);
-      if (!raw) {
-        for (var i = 0; i < LEGACY_KEYS.length; i++) {
-          raw = localStorage.getItem(LEGACY_KEYS[i]);
-          if (raw) break;
-        }
-      }
-    } catch (e) {
-      say("無法存取瀏覽器儲存空間。", "error");
-      return;
-    }
-
-    if (!raw) return;
-
-    try {
-      var data = JSON.parse(raw);
-      data.floor = String(data.floor || "B1");
-      data.zone = String(data.zone || "");
-      data.note = String(data.note || "");
-      data.photo = typeof data.photo === "string" ? data.photo : "";
-      if (typeof data.lat !== "number") data.lat = null;
-      if (typeof data.lng !== "number") data.lng = null;
-
-      render(data);
+      var raw = localStorage.getItem(KEY);
+      for (var i = 0; !raw && i < OLD_KEYS.length; i++) raw = localStorage.getItem(OLD_KEYS[i]);
+      if (!raw) return;
+      var d = JSON.parse(raw);
+      if (!d || typeof d !== "object") return;
+      d.floor = String(d.floor || "B1");
+      d.zone = String(d.zone || "");
+      d.note = String(d.note || "");
+      d.photo = typeof d.photo === "string" ? d.photo : "";
+      d.steps = Array.isArray(d.steps) ? d.steps.map(String) : [];
+      if (!validPoint(d)) { d.lat = null; d.lng = null; }
+      render(d);
       say("已載入上次停車紀錄。", "good");
-    } catch (error) {
-      say("舊紀錄格式無法讀取，請重新記錄。", "warning");
-    }
+    } catch (e) { say("無法讀取舊紀錄，可以重新記錄。"); }
   }
 
-  /* ============ 照片壓縮 ============ */
-  function compressImage(file) {
-    return new Promise(function (resolve, reject) {
-      var reader = new FileReader();
-
-      reader.onload = function () {
-        var img = new Image();
-
-        img.onload = function () {
-          try {
-            var w = img.naturalWidth || img.width;
-            var h = img.naturalHeight || img.height;
-            if (!w || !h) return reject(new Error("圖片尺寸無效"));
-
-            var scale = Math.min(1, MAX_PHOTO_DIM / Math.max(w, h));
-            var tw = Math.max(1, Math.round(w * scale));
-            var th = Math.max(1, Math.round(h * scale));
-
-            var canvas = document.createElement("canvas");
-            canvas.width = tw;
-            canvas.height = th;
-
-            var ctx = canvas.getContext("2d");
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(0, 0, tw, th);
-            ctx.drawImage(img, 0, 0, tw, th);
-
-            resolve(canvas.toDataURL("image/jpeg", PHOTO_QUALITY));
-          } catch (err) {
-            reject(err);
-          }
-        };
-
-        img.onerror = function () { reject(new Error("圖片解析失敗")); };
-        img.src = reader.result;
-      };
-
-      reader.onerror = function () { reject(new Error("檔案讀取失敗")); };
-      reader.readAsDataURL(file);
-    });
-  }
-
-  $("photo").addEventListener("change", function (event) {
-    var file = event.target.files && event.target.files[0];
-    if (!file) return;
-
-    if (!file.type || file.type.indexOf("image/") !== 0) {
-      say("請選擇有效的圖片檔。", "error");
-      event.target.value = "";
-      return;
-    }
-
-    if (file.size > MAX_FILE_SIZE) {
-      say("照片太大，請選擇 15 MB 以下的圖片。", "error");
-      event.target.value = "";
-      return;
-    }
-
-    say("正在處理照片……");
-
-    compressImage(file)
-      .then(function (dataUrl) {
-        photoData = dataUrl;
-        $("photoPreview").src = dataUrl;
-        $("photoPreview").style.display = "block";
-        var kb = Math.round(dataUrl.length * 0.75 / 1024);
-        say("照片已壓縮完成（約 " + kb + " KB）。", "good");
-      })
-      .catch(function (err) {
-        say("照片處理失敗：" + err.message, "error");
-        event.target.value = "";
-      });
+  $("photo").addEventListener("change", function (ev) {
+    var f = ev.target.files && ev.target.files[0];
+    if (!f) return;
+    if (!f.type || f.type.indexOf("image/") !== 0) { say("請選擇有效的圖片。", "error"); return; }
+    if (f.size > 12 * 1024 * 1024) { say("照片太大，請選擇 12 MB 以下的圖片。", "error"); return; }
+    var r = new FileReader();
+    r.onload = function () {
+      photoData = r.result;
+      $("photoPreview").src = photoData;
+      $("photoPreview").style.display = "block";
+      say("照片預覽成功。", "good");
+    };
+    r.onerror = function () { say("照片讀取失敗。", "error"); };
+    r.readAsDataURL(f);
   });
 
-  /* ============ 儲存紀錄 ============ */
-  function saveRecord(position) {
+  function saveRecord(pos) {
     var now = Date.now();
-    var prev = saved || {};
-    var hasFix = !!position;
-
-    var lat = hasFix ? position.coords.latitude : null;
-    var lng = hasFix ? position.coords.longitude : null;
-    var acc = hasFix ? position.coords.accuracy : null;
-
-    // 沒拿到新座標，但樓層沒變 → 沿用舊座標（單純更新備註的情況）
-    if (!hasFix && validPoint(prev) && prev.floor === floor) {
-      lat = prev.lat;
-      lng = prev.lng;
-      acc = prev.accuracy;
-    }
-
-    var data = {
-      lat: lat,
-      lng: lng,
-      accuracy: acc,
+    var d = {
+      lat: pos ? pos.coords.latitude : (saved ? saved.lat : null),
+      lng: pos ? pos.coords.longitude : (saved ? saved.lng : null),
+      accuracy: pos ? pos.coords.accuracy : (saved ? saved.accuracy : null),
       floor: floor,
       zone: $("zone").value.trim(),
       note: $("note").value.trim(),
+      steps: steps.slice(),
       timestamp: now,
       time: new Date(now).toLocaleString("zh-TW"),
-      photo: photoData || prev.photo || ""
+      photo: photoData || (saved && saved.photo ? saved.photo : "")
     };
+    if (pos && !validPoint(d)) { say("取得的 GPS 座標無效。", "error"); return; }
+    if (!validPoint(d)) { d.lat = null; d.lng = null; d.accuracy = null; }
+    if (!persist(d)) return;
+    render(d);
 
-    var stored = persist(data);
-    if (!stored) return;
-
-    render(stored);
-    buzz([30, 40, 30]);
-
-    if (isBasement(floor)) {
-      say("已記錄地下室車位！已切換為室內地標指引模式。", "good");
-    } else if (validPoint(stored)) {
-      if (stored.accuracy > 50) {
-        say("已儲存，但 GPS 訊號較弱，請務必核對車位照片。", "warning");
+    if (validPoint(d)) {
+      current = { lat: d.lat, lng: d.lng, accuracy: d.accuracy };
+      lastFix = now; refreshGpsInfo();
+      if (underground(d.floor)) {
+        say("已儲存。地下樓層 GPS 不可靠，建議補上地標路線與照片。", "warn");
+      } else if (d.accuracy > 50) {
+        say("已儲存，但 GPS 誤差較大，請確認車位照片。", "error");
       } else {
-        say("戶外停車紀錄與 GPS 已成功儲存！", "good");
+        say("停車紀錄已儲存！", "good");
       }
     } else {
-      say("已儲存樓層與車位資料（無 GPS 座標）。", "good");
+      say("已儲存樓層、區域、地標和照片，但沒有 GPS 座標。", "good");
     }
   }
 
   $("saveBtn").addEventListener("click", function () {
     if (busy) return;
-
-    // 地下室：不等待 GPS，秒速儲存
-    if (isBasement(floor)) {
-      saveRecord(null);
-      return;
-    }
-
     if (!navigator.geolocation || !window.isSecureContext) {
       saveRecord(null);
-      say("已儲存手動紀錄（此環境無法使用 GPS）。", "warning");
+      say("已儲存手動紀錄。此環境無法使用 GPS，請依地標與照片找車。", "good");
       return;
     }
-
-    busy = true;
-    $("saveBtn").disabled = true;
-    say("正在取得高精度 GPS……");
-
+    busy = true; $("saveBtn").disabled = true; say("正在取得 GPS……");
     navigator.geolocation.getCurrentPosition(
-      function (position) {
-        try {
-          saveRecord(position);
-        } catch (err) {
-          say("儲存時發生錯誤：" + err.message, "error");
-        } finally {
-          busy = false;
-          $("saveBtn").disabled = false;
-        }
+      function (pos) {
+        try { saveRecord(pos); }
+        catch (e) { say("儲存時發生錯誤：" + e.message, "error"); }
+        finally { busy = false; $("saveBtn").disabled = false; }
       },
-      function () {
-        busy = false;
-        $("saveBtn").disabled = false;
+      function (err) {
+        busy = false; $("saveBtn").disabled = false;
         saveRecord(null);
-        say("無法取得 GPS，已自動儲存為室內／手動車位紀錄。", "warning");
+        var m = err.code === 1 ? "定位權限遭拒絕" : err.code === 3 ? "定位逾時" : "無法取得 GPS";
+        say(m + "，已保留手動停車紀錄。", "error");
       },
-      { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
     );
   });
 
-  /* ============ 地理計算 ============ */
+  // ---------- 計算 ----------
   function distance(a, b) {
-    var rad = Math.PI / 180;
-    var dLat = (b.lat - a.lat) * rad;
-    var dLng = (b.lng - a.lng) * rad;
-    var lat1 = a.lat * rad;
-    var lat2 = b.lat * rad;
-
-    var h = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1) * Math.cos(lat2) *
-      Math.sin(dLng / 2) * Math.sin(dLng / 2);
-
+    var r = Math.PI / 180, dLat = (b.lat - a.lat) * r, dLng = (b.lng - a.lng) * r;
+    var h = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(dLng / 2) ** 2;
     return 6371000 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
   }
-
   function bearing(a, b) {
-    var rad = Math.PI / 180;
-    var lat1 = a.lat * rad;
-    var lat2 = b.lat * rad;
-    var dLng = (b.lng - a.lng) * rad;
-
-    var y = Math.sin(dLng) * Math.cos(lat2);
-    var x = Math.cos(lat1) * Math.sin(lat2) -
-      Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
-
-    return (Math.atan2(y, x) / rad + 360) % 360;
+    var r = Math.PI / 180, l1 = a.lat * r, l2 = b.lat * r, dLng = (b.lng - a.lng) * r;
+    var y = Math.sin(dLng) * Math.cos(l2);
+    var x = Math.cos(l1) * Math.sin(l2) - Math.sin(l1) * Math.cos(l2) * Math.cos(dLng);
+    return (Math.atan2(y, x) / r + 360) % 360;
   }
 
-  /* 平滑旋轉，避免 359° → 0° 時箭頭反轉一圈 */
-  function setArrowRotation(deg) {
-    var diff = ((deg - arrowRotation) % 360 + 540) % 360 - 180;
-    arrowRotation += diff;
-    $("arrow").style.transform = "rotate(" + arrowRotation + "deg)";
-  }
-
-  /* ============ 導航更新 ============ */
+  // ---------- 導航更新 ----------
   function updateNavigation() {
-    if (!saved) {
+    var arrow = $("arrow");
+    if (!saved || !validPoint(saved) || !current || !validPoint(current)) {
       $("distance").textContent = "--";
-      $("bearing").textContent = "請先記錄車位";
+      $("bearing").textContent = "沒有有效座標";
+      arrow.classList.add("dim");
       return;
     }
+    var d = distance(current, saved), b = bearing(current, saved);
+    $("distance").textContent = d < 1000 ? Math.round(d) + " m" : (d / 1000).toFixed(2) + " km";
+    refreshGpsInfo();
 
-    if (isIndoorMode()) {
-      $("distance").textContent = saved.floor || "地下室";
-      $("bearing").textContent =
-        "區域：" + (saved.zone || "未填寫") + "｜備註：" + (saved.note || "無");
-      sayNav(
-        "室內模式：請先前往【" + (saved.floor || "紀錄樓層") + "】樓層，尋找【" +
-        (saved.zone || "記錄區域") + "】，並對照下方車位照片尋車。",
-        "warning"
-      );
-      return;
+    var ok = gpsReliable() && !underground(saved.floor);
+    if (heading === null) {
+      $("bearing").textContent = "目標方位 " + Math.round(b) + "°";
+      arrow.classList.add("dim");
+    } else {
+      arrow.style.transform = "rotate(" + ((b - heading + 360) % 360) + "deg)";
+      $("bearing").textContent = "方位 " + Math.round(b) + "°";
+      arrow.classList.toggle("dim", !ok);
     }
 
-    if (!current || !validPoint(current)) {
-      $("distance").textContent = "--";
-      $("bearing").textContent = "正在搜尋目前 GPS…";
-      return;
+    if (underground(saved.floor)) {
+      sayNav("車在地下樓層：GPS 與箭頭僅供參考，請改用「地標路線」。", "warn");
+    } else if (!gpsReliable()) {
+      sayNav("GPS 精度不足或已過期，箭頭已淡化，請依地標與照片確認。", "error");
+    } else if (heading === null) {
+      sayNav("尚無方向資料，只能顯示距離。請畫 8 字校正。", "warn");
+    } else if (d < 8) {
+      sayNav("已接近記錄座標（不是確認車格），請核對車位編號或照片。", "good");
+    } else {
+      sayNav("箭頭指向直線方向，不代表可行走路線。");
     }
+  }
 
-    var d = distance(current, saved);
-    var b = bearing(current, saved);
+  // ---------- 方向感測器 ----------
+  function orientationHandler(e) {
+    var v = null;
+    if (Number.isFinite(e.webkitCompassHeading)) {
+      v = e.webkitCompassHeading;
+    } else if (e.absolute && Number.isFinite(e.alpha)) {
+      var ang = screen.orientation ? screen.orientation.angle || 0 : 0;
+      v = (360 - e.alpha + ang + 360) % 360;
+    }
+    if (v !== null) {
+      heading = (v + 360) % 360;
+      lastHeadingAt = Date.now();
+      var acc = e.webkitCompassAccuracy;
+      if (Number.isFinite(acc) && (acc < 0 || acc > 25)) {
+        sayRaw("sensorStatus", "方向感測器：精度差，請畫 8 字校正。", "warn");
+      } else {
+        sayRaw("sensorStatus", "方向感測器：正常", "good");
+      }
+      updateNavigation();
+    }
+  }
 
-    $("distance").textContent = d
+  function startSensors() {
+    function bind() {
+      window.addEventListener("deviceorientation", orientationHandler);
+      window.addEventListener("deviceorientationabsolute", orientationHandler);
+      sayRaw("sensorStatus", "方向感測器：等待資料……");
+      clearTimeout(sensorTimer);
+      sensorTimer = setTimeout(function () {
+        if (!lastHeadingAt) {
+          sayRaw("sensorStatus", "此裝置或瀏覽器沒有提供方向資料，請改用「地標路線」。", "error");
+        }
+      }, 3000);
+    }
+    var DOE = window.DeviceOrientationEvent;
+    if (DOE && typeof DOE.requestPermission === "fun
