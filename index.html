@@ -30,35 +30,117 @@ body{
   font-family:"Segoe UI","Noto Sans TC",Arial,sans-serif;
   -webkit-font-smoothing:antialiased;
 }
+body.locked{overflow:hidden;height:100vh;padding:0;max-width:none}
 
-/* ===== 載入動畫 ===== */
-#loader{
-  position:fixed;inset:0;z-index:9999;
+/* ===== 開場全螢幕 ===== */
+#intro{
+  position:fixed;inset:0;z-index:10000;
   background:#0a0e16;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  transition:opacity .55s ease, visibility .55s ease;
+  display:flex;flex-direction:column;
+  color:var(--text);
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  scroll-behavior:smooth;
 }
-#loader.hide{opacity:0;visibility:hidden;pointer-events:none}
+#intro.done{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .55s ease,visibility .55s ease}
+
+.intro-hero{
+  min-height:100vh;min-height:100dvh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px 20px 40px;position:relative;flex-shrink:0;
+}
 .xyx{
   display:flex;gap:6px;font-size:52px;font-weight:800;letter-spacing:4px;
   color:#2ee6a8;text-shadow:0 0 20px #2ee6a866,0 0 40px #2ee6a844;
 }
 .xyx span{
   opacity:0;transform:translateY(18px) scale(.8);
-  animation:xyxIn .6s cubic-bezier(.22,1,.36,1) forwards;
 }
-.xyx span:nth-child(1){animation-delay:.15s}
-.xyx span:nth-child(2){animation-delay:.3s}
-.xyx span:nth-child(3){animation-delay:.45s}
+.xyx span.in{
+  animation:xyxIn .65s cubic-bezier(.22,1,.36,1) forwards;
+}
 @keyframes xyxIn{to{opacity:1;transform:translateY(0) scale(1)}}
-.loader-bar{width:80px;height:3px;background:#1a2435;border-radius:4px;margin-top:28px;overflow:hidden}
-.loader-bar::after{
-  content:"";display:block;height:100%;width:40%;
-  background:linear-gradient(90deg,transparent,#2ee6a8,transparent);
-  animation:barMove 1.1s ease-in-out infinite;
+
+.intro-tag{
+  margin-top:18px;font-size:13px;color:#6b7c92;letter-spacing:2px;
+  opacity:0;transition:opacity .6s ease .2s;
 }
-@keyframes barMove{0%{transform:translateX(-100%)}100%{transform:translateX(250%)}}
-.loader-text{margin-top:18px;font-size:13px;color:#6b7c92;letter-spacing:1px}
+.intro-tag.show{opacity:1}
+
+.scroll-hint{
+  position:fixed;bottom:28px;left:0;right:0;z-index:10001;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  opacity:0;pointer-events:none;
+  transition:opacity .85s ease;
+}
+.scroll-hint.show{opacity:1}
+.scroll-hint.show.bob{animation:hintBob 1.8s ease-in-out infinite}
+.scroll-hint.gone{opacity:0 !important;visibility:hidden;animation:none !important}
+@keyframes hintBob{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(8px)}
+}
+.scroll-hint .arrow{
+  font-size:22px;color:#2ee6a8;line-height:1;
+  text-shadow:0 0 12px #2ee6a866;
+}
+.scroll-hint .txt{
+  font-size:12px;color:#6b7c92;letter-spacing:1px;
+}
+
+/* 說明區 */
+.intro-story{
+  min-height:100vh;min-height:100dvh;
+  padding:48px 22px 56px;
+  max-width:420px;margin:0 auto;width:100%;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.story-block{
+  opacity:0;transform:translateY(28px);
+  transition:opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1);
+}
+.story-block.visible{
+  opacity:1;transform:translateY(0);
+}
+.story-block + .story-block{margin-top:28px}
+
+.story-kicker{
+  font-size:11px;letter-spacing:2px;color:#2ee6a8;margin-bottom:8px;text-transform:uppercase;
+}
+.story-title{
+  font-size:22px;font-weight:700;line-height:1.35;margin-bottom:12px;
+}
+.story-body{
+  font-size:14px;line-height:1.85;color:#b8c4d4;
+}
+.story-body strong{color:#eef2f8;font-weight:600}
+.story-list{
+  margin:12px 0 0;padding-left:18px;font-size:14px;line-height:1.9;color:#b8c4d4;
+}
+.story-list li{margin-bottom:4px}
+.privacy-card{
+  margin-top:8px;padding:16px 16px;border-radius:14px;
+  background:rgba(46,230,168,.06);border:1px solid rgba(46,230,168,.22);
+  font-size:13px;line-height:1.75;color:#a8d4c4;
+}
+.privacy-card b{color:#8affd8}
+
+.intro-actions{
+  margin-top:36px;display:flex;flex-direction:column;gap:10px;
+  opacity:0;transform:translateY(16px);
+  transition:opacity .6s ease, transform .6s ease;
+}
+.intro-actions.visible{opacity:1;transform:translateY(0)}
+.intro-actions .go{
+  width:100%;min-height:50px;border:0;border-radius:12px;
+  background:var(--green);color:#06281e;font-size:15px;font-weight:700;
+  font-family:inherit;cursor:pointer;
+}
+.intro-actions .skip{
+  width:100%;min-height:44px;border:1px solid var(--border);border-radius:12px;
+  background:transparent;color:var(--muted);font-size:13px;font-weight:600;
+  font-family:inherit;cursor:pointer;
+}
+.intro-actions button:active{filter:brightness(.9);transform:scale(.98)}
 
 /* ===== 主畫面 ===== */
 header{text-align:center;padding:22px 0 14px}
@@ -181,14 +263,120 @@ footer{text-align:center;color:#5a6a7e;font-size:11px;line-height:1.7;margin-top
 .modal p{font-size:14px;line-height:1.7;color:#c8d4e4;margin-bottom:10px}
 .modal ol{padding-left:20px;margin:10px 0 16px;font-size:14px;line-height:1.8;color:#c8d4e4}
 .modal .close-btn{width:100%;background:#1e3a5f;color:#b8dcff;margin-top:8px}
+
+
+/* 分享按鈕 */
+.share-fab{
+  position:fixed;top:12px;left:12px;z-index:900;
+  width:44px;height:44px;border-radius:12px;border:1px solid var(--border);
+  background:rgba(22,30,44,.92);color:var(--text);font-size:18px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(0,0,0,.35);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  cursor:pointer;padding:0;min-height:0;
+}
+.share-fab:active{filter:brightness(.9);transform:scale(.96)}
+.share-menu-mask{
+  position:fixed;inset:0;z-index:950;background:rgba(0,0,0,.45);
+  opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s;
+}
+.share-menu-mask.show{opacity:1;visibility:visible}
+.share-menu{
+  position:fixed;top:62px;left:12px;z-index:960;
+  width:min(280px,calc(100vw - 24px));
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:8px;box-shadow:0 12px 40px rgba(0,0,0,.5);
+  opacity:0;visibility:hidden;transform:translateY(-8px) scale(.96);
+  transition:opacity .2s,visibility .2s,transform .2s;
+}
+.share-menu.show{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
+.share-menu button{
+  display:flex;align-items:flex-start;gap:12px;width:100%;
+  text-align:left;background:transparent;color:var(--text);
+  border-radius:10px;padding:12px;min-height:0;font-weight:500;font-size:14px;
+}
+.share-menu button:hover,.share-menu button:active{background:#1e2838}
+.share-menu .ico{font-size:20px;line-height:1.2;flex-shrink:0}
+.share-menu .lbl{display:flex;flex-direction:column;gap:2px}
+.share-menu .lbl b{font-size:14px;font-weight:600}
+.share-menu .lbl span{font-size:11px;color:var(--muted);font-weight:400;line-height:1.4}
+
+
+#app{display:none}
+#app.ready{display:block}
 </style>
 </head>
-<body>
+<body class="locked">
 
-<div id="loader">
-  <div class="xyx"><span>X</span><span>Y</span><span>X</span></div>
-  <div class="loader-bar"></div>
-  <div class="loader-text">極速記車位</div>
+<!-- ===== 開場 ===== -->
+<div id="intro">
+  <div class="intro-hero">
+    <div class="xyx" id="xyxLetters" aria-label="XYX">
+      <span>X</span><span>Y</span><span>X</span>
+    </div>
+    <div class="intro-tag" id="introTag">極速記車位</div>
+    <div class="scroll-hint" id="scrollHint">
+      <div class="arrow">↓</div>
+      <div class="txt">下滑繼續</div>
+    </div>
+  </div>
+
+  <div class="intro-story" id="introStory">
+    <div class="story-block" data-step="0">
+      <div class="story-kicker">WHY THIS EXISTS</div>
+      <div class="story-title">為什麼做這個網站？</div>
+      <div class="story-body">
+        在地下停車場找車，常常是一場小災難：訊號差、樓層搞混、記不住柱子顏色。
+        這個工具只想做一件事——<strong>幫你把「車停在哪」牢牢留在自己手機裡</strong>，找車時更快、更有把握。
+      </div>
+    </div>
+
+    <div class="story-block" data-step="1">
+      <div class="story-kicker">HOW IT WORKS</div>
+      <div class="story-title">怎麼運作？</div>
+      <ul class="story-list">
+        <li>記錄樓層、區域、地標路線與照片</li>
+        <li>有 GPS 時用濾波減少飄移；地下則建議用地標</li>
+        <li>導航可切換「GPS 箭頭」或「地標逐步指引」</li>
+      </ul>
+    </div>
+
+    <div class="story-block" data-step="2">
+      <div class="story-kicker">PRIVACY</div>
+      <div class="story-title">資料存在哪裡？</div>
+      <div class="privacy-card">
+        <b>停車紀錄只存在你這台裝置的瀏覽器中</b>（本機儲存），不會上傳到我們的伺服器，也沒有雲端帳號或後台資料庫。<br><br>
+        開啟地圖時，會向地圖圖磚服務（如 OpenStreetMap）請求地圖畫面；這與一般網頁看地圖相同，<b>不會把你的車位照片或備註送出去</b>。若你主動點「Google Maps」，則會依你的操作開啟外部導航。
+      </div>
+    </div>
+
+    <div class="story-block" data-step="3">
+      <div class="story-kicker">READY</div>
+      <div class="story-title">準備好了嗎？</div>
+      <div class="story-body">建議同時記下樓層、車位編號與一張照片，地下車場最實用。資料可隨時在本機清除。</div>
+      <div class="intro-actions" id="introActions">
+        <button type="button" class="go" id="enterApp">我已看完說明，繼續進入網站</button>
+        <button type="button" class="skip" id="leaveIntro">先不進入</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+
+<button type="button" class="share-fab" id="shareFab" title="分享" aria-label="分享">📤</button>
+<div class="share-menu-mask" id="shareMask"></div>
+<div class="share-menu" id="shareMenu" role="menu">
+  <button type="button" id="shareCarBtn" role="menuitem">
+    <span class="ico">🚗</span>
+    <span class="lbl"><b>分享車位位置</b><span>產生文字與地圖連結，傳給家人朋友</span></span>
+  </button>
+  <button type="button" id="shareAppBtn" role="menuitem">
+    <span class="ico">🔗</span>
+    <span class="lbl"><b>分享這個程式</b><span>把本工具推薦給需要記車位的人</span></span>
+  </button>
+</div>
+
 </div>
 
 <div class="modal-mask" id="installModal">
@@ -326,22 +514,135 @@ footer{text-align:center;color:#5a6a7e;font-size:11px;line-height:1.7;margin-top
   紀錄儲存在目前瀏覽器中。<br>
   地下停車場 GPS 可能失效，請同時記錄車位編號、地標與照片。
 </footer>
+</div><!-- /#app -->
 
 <script>
-// ===== 載入動畫 =====
-(function hideLoader() {
-  var loader = document.getElementById("loader");
-  if (!loader) return;
-  function doHide() {
-    loader.classList.add("hide");
-    setTimeout(function () {
-      if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
-    }, 600);
-  }
-  // 固定顯示 3.5 秒（原本載入完成後約 0.8 秒就可能提早隱藏）
-  setTimeout(doHide, 3500);
-})();
+// ===== 開場：逐字淡入 → 下滑說明 → 進入 App =====
+(function () {
+  var intro = document.getElementById("intro");
+  var letters = document.querySelectorAll("#xyxLetters span");
+  var tag = document.getElementById("introTag");
+  var hint = document.getElementById("scrollHint");
+  var blocks = document.querySelectorAll(".story-block");
+  var actions = document.getElementById("introActions");
+  var app = document.getElementById("app");
+  var entered = false;
 
+  function enterApp() {
+    if (entered) return;
+    entered = true;
+    try { sessionStorage.setItem("parking_intro_seen", "1"); } catch (e) {}
+    intro.classList.add("done");
+    document.body.classList.remove("locked");
+    app.classList.add("ready");
+    setTimeout(function () {
+      if (intro.parentNode) intro.parentNode.removeChild(intro);
+    }, 600);
+    // 通知主程式可初始化地圖尺寸
+    window.dispatchEvent(new Event("app-ready"));
+  }
+
+  // 已看過說明：直接進 App（同一次瀏覽工作階段）
+  try {
+    if (sessionStorage.getItem("parking_intro_seen") === "1") {
+      intro.style.display = "none";
+      document.body.classList.remove("locked");
+      app.classList.add("ready");
+      entered = true;
+      return;
+    }
+  } catch (e) {}
+
+  // 逐字淡入
+  letters.forEach(function (span, i) {
+    setTimeout(function () { span.classList.add("in"); }, 180 + i * 220);
+  });
+  setTimeout(function () { tag.classList.add("show"); }, 180 + letters.length * 220 + 200);
+
+  // 「下滑繼續」：靜止時慢慢淡入；使用者移動／滑動時立刻隱藏；滑到底完全消失
+  var hintIdleTimer = null;
+  var hintReady = false;
+  var hintForeverGone = false;
+
+  function atBottom() {
+    // 接近說明區底部（含按鈕區）
+    var maxScroll = intro.scrollHeight - intro.clientHeight;
+    if (maxScroll <= 8) return false;
+    return intro.scrollTop >= maxScroll - 24;
+  }
+
+  function hideHintNow() {
+    if (!hint) return;
+    hint.classList.remove("show", "bob");
+    clearTimeout(hintIdleTimer);
+    if (hintForeverGone || atBottom()) {
+      hint.classList.add("gone");
+      hintForeverGone = true;
+      return;
+    }
+    // 停止移動約 1.2 秒後再慢慢淡入
+    hintIdleTimer = setTimeout(function () {
+      if (hintForeverGone || atBottom()) {
+        hint.classList.add("gone");
+        hintForeverGone = true;
+        return;
+      }
+      if (hintReady) {
+        hint.classList.remove("gone");
+        hint.classList.add("show", "bob");
+      }
+    }, 1200);
+  }
+
+  function onUserMove() {
+    if (!hintReady || hintForeverGone) return;
+    hideHintNow();
+  }
+
+  setTimeout(function () {
+    hintReady = true;
+    if (!atBottom()) {
+      hint.classList.add("show", "bob");
+    }
+  }, 180 + letters.length * 220 + 700);
+
+  intro.addEventListener("scroll", onUserMove, { passive: true });
+  intro.addEventListener("touchstart", onUserMove, { passive: true });
+  intro.addEventListener("touchmove", onUserMove, { passive: true });
+  intro.addEventListener("wheel", onUserMove, { passive: true });
+  intro.addEventListener("pointerdown", onUserMove, { passive: true });
+
+  // 下滑時區塊依序浮現
+  function onScrollReveal() {
+    var viewH = intro.clientHeight;
+    blocks.forEach(function (el, i) {
+      var rect = el.getBoundingClientRect();
+      if (rect.top < viewH * 0.88) {
+        setTimeout(function () { el.classList.add("visible"); }, i * 80);
+      }
+    });
+    if (actions.getBoundingClientRect().top < viewH * 0.92) {
+      actions.classList.add("visible");
+    }
+    // 滑到底：提示永久消失
+    if (atBottom()) {
+      hintForeverGone = true;
+      hint.classList.remove("show", "bob");
+      hint.classList.add("gone");
+      clearTimeout(hintIdleTimer);
+    }
+  }
+  intro.addEventListener("scroll", onScrollReveal, { passive: true });
+  setTimeout(onScrollReveal, 100);
+
+  document.getElementById("enterApp").addEventListener("click", enterApp);
+  document.getElementById("leaveIntro").addEventListener("click", function () {
+    // 先不進入：關閉分頁無法強制，改為回到頂部並提示
+    intro.scrollTo({ top: 0, behavior: "smooth" });
+  });
+})();
+</script>
+<script>
 // ===== 加到桌面捷徑 =====
 (function () {
   var deferredPrompt = null;
@@ -421,6 +722,7 @@ window.addEventListener("error", function (e) {
   }
 });
 </script>
+
 <script>
 (function () {
   "use strict";
@@ -443,7 +745,6 @@ window.addEventListener("error", function (e) {
   function sayNav(m, t) { $("navStatus").textContent = m; $("navStatus").className = "small " + (t || ""); }
   function sayRaw(el, m, t) { $(el).textContent = m; $(el).className = "small " + (t || ""); }
 
-  // ---------- 樓層按鈕（戶外放最前面）----------
   var FLOORS = [OUTDOOR, "B5", "B4", "B3", "B2", "B1", "1F", "2F", "3F", "4F", "5F", "6F", "7F", "8F", "其他"];
   var floorScroll = $("floorScroll");
   FLOORS.forEach(function (f) {
@@ -496,7 +797,6 @@ window.addEventListener("error", function (e) {
   function underground(f) { return /^B/.test(f || ""); }
   function outdoor(f) { return f === OUTDOOR; }
 
-  // ---------- GPS 可信度 ----------
   function trust(acc, ageSec) {
     if (!Number.isFinite(acc)) return { t: "未知", c: "warn" };
     if (ageSec > 30) return { t: "過期", c: "error" };
@@ -521,7 +821,6 @@ window.addEventListener("error", function (e) {
       current.accuracy <= 50 && (Date.now() - lastFix) < 30000;
   }
 
-  // ---------- 地標摺疊 ----------
   $("stepToggle").addEventListener("click", function () {
     var open = $("stepBody").classList.toggle("open");
     $("stepToggleText").textContent = open ? "收合 ▴" : "展開 ▾";
@@ -578,7 +877,6 @@ window.addEventListener("error", function (e) {
   $("prevStep").addEventListener("click", function () { navIdx--; showRoute(); });
   $("nextStep").addEventListener("click", function () { navIdx++; showRoute(); });
 
-  // ---------- 模式 ----------
   function setMode(m) {
     mode = m;
     $("modeGps").classList.toggle("active", m === "gps");
@@ -591,7 +889,6 @@ window.addEventListener("error", function (e) {
   $("modeGps").addEventListener("click", function () { setMode("gps"); });
   $("modeRoute").addEventListener("click", function () { setMode("route"); });
 
-  // ---------- 儲存 / 載入 ----------
   function persist(d) {
     try { localStorage.setItem(KEY, JSON.stringify(d)); saved = d; return true; }
     catch (e) { say("儲存失敗，可能是瀏覽器空間不足。", "error"); return false; }
@@ -689,7 +986,6 @@ window.addEventListener("error", function (e) {
     }
   }
 
-  // ---------- 靜止偵測 ----------
   var motion = { got: false, mag: [] };
   function motionHandler(e) {
     var a = e.accelerationIncludingGravity;
@@ -767,7 +1063,6 @@ window.addEventListener("error", function (e) {
           busy = false; $("saveBtn").disabled = false;
           if (best) {
             try {
-              // 戶外：加權平均；其他樓層：粒子濾波
               var avg = outdoor(floor) ? averagePos(samples, best) : pfAverage(samples, best);
               saveRecord(avg);
               var extra = "（" + avg.coords.n + " 筆取樣，" + avg.coords.method + "，誤差約 ±" + Math.round(avg.coords.accuracy) + " m）";
@@ -787,7 +1082,6 @@ window.addEventListener("error", function (e) {
     });
   });
 
-  // ---------- 計算 ----------
   function distance(a, b) {
     var r = Math.PI / 180, dLat = (b.lat - a.lat) * r, dLng = (b.lng - a.lng) * r;
     var h = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(dLng / 2) ** 2;
@@ -800,7 +1094,6 @@ window.addEventListener("error", function (e) {
     return (Math.atan2(y, x) / r + 360) % 360;
   }
 
-  // ===== 戶外：加權平均（記錄）＋卡爾曼濾波（導航）=====
   function averagePos(samples, best) {
     var still = samples.filter(function (p) { return !p.mv; });
     if (still.length >= 3) samples = still;
@@ -808,7 +1101,6 @@ window.addEventListener("error", function (e) {
     var cutoff = Math.max(bestAcc * 3, 10);
     var kept = samples.filter(function (p) { return p.coords.accuracy <= cutoff; });
     if (!kept.length) kept = [best];
-
     function mean(list) {
       var sw = 0, la = 0, ln = 0;
       list.forEach(function (p) {
@@ -817,14 +1109,12 @@ window.addEventListener("error", function (e) {
       });
       return { lat: la / sw, lng: ln / sw, sw: sw };
     }
-
     var m = mean(kept);
     var maxOff = Math.max(15, bestAcc * 2);
     var inliers = kept.filter(function (p) {
       return distance(m, { lat: p.coords.latitude, lng: p.coords.longitude }) <= maxOff;
     });
     if (inliers.length >= 1 && inliers.length < kept.length) { kept = inliers; m = mean(kept); }
-
     var acc = Math.max(bestAcc * 0.8, 1 / Math.sqrt(m.sw));
     return { coords: { latitude: m.lat, longitude: m.lng, accuracy: acc, n: kept.length, method: "加權平均" } };
   }
@@ -834,17 +1124,13 @@ window.addEventListener("error", function (e) {
     var lat = p.coords.latitude, lng = p.coords.longitude;
     var acc = Math.max(p.coords.accuracy, 1), t = p.timestamp || Date.now();
     function out() { return { lat: kf.lat, lng: kf.lng, accuracy: Math.max(Math.sqrt(kf.v), acc * 0.5) }; }
-
     if (!kf) { kf = { lat: lat, lng: lng, v: acc * acc, t: t, jump: 0 }; return out(); }
-
     var dt = Math.max((t - kf.t) / 1000, 0);
     kf.v += dt * 9;
     var d = distance({ lat: kf.lat, lng: kf.lng }, { lat: lat, lng: lng });
     var maxMove = Math.max(dt * 5, 5) + Math.sqrt(kf.v) + acc;
-
     if (d > maxMove && kf.jump < 3) { kf.jump++; kf.t = t; return out(); }
     if (d > maxMove) { kf = { lat: lat, lng: lng, v: acc * acc, t: t, jump: 0 }; return out(); }
-
     var K = kf.v / (kf.v + acc * acc);
     if (d < Math.max(2, acc * 0.25)) K *= 0.3;
     kf.lat += K * (lat - kf.lat);
@@ -854,14 +1140,8 @@ window.addEventListener("error", function (e) {
     return out();
   }
 
-  // ===== 室內／地下：粒子濾波 =====
-  // 用 N 個「可能位置」代表不確定性。每次新定位：
-  // 1) 預測：粒子隨機走一小步  2) 加權：越接近量測值權重越高
-  //    （量測模型含「離群」成分，偶發的大跳點不會把整團粒子拖走；精度越差、影響越小）
-  // 3) 重採樣：淘汰低權重粒子，複製高權重粒子
   var PF_N = 200;
   var pf = null;
-
   function gauss() {
     var u = 1 - Math.random(), v = Math.random();
     return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
@@ -880,9 +1160,7 @@ window.addEventListener("error", function (e) {
   function pfUpdate(S, lat, lng, acc, t, moveStd) {
     var ps = S.ps, i;
     S.t = t;
-    // 預測
     for (i = 0; i < ps.length; i++) { ps[i].x += gauss() * moveStd; ps[i].y += gauss() * moveStd; }
-    // 加權
     var zx = (lng - S.lng0) * S.kx, zy = (lat - S.lat0) * S.ky;
     var sg = Math.max(acc, 3), big = 4 * sg + 30, eps = 0.1, sum = 0;
     for (i = 0; i < ps.length; i++) {
@@ -891,7 +1169,7 @@ window.addEventListener("error", function (e) {
                  eps * Math.exp(-d2 / (2 * big * big)) / (big * big);
       ps[i].w *= like; sum += ps[i].w;
     }
-    if (!(sum > 1e-300)) {               // 全部粒子都不合理：以這次量測重新撒粒子
+    if (!(sum > 1e-300)) {
       var fresh = pfNew(lat, lng, acc, t);
       S.lat0 = fresh.lat0; S.lng0 = fresh.lng0; S.kx = fresh.kx; S.ky = fresh.ky; S.ps = fresh.ps;
       return;
@@ -899,7 +1177,6 @@ window.addEventListener("error", function (e) {
     var ess = 0;
     for (i = 0; i < ps.length; i++) { ps[i].w /= sum; ess += ps[i].w * ps[i].w; }
     ess = 1 / ess;
-    // 重採樣（有效粒子數太少時）
     if (ess < ps.length / 2) {
       var out = [], step = 1 / ps.length, u = Math.random() * step, c = ps[0].w, k = 0;
       for (i = 0; i < ps.length; i++) {
@@ -907,7 +1184,6 @@ window.addEventListener("error", function (e) {
         while (target > c && k < ps.length - 1) { k++; c += ps[k].w; }
         out.push({ x: ps[k].x + gauss() * 0.3, y: ps[k].y + gauss() * 0.3, w: 1 / ps.length });
       }
-      // 注入約 5% 新粒子到本次量測附近：若起點選錯，只要之後的定位彼此一致，就能被這些粒子拉回
       var inject = Math.max(2, Math.round(ps.length * 0.05));
       for (i = 0; i < inject; i++) {
         out[out.length - 1 - i] = { x: zx + gauss() * sg, y: zy + gauss() * sg, w: 1 / ps.length };
@@ -916,7 +1192,6 @@ window.addEventListener("error", function (e) {
     }
   }
 
-  // 記錄車位用：以最佳取樣為中心建立粒子，依序餵入所有取樣（靜止，移動雜訊很小）
   function pfAverage(samples, best) {
     var still = samples.filter(function (p) { return !p.mv; });
     if (still.length >= 3) samples = still;
@@ -929,7 +1204,6 @@ window.addEventListener("error", function (e) {
     var mLat = med(list.map(function (p) { return p.coords.latitude; }));
     var mLng = med(list.map(function (p) { return p.coords.longitude; }));
     var mAcc = med(list.map(function (p) { return p.coords.accuracy; }));
-    // 起點用中位數（不受少數離群點影響），初始散布略大於一般誤差
     var S = pfNew(mLat, mLng, Math.max(mAcc, bestAcc) * 1.5, Date.now());
     list.forEach(function (p) {
       pfUpdate(S, p.coords.latitude, p.coords.longitude, p.coords.accuracy, p.t, 0.2);
@@ -938,24 +1212,21 @@ window.addEventListener("error", function (e) {
     return { coords: { latitude: e.lat, longitude: e.lng, accuracy: Math.max(e.sd, bestAcc * 0.8), n: list.length, method: "粒子濾波" } };
   }
 
-  // 導航用：每次新定位更新粒子，回傳估計位置
   function filterPF(p) {
     var lat = p.coords.latitude, lng = p.coords.longitude;
     var acc = Math.max(p.coords.accuracy, 1), t = p.timestamp || Date.now();
     if (!pf) pf = pfNew(lat, lng, acc, t);
     var dt = Math.min(Math.max((t - pf.t) / 1000, 0.2), 5);
-    pfUpdate(pf, lat, lng, acc, t, 1.2 * dt);   // 步行速度約 1.2 m/s
+    pfUpdate(pf, lat, lng, acc, t, 1.2 * dt);
     var e = pfEst(pf);
     return { lat: e.lat, lng: e.lng, accuracy: Math.max(e.sd, acc * 0.5) };
   }
 
-  // ---------- 地圖 ----------
   var map = null, carMk = null, meMk = null, meCircle = null, line = null;
   var adjusting = false, fitted = false, follow = true, nearZoomed = false;
   var anim = null, lastMe = null, layerIdx = 0, layerObjs = [];
   var plan = null, planOv = null, planMk = null;
 
-  // 圖層：原生圖磚最高到 native 級，再放大只會變糊（不會出現更多細節）
   var LAYERS = [
     { name: "🗺️ 街道", url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", native: 19, attr: "© OpenStreetMap" },
     { name: "🇹🇼 國測圖", url: "https://wmts.nlsc.gov.tw/wmts/EMAP/default/GoogleMapsCompatible/{z}/{y}/{x}", native: 18, attr: "© 內政部國土測繪中心" },
@@ -974,7 +1245,7 @@ window.addEventListener("error", function (e) {
       lyr.on("tileload", function () { ok++; });
       lyr.on("tileerror", function () {
         bad++;
-        if (bad >= 6 && ok === 0 && i !== 0) {   // 一張都載不到：自動切回街道圖
+        if (bad >= 6 && ok === 0 && i !== 0) {
           bad = 0;
           say(def.name + " 載入失敗，已切回街道圖。", "warn");
           setLayer(0);
@@ -999,7 +1270,7 @@ window.addEventListener("error", function (e) {
     var idx = 0;
     try { idx = parseInt(localStorage.getItem("parking_layer"), 10) || 0; } catch (e) {}
     setLayer(idx);
-    map.on("dragstart", function () {          // 手動拖曳地圖就暫停跟隨
+    map.on("dragstart", function () {
       if (follow) { follow = false; showFollow(); }
     });
     loadPlan();
@@ -1018,7 +1289,6 @@ window.addEventListener("error", function (e) {
     else { c.style.display = "block"; c.style.transform = "rotate(" + heading + "deg)"; }
   }
 
-  // 藍點在兩次定位之間平滑移動，不會一格一格跳
   function animateMe(target) {
     if (anim) cancelAnimationFrame(anim);
     var from = meMk.getLatLng(), t0 = performance.now(), dur = 700;
@@ -1089,11 +1359,11 @@ window.addEventListener("error", function (e) {
       if (hasCar && hasMe) map.fitBounds(L.latLngBounds([ml, cl]), { padding: [40, 40], maxZoom: 19 });
       else if (hasCar) map.setView(cl, 18);
     } else if (hasCar && hasMe && fitted && !adjusting) {
-      if (!nearZoomed && distance(current, saved) < 25) {      // 靠近車位：自動放大到看清楚周圍
+      if (!nearZoomed && distance(current, saved) < 25) {
         nearZoomed = true;
         map.fitBounds(L.latLngBounds([ml, cl]), { padding: [60, 60], maxZoom: 20 });
       } else if (follow && !map.getBounds().pad(-0.25).contains(ml)) {
-        map.panTo(ml);                                          // 走出畫面中央區域才跟著移動
+        map.panTo(ml);
       }
     }
   }
@@ -1105,7 +1375,6 @@ window.addEventListener("error", function (e) {
   });
   $("fitBtn").addEventListener("click", function () { updateMap(true); });
 
-  // ---------- 停車場平面圖疊加 ----------
   function planBounds() {
     var kx = 111320 * Math.cos(plan.lat * Math.PI / 180);
     var hw = plan.w / 2 / kx, hh = plan.w * plan.aspect / 2 / 111320;
@@ -1416,11 +1685,130 @@ window.addEventListener("error", function (e) {
     } catch (e) { say("清除失敗，請檢查瀏覽器儲存設定。", "error"); }
   });
 
-  chooseFloor(OUTDOOR);
-  initMap();
-  loadSaved();
-  updateMap(true);
-  say("程式已正常啟動，可以操作。", "good");
+
+  // ---------- 分享 ----------
+  var shareFab = $("shareFab");
+  var shareMask = $("shareMask");
+  var shareMenu = $("shareMenu");
+  function openShareMenu() {
+    shareMask.classList.add("show");
+    shareMenu.classList.add("show");
+  }
+  function closeShareMenu() {
+    shareMask.classList.remove("show");
+    shareMenu.classList.remove("show");
+  }
+  if (shareFab) shareFab.addEventListener("click", function () { openShareMenu(); });
+  if (shareMask) shareMask.addEventListener("click", closeShareMenu);
+
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text).then(function () { return true; }).catch(function () { return fallbackCopy(text); });
+    }
+    return Promise.resolve(fallbackCopy(text));
+  }
+  function fallbackCopy(text) {
+    var a = document.createElement("textarea");
+    a.value = text; a.style.position = "fixed"; a.style.left = "-9999px";
+    document.body.appendChild(a); a.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    a.remove();
+    return ok;
+  }
+  function tryNativeShare(data) {
+    if (!navigator.share) return Promise.resolve(false);
+    return navigator.share(data).then(function () { return true; }).catch(function (err) {
+      // 使用者取消不算失敗
+      if (err && err.name === "AbortError") return true;
+      return false;
+    });
+  }
+
+  function buildCarShareText() {
+    if (!saved) return null;
+    var lines = ["【極速記車位】我的停車位置"];
+    lines.push("樓層：" + (saved.floor || "未填"));
+    lines.push("區域／車位：" + (saved.zone || "未填"));
+    if (saved.note) lines.push("備註：" + saved.note);
+    if (saved.steps && saved.steps.length) {
+      lines.push("路線地標（車位→出口）：" + saved.steps.join(" → "));
+    }
+    if (validPoint(saved)) {
+      lines.push("座標：" + saved.lat.toFixed(6) + ", " + saved.lng.toFixed(6));
+      lines.push("地圖：https://www.google.com/maps?q=" + encodeURIComponent(saved.lat + "," + saved.lng));
+    } else {
+      lines.push("（無 GPS 座標，請依樓層與地標尋車）");
+    }
+    if (saved.time) lines.push("記錄時間：" + saved.time);
+    lines.push("");
+    lines.push("— 由「極速記車位」本機記錄，資料未上傳雲端");
+    return lines.join("\n");
+  }
+
+  $("shareCarBtn").addEventListener("click", function () {
+    closeShareMenu();
+    var text = buildCarShareText();
+    if (!text) {
+      say("尚無停車紀錄，請先記錄位置再分享。", "warn");
+      return;
+    }
+    var shareData = { title: "我的停車位置", text: text };
+    if (validPoint(saved)) {
+      shareData.url = "https://www.google.com/maps?q=" + encodeURIComponent(saved.lat + "," + saved.lng);
+    }
+    tryNativeShare(shareData).then(function (shared) {
+      if (shared) {
+        say("已開啟系統分享。", "good");
+        return;
+      }
+      copyText(text).then(function (ok) {
+        if (ok) say("已複製車位資訊，可貼到 LINE、訊息等傳送。", "good");
+        else window.prompt("請複製以下車位資訊：", text);
+      });
+    });
+  });
+
+  $("shareAppBtn").addEventListener("click", function () {
+    closeShareMenu();
+    var pageUrl = location.href.split("#")[0];
+    // file:// 或無法當連結時，只分享說明文字
+    var isHttp = /^https?:/i.test(pageUrl);
+    var blurb =
+      "推薦你「極速記車位」——把停車樓層、地標、照片記在自己手機裡，找車更快。\n" +
+      "資料只存在本機瀏覽器，不會上傳到雲端。\n" +
+      (isHttp ? ("開啟：" + pageUrl) : "（請向分享者索取網頁連結或檔案）");
+    var shareData = { title: "極速記車位", text: blurb };
+    if (isHttp) shareData.url = pageUrl;
+    tryNativeShare(shareData).then(function (shared) {
+      if (shared) {
+        say("已開啟系統分享。", "good");
+        return;
+      }
+      var toCopy = isHttp ? (blurb) : blurb;
+      copyText(toCopy).then(function (ok) {
+        if (ok) say(isHttp ? "已複製程式連結與說明。" : "已複製程式說明（目前不是網頁連結，請自行附上檔案或網址）。", "good");
+        else window.prompt("請複製：", toCopy);
+      });
+    });
+  });
+
+
+
+  function boot() {
+    chooseFloor(OUTDOOR);
+    initMap();
+    loadSaved();
+    updateMap(true);
+    say("程式已正常啟動，可以操作。", "good");
+    if (map) setTimeout(function () { map.invalidateSize(); }, 200);
+  }
+
+  if (document.getElementById("app").classList.contains("ready")) {
+    boot();
+  } else {
+    window.addEventListener("app-ready", boot);
+  }
 })();
 </script>
 </body>
