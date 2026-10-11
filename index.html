@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
-<title>極速記車位 2.8</title>
+<title>極速記車位 2.9</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
@@ -140,7 +140,14 @@ button:disabled{opacity:.45}
 .gps b{color:var(--text)}
 #map{height:260px;border-radius:14px;border:1px solid var(--border);margin-bottom:10px;background:#0f1623}
 .pin{font-size:26px;text-align:center;line-height:34px;filter:drop-shadow(0 1px 2px #000)}
-.me{width:16px;height:16px;border-radius:50%;background:#2d8cff;border:3px solid #fff;box-shadow:0 0 0 2px #2d8cff88}
+.me{position:relative;width:16px;height:16px;border-radius:50%;background:#2d8cff;border:3px solid #fff;box-shadow:0 0 0 2px #2d8cff88}
+.cone{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;pointer-events:none;
+  background:conic-gradient(from -28deg,rgba(45,140,255,.65) 0deg,rgba(45,140,255,0) 56deg,transparent 56deg);
+  -webkit-mask-image:radial-gradient(circle,#000 18%,transparent 70%);mask-image:radial-gradient(circle,#000 18%,transparent 70%)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.grid3 button{padding:11px 4px;font-size:13px}
+.secondary.on{background:var(--green-dark);color:#8affd8}
+input[type=range]{width:100%;accent-color:#2ee6a8;margin:6px 0}
 
 .compass{
   width:170px;height:170px;border:2px solid var(--border);border-radius:50%;
@@ -195,7 +202,7 @@ footer{text-align:center;color:#5a6a7e;font-size:11px;line-height:1.7;margin-top
 <header>
   <div class="logo">🚗</div>
   <h1>極速記車位</h1>
-  <div class="sub">2.8｜戶外／室內自動切換濾波</div>
+  <div class="sub">2.9｜多圖層地圖・朝向・跟隨</div>
   <button type="button" class="install-btn" id="installBtn">📲 加到手機桌面（捷徑）</button>
 </header>
 
@@ -253,9 +260,22 @@ footer{text-align:center;color:#5a6a7e;font-size:11px;line-height:1.7;margin-top
 
   <div id="gpsBox">
     <div id="map" role="img" aria-label="停車位置地圖"></div>
-    <div class="grid2">
-      <button type="button" class="secondary" id="layerBtn">🛰️ 衛星</button>
-      <button type="button" class="secondary" id="fitBtn">🎯 顯示全部</button>
+    <div class="grid3">
+      <button type="button" class="secondary" id="layerBtn">🗺️ 街道</button>
+      <button type="button" class="secondary on" id="followBtn">📍 跟隨 開</button>
+      <button type="button" class="secondary" id="fitBtn">🎯 全部</button>
+    </div>
+    <button type="button" class="secondary" id="planBtn" style="margin-top:8px">🖼️ 疊加停車場平面圖</button>
+    <input type="file" id="planFile" accept="image/*" hidden>
+    <div id="planCtl" hidden style="margin-top:8px">
+      <div class="grid3">
+        <button type="button" class="secondary" id="planSmall">－ 縮小</button>
+        <button type="button" class="secondary" id="planBig">＋ 放大</button>
+        <button type="button" class="danger" id="planDel" style="margin-top:0">移除</button>
+      </div>
+      <label for="planOp">平面圖透明度</label>
+      <input type="range" id="planOp" min="10" max="100" value="60">
+      <p class="small">拖曳地圖上的 ✥ 標記移動平面圖，再用縮放對準道路或建築。</p>
     </div>
     <p class="small" id="mapHint" style="margin:8px 0 4px"></p>
     <div class="compass">
@@ -930,8 +950,43 @@ window.addEventListener("error", function (e) {
   }
 
   // ---------- 地圖 ----------
-  var map = null, base = null, sat = null, carMk = null, meMk = null, meCircle = null;
-  var line = null, isSat = false, adjusting = false, fitted = false;
+  var map = null, carMk = null, meMk = null, meCircle = null, line = null;
+  var adjusting = false, fitted = false, follow = true, nearZoomed = false;
+  var anim = null, lastMe = null, layerIdx = 0, layerObjs = [];
+  var plan = null, planOv = null, planMk = null;
+
+  // 圖層：原生圖磚最高到 native 級，再放大只會變糊（不會出現更多細節）
+  var LAYERS = [
+    { name: "🗺️ 街道", url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", native: 19, attr: "© OpenStreetMap" },
+    { name: "🇹🇼 國測圖", url: "https://wmts.nlsc.gov.tw/wmts/EMAP/default/GoogleMapsCompatible/{z}/{y}/{x}", native: 18, attr: "© 內政部國土測繪中心" },
+    { name: "🛰️ 衛星", url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", native: 18, attr: "Esri" },
+    { name: "🛰️ 國測影像", url: "https://wmts.nlsc.gov.tw/wmts/PHOTO2/default/GoogleMapsCompatible/{z}/{y}/{x}", native: 18, attr: "© 內政部國土測繪中心" }
+  ];
+
+  function setLayer(i) {
+    if (!map) return;
+    i = ((i % LAYERS.length) + LAYERS.length) % LAYERS.length;
+    if (layerObjs[layerIdx] && map.hasLayer(layerObjs[layerIdx])) map.removeLayer(layerObjs[layerIdx]);
+    var def = LAYERS[i];
+    if (!layerObjs[i]) {
+      var lyr = L.tileLayer(def.url, { maxZoom: 21, maxNativeZoom: def.native, attribution: def.attr });
+      var ok = 0, bad = 0;
+      lyr.on("tileload", function () { ok++; });
+      lyr.on("tileerror", function () {
+        bad++;
+        if (bad >= 6 && ok === 0 && i !== 0) {   // 一張都載不到：自動切回街道圖
+          bad = 0;
+          say(def.name + " 載入失敗，已切回街道圖。", "warn");
+          setLayer(0);
+        }
+      });
+      layerObjs[i] = lyr;
+    }
+    layerObjs[i].addTo(map);
+    layerIdx = i;
+    $("layerBtn").textContent = def.name;
+    try { localStorage.setItem("parking_layer", String(i)); } catch (e) {}
+  }
 
   function initMap() {
     if (map) return;
@@ -940,11 +995,42 @@ window.addEventListener("error", function (e) {
       $("mapHint").textContent = "地圖無法載入（需要網路）。距離、箭頭與地標路線仍可使用。";
       return;
     }
-    map = L.map("map").setView([23.7, 121], 7);
-    base = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-      { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(map);
-    sat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-      { maxZoom: 19, attribution: "Esri" });
+    map = L.map("map", { maxZoom: 21 }).setView([23.7, 121], 7);
+    var idx = 0;
+    try { idx = parseInt(localStorage.getItem("parking_layer"), 10) || 0; } catch (e) {}
+    setLayer(idx);
+    map.on("dragstart", function () {          // 手動拖曳地圖就暫停跟隨
+      if (follow) { follow = false; showFollow(); }
+    });
+    loadPlan();
+  }
+
+  function showFollow() {
+    $("followBtn").textContent = follow ? "📍 跟隨 開" : "📍 跟隨 關";
+    $("followBtn").classList.toggle("on", follow);
+  }
+
+  function updateCone() {
+    if (!meMk || !meMk.getElement) return;
+    var el = meMk.getElement(), c = el && el.querySelector(".cone");
+    if (!c) return;
+    if (heading === null) { c.style.display = "none"; }
+    else { c.style.display = "block"; c.style.transform = "rotate(" + heading + "deg)"; }
+  }
+
+  // 藍點在兩次定位之間平滑移動，不會一格一格跳
+  function animateMe(target) {
+    if (anim) cancelAnimationFrame(anim);
+    var from = meMk.getLatLng(), t0 = performance.now(), dur = 700;
+    var carPos = carMk ? carMk.getLatLng() : null;
+    function step(now) {
+      var k = Math.min((now - t0) / dur, 1);
+      var lat = from.lat + (target[0] - from.lat) * k, lng = from.lng + (target[1] - from.lng) * k;
+      meMk.setLatLng([lat, lng]); meCircle.setLatLng([lat, lng]);
+      if (line && carPos) line.setLatLngs([[lat, lng], carPos]);
+      anim = k < 1 ? requestAnimationFrame(step) : null;
+    }
+    anim = requestAnimationFrame(step);
   }
 
   function updateMap(fit) {
@@ -974,41 +1060,140 @@ window.addEventListener("error", function (e) {
     if (hasMe) {
       if (!meMk) {
         meMk = L.marker(ml, {
-          icon: L.divIcon({ className: "", html: '<div class="me"></div>', iconSize: [16, 16], iconAnchor: [8, 8] }),
+          icon: L.divIcon({ className: "", html: '<div class="me"><div class="cone"></div></div>', iconSize: [16, 16], iconAnchor: [8, 8] }),
           interactive: false
         }).addTo(map);
         meCircle = L.circle(ml, { radius: current.accuracy, color: "#2d8cff", weight: 1, fillOpacity: 0.12 }).addTo(map);
-      } else {
-        meMk.setLatLng(ml); meCircle.setLatLng(ml); meCircle.setRadius(current.accuracy);
+        lastMe = ml;
+      } else if (!lastMe || lastMe[0] !== ml[0] || lastMe[1] !== ml[1]) {
+        animateMe(ml); lastMe = ml;
       }
+      meCircle.setRadius(current.accuracy);
+      updateCone();
     } else {
+      if (anim) { cancelAnimationFrame(anim); anim = null; }
       if (meMk) { map.removeLayer(meMk); meMk = null; }
       if (meCircle) { map.removeLayer(meCircle); meCircle = null; }
+      lastMe = null;
     }
 
     if (hasCar && hasMe) {
       if (!line) line = L.polyline([ml, cl], { color: "#2ee6a8", weight: 3, dashArray: "6 8" }).addTo(map);
-      else line.setLatLngs([ml, cl]);
     } else if (line) { map.removeLayer(line); line = null; }
 
     $("mapHint").textContent = hasCar
-      ? "🚗 車位　藍點 你的位置　淺藍圈 GPS 誤差範圍　虛線為直線距離"
+      ? "🚗 車位　藍點＝你（扇形＝面向）　淺藍圈＝GPS 誤差　虛線＝直線距離"
       : "尚無車位座標。記錄位置後會顯示在地圖上。";
 
     if (fit) {
       if (hasCar && hasMe) map.fitBounds(L.latLngBounds([ml, cl]), { padding: [40, 40], maxZoom: 19 });
       else if (hasCar) map.setView(cl, 18);
+    } else if (hasCar && hasMe && fitted && !adjusting) {
+      if (!nearZoomed && distance(current, saved) < 25) {      // 靠近車位：自動放大到看清楚周圍
+        nearZoomed = true;
+        map.fitBounds(L.latLngBounds([ml, cl]), { padding: [60, 60], maxZoom: 20 });
+      } else if (follow && !map.getBounds().pad(-0.25).contains(ml)) {
+        map.panTo(ml);                                          // 走出畫面中央區域才跟著移動
+      }
     }
   }
 
-  $("layerBtn").addEventListener("click", function () {
-    if (!map) return;
-    isSat = !isSat;
-    if (isSat) { map.removeLayer(base); sat.addTo(map); }
-    else { map.removeLayer(sat); base.addTo(map); }
-    $("layerBtn").textContent = isSat ? "🗺️ 街道" : "🛰️ 衛星";
+  $("layerBtn").addEventListener("click", function () { setLayer(layerIdx + 1); });
+  $("followBtn").addEventListener("click", function () {
+    follow = !follow; showFollow();
+    if (follow && meMk && map) map.panTo(meMk.getLatLng());
   });
   $("fitBtn").addEventListener("click", function () { updateMap(true); });
+
+  // ---------- 停車場平面圖疊加 ----------
+  function planBounds() {
+    var kx = 111320 * Math.cos(plan.lat * Math.PI / 180);
+    var hw = plan.w / 2 / kx, hh = plan.w * plan.aspect / 2 / 111320;
+    return [[plan.lat - hh, plan.lng - hw], [plan.lat + hh, plan.lng + hw]];
+  }
+  function savePlan() {
+    try { localStorage.setItem("parking_plan", JSON.stringify(plan)); return true; }
+    catch (e) { say("平面圖太大，無法儲存（本次仍可使用）。", "warn"); return false; }
+  }
+  function applyPlan() {
+    if (!map) return;
+    if (planOv) { map.removeLayer(planOv); planOv = null; }
+    if (planMk) { map.removeLayer(planMk); planMk = null; }
+    $("planCtl").hidden = !plan;
+    if (!plan) return;
+    planOv = L.imageOverlay(plan.img, planBounds(), { opacity: plan.opacity, interactive: false }).addTo(map);
+    planMk = L.marker([plan.lat, plan.lng], {
+      draggable: true,
+      icon: L.divIcon({ className: "", html: '<div class="pin" style="font-size:22px">✥</div>', iconSize: [34, 34], iconAnchor: [17, 17] })
+    }).addTo(map);
+    planMk.on("dragend", function () {
+      var p = planMk.getLatLng();
+      plan.lat = p.lat; plan.lng = p.lng;
+      planOv.setBounds(planBounds()); savePlan();
+    });
+    $("planOp").value = Math.round(plan.opacity * 100);
+  }
+  function loadPlan() {
+    try {
+      var raw = localStorage.getItem("parking_plan");
+      if (raw) {
+        var p = JSON.parse(raw);
+        if (p && typeof p.img === "string" && Number.isFinite(p.lat) && Number.isFinite(p.lng) &&
+            Number.isFinite(p.w) && Number.isFinite(p.aspect)) {
+          p.opacity = Number.isFinite(p.opacity) ? p.opacity : 0.6;
+          plan = p;
+        }
+      }
+    } catch (e) { plan = null; }
+    applyPlan();
+  }
+
+  $("planBtn").addEventListener("click", function () {
+    if (!map) { say("地圖未載入，無法疊加平面圖。", "error"); return; }
+    $("planFile").click();
+  });
+  $("planFile").addEventListener("change", function (ev) {
+    var f = ev.target.files && ev.target.files[0];
+    if (!f) return;
+    if (!f.type || f.type.indexOf("image/") !== 0) { say("請選擇圖片檔。", "error"); return; }
+    var r = new FileReader();
+    r.onload = function () {
+      var im = new Image();
+      im.onload = function () {
+        var sc = Math.min(1, 1200 / Math.max(im.width, im.height));
+        var cv = document.createElement("canvas");
+        cv.width = Math.round(im.width * sc); cv.height = Math.round(im.height * sc);
+        cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height);
+        var c = carMk ? carMk.getLatLng() : map.getCenter();
+        plan = { img: cv.toDataURL("image/jpeg", 0.8), w: 80, aspect: cv.height / cv.width, lat: c.lat, lng: c.lng, opacity: 0.6 };
+        savePlan(); applyPlan();
+        map.setView([plan.lat, plan.lng], 19);
+        say("已疊加平面圖：拖曳 ✥ 移動，用縮放對準道路或建築。", "good");
+      };
+      im.onerror = function () { say("圖片讀取失敗。", "error"); };
+      im.src = r.result;
+    };
+    r.readAsDataURL(f);
+    ev.target.value = "";
+  });
+  function resizePlan(k) {
+    if (!plan || !planOv) return;
+    plan.w = Math.max(10, Math.min(1000, plan.w * k));
+    planOv.setBounds(planBounds()); savePlan();
+  }
+  $("planBig").addEventListener("click", function () { resizePlan(1.15); });
+  $("planSmall").addEventListener("click", function () { resizePlan(1 / 1.15); });
+  $("planDel").addEventListener("click", function () {
+    plan = null;
+    try { localStorage.removeItem("parking_plan"); } catch (e) {}
+    applyPlan();
+    say("已移除平面圖。", "good");
+  });
+  $("planOp").addEventListener("input", function () {
+    if (!plan || !planOv) return;
+    plan.opacity = this.value / 100; planOv.setOpacity(plan.opacity);
+  });
+  $("planOp").addEventListener("change", function () { if (plan) savePlan(); });
 
   $("adjustBtn").addEventListener("click", function () {
     if (!map || !carMk) { say("沒有車位座標可微調。", "error"); return; }
@@ -1147,6 +1332,7 @@ window.addEventListener("error", function (e) {
       if (watchId !== null) navigator.geolocation.clearWatch(watchId);
       fitted = false;
       kf = null; pf = null;
+      nearZoomed = false; follow = true; showFollow(); lastMe = null;
       watchId = navigator.geolocation.watchPosition(
         function (p) {
           current = usePF ? filterPF(p) : filterFix(p);
