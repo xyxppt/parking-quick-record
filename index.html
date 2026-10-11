@@ -302,6 +302,19 @@ footer{text-align:center;color:#5a6a7e;font-size:11px;line-height:1.7;margin-top
 .share-menu .lbl span{font-size:11px;color:var(--muted);font-weight:400;line-height:1.4}
 
 
+
+/* 離開畫面 */
+#exitScreen{
+  display:none;position:fixed;inset:0;z-index:100000;
+  background:#070a10;color:#eef2f8;
+  flex-direction:column;align-items:center;justify-content:center;
+  padding:32px;text-align:center;font-family:inherit;
+}
+#exitScreen.show{display:flex}
+#exitScreen .big{font-size:42px;margin-bottom:16px}
+#exitScreen h2{font-size:20px;margin-bottom:10px;color:#2ee6a8}
+#exitScreen p{font-size:14px;color:#8b9bb0;line-height:1.7;max-width:320px}
+
 #app{display:none}
 #app.ready{display:block}
 </style>
@@ -351,15 +364,32 @@ footer{text-align:center;color:#5a6a7e;font-size:11px;line-height:1.7;margin-top
     </div>
 
     <div class="story-block" data-step="3">
+      <div class="story-kicker">NOTICE</div>
+      <div class="story-title">使用與著作聲明</div>
+      <div class="privacy-card">
+        本工具由作者獨立製作，僅供個人停車記錄與找車使用。<br><br>
+        <b>程式介面、文案與實作方式受著作權保護</b>，未經授權請勿原封抄襲、冒充官方或用於商業販售。<br><br>
+        歡迎分享給有需要的朋友使用；若需改作或二次發佈，請先取得作者同意。<br><br>
+        <span style="color:#8b9bb0;font-size:12px">© 極速記車位 · 保留相關權利。本聲明不影響你在本機使用與自行備份自己的停車資料。</span>
+      </div>
+    </div>
+
+    <div class="story-block" data-step="4">
       <div class="story-kicker">READY</div>
       <div class="story-title">準備好了嗎？</div>
       <div class="story-body">建議同時記下樓層、車位編號與一張照片，地下車場最實用。資料可隨時在本機清除。</div>
       <div class="intro-actions" id="introActions">
         <button type="button" class="go" id="enterApp">我已看完說明，繼續進入網站</button>
-        <button type="button" class="skip" id="leaveIntro">先不進入</button>
+        <button type="button" class="skip" id="leaveIntro">先不進入並離開</button>
       </div>
     </div>
   </div>
+</div>
+
+<div id="exitScreen" aria-live="polite">
+  <div class="big">👋</div>
+  <h2>已離開極速記車位</h2>
+  <p>此分頁可直接關閉。<br>若沒有自動關閉，請用瀏覽器的關閉鈕結束此頁。</p>
 </div>
 
 <div id="app">
@@ -637,8 +667,22 @@ footer{text-align:center;color:#5a6a7e;font-size:11px;line-height:1.7;margin-top
 
   document.getElementById("enterApp").addEventListener("click", enterApp);
   document.getElementById("leaveIntro").addEventListener("click", function () {
-    // 先不進入：關閉分頁無法強制，改為回到頂部並提示
-    intro.scrollTo({ top: 0, behavior: "smooth" });
+    // 盡力關閉分頁；多數瀏覽器僅允許腳本開啟的視窗被 close，失敗則顯示離開畫面
+    var exited = false;
+    try {
+      window.open("", "_self");
+      window.close();
+      exited = true;
+    } catch (e) {}
+    setTimeout(function () {
+      var exit = document.getElementById("exitScreen");
+      if (exit) {
+        if (intro) intro.style.display = "none";
+        document.body.classList.remove("intro-lock");
+        exit.classList.add("show");
+      }
+      try { window.close(); } catch (e2) {}
+    }, 120);
   });
 })();
 </script>
