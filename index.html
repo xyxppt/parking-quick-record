@@ -318,12 +318,8 @@ footer{text-align:center;color:#5a6a7e;font-size:11px;line-height:1.7;margin-top
       if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
     }, 600);
   }
-  setTimeout(doHide, 2800);
-  if (document.readyState === "complete") {
-    setTimeout(doHide, 2800);
-  } else {
-    window.addEventListener("load", function () { setTimeout(doHide, 800); });
-  }
+  // 固定顯示 3.5 秒（原本載入完成後約 0.8 秒就可能提早隱藏）
+  setTimeout(doHide, 3500);
 })();
 
 // ===== 加到桌面捷徑 =====
