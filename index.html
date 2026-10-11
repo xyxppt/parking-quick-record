@@ -363,7 +363,7 @@ footer{text-align:center;color:#5a6a7e;font-size:11px;line-height:1.7;margin-top
 </footer>
 
 <script>
-// ===== 載入動畫隱藏 =====
+// ===== 載入動畫隱藏（已加長到 2.8 秒）=====
 (function hideLoader() {
   var loader = document.getElementById("loader");
   if (!loader) return;
@@ -373,11 +373,12 @@ footer{text-align:center;color:#5a6a7e;font-size:11px;line-height:1.7;margin-top
       if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
     }, 600);
   }
-  setTimeout(doHide, 1600);
+  // 改成 2800 毫秒（約 2.8 秒）
+  setTimeout(doHide, 2800);
   if (document.readyState === "complete") {
-    setTimeout(doHide, 1600);
+    setTimeout(doHide, 2800);
   } else {
-    window.addEventListener("load", function () { setTimeout(doHide, 400); });
+    window.addEventListener("load", function () { setTimeout(doHide, 800); });
   }
 })();
 
@@ -390,14 +391,12 @@ footer{text-align:center;color:#5a6a7e;font-size:11px;line-height:1.7;margin-top
   var modalContent = document.getElementById("modalContent");
   var closeModal = document.getElementById("closeModal");
 
-  // 捕捉 Android / Chrome 的安裝事件
   window.addEventListener("beforeinstallprompt", function (e) {
     e.preventDefault();
     deferredPrompt = e;
     installBtn.classList.remove("hidden");
   });
 
-  // 已安裝則隱藏按鈕
   window.addEventListener("appinstalled", function () {
     deferredPrompt = null;
     installBtn.classList.add("hidden");
@@ -415,13 +414,11 @@ footer{text-align:center;color:#5a6a7e;font-size:11px;line-height:1.7;margin-top
       window.navigator.standalone === true;
   }
 
-  // 如果已經是捷徑模式，就隱藏按鈕
   if (isStandalone()) {
     installBtn.classList.add("hidden");
   }
 
   installBtn.addEventListener("click", function () {
-    // Android / Chrome 有原生提示
     if (deferredPrompt) {
       deferredPrompt.prompt();
       deferredPrompt.userChoice.then(function (choice) {
@@ -433,7 +430,6 @@ footer{text-align:center;color:#5a6a7e;font-size:11px;line-height:1.7;margin-top
       return;
     }
 
-    // iOS 顯示教學
     if (isIOS()) {
       modalTitle.textContent = "加入 iPhone / iPad 桌面";
       modalContent.innerHTML = `
@@ -449,7 +445,6 @@ footer{text-align:center;color:#5a6a7e;font-size:11px;line-height:1.7;margin-top
       return;
     }
 
-    // Android 其他瀏覽器
     if (isAndroid()) {
       modalTitle.textContent = "加入 Android 桌面";
       modalContent.innerHTML = `
@@ -464,7 +459,6 @@ footer{text-align:center;color:#5a6a7e;font-size:11px;line-height:1.7;margin-top
       return;
     }
 
-    // 其他裝置
     modalTitle.textContent = "設為捷徑";
     modalContent.innerHTML = `
       <p>目前瀏覽器不支援一鍵安裝。</p>
