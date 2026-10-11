@@ -7,45 +7,45 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
-<title>璆菟�蠘�頠𠹺� 3.0 靽格迤��</title>
+<title>極速記車位 2.9</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
---bg:#0c111b;
---card:#161e2c;
---border:#2a364a;
---text:#eef2f8;
---muted:#8b9bb0;
---green:#2ee6a8;
---green-dark:#0d4a3a;
---blue:#1e3a5f;
---danger:#4a2a32;
---danger-text:#ffb4b4;
+  --bg:#0c111b;
+  --card:#161e2c;
+  --border:#2a364a;
+  --text:#eef2f8;
+  --muted:#8b9bb0;
+  --green:#2ee6a8;
+  --green-dark:#0d4a3a;
+  --blue:#1e3a5f;
+  --danger:#4a2a32;
+  --danger-text:#ffb4b4;
 }
 body{
-margin:0 auto;padding:0 14px 40px;max-width:480px;min-height:100vh;
-background:var(--bg);color:var(--text);
-font-family:"Segoe UI","Noto Sans TC",Arial,sans-serif;
--webkit-font-smoothing:antialiased;
+  margin:0 auto;padding:0 14px 40px;max-width:480px;min-height:100vh;
+  background:var(--bg);color:var(--text);
+  font-family:"Segoe UI","Noto Sans TC",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
 }
 
-/* ===== 頛匧��閧𧞄 ===== */
+/* ===== 載入動畫 ===== */
 #loader{
-position:fixed;inset:0;z-index:9999;
-background:#0a0e16;
-display:flex;flex-direction:column;align-items:center;justify-content:center;
-transition:opacity .55s ease, visibility .55s ease;
+  position:fixed;inset:0;z-index:9999;
+  background:#0a0e16;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity .55s ease, visibility .55s ease;
 }
 #loader.hide{opacity:0;visibility:hidden;pointer-events:none}
 .xyx{
-display:flex;gap:6px;font-size:52px;font-weight:800;letter-spacing:4px;
-color:#2ee6a8;text-shadow:0 0 20px #2ee6a866,0 0 40px #2ee6a844;
+  display:flex;gap:6px;font-size:52px;font-weight:800;letter-spacing:4px;
+  color:#2ee6a8;text-shadow:0 0 20px #2ee6a866,0 0 40px #2ee6a844;
 }
 .xyx span{
-opacity:0;transform:translateY(18px) scale(.8);
-animation:xyxIn .6s cubic-bezier(.22,1,.36,1) forwards;
+  opacity:0;transform:translateY(18px) scale(.8);
+  animation:xyxIn .6s cubic-bezier(.22,1,.36,1) forwards;
 }
 .xyx span:nth-child(1){animation-delay:.15s}
 .xyx span:nth-child(2){animation-delay:.3s}
@@ -53,24 +53,24 @@ animation:xyxIn .6s cubic-bezier(.22,1,.36,1) forwards;
 @keyframes xyxIn{to{opacity:1;transform:translateY(0) scale(1)}}
 .loader-bar{width:80px;height:3px;background:#1a2435;border-radius:4px;margin-top:28px;overflow:hidden}
 .loader-bar::after{
-content:"";display:block;height:100%;width:40%;
-background:linear-gradient(90deg,transparent,#2ee6a8,transparent);
-animation:barMove 1.1s ease-in-out infinite;
+  content:"";display:block;height:100%;width:40%;
+  background:linear-gradient(90deg,transparent,#2ee6a8,transparent);
+  animation:barMove 1.1s ease-in-out infinite;
 }
 @keyframes barMove{0%{transform:translateX(-100%)}100%{transform:translateX(250%)}}
 .loader-text{margin-top:18px;font-size:13px;color:#6b7c92;letter-spacing:1px}
 
-/* ===== 銝餌𧞄�� ===== */
+/* ===== 主畫面 ===== */
 header{text-align:center;padding:22px 0 14px}
 header .logo{font-size:36px;margin-bottom:2px}
 h1{font-size:24px;font-weight:700;letter-spacing:.5px}
 .sub{font-size:12px;color:var(--muted);margin-top:4px}
 
 .install-btn{
-display:block;width:100%;margin:12px 0 6px;
-background:linear-gradient(135deg,#1a3a5c,#0d4a3a);
-color:#8affd8;border:1px solid #2ee6a8;
-border-radius:12px;font-size:14px;font-weight:600;min-height:44px;
+  display:block;width:100%;margin:12px 0 6px;
+  background:linear-gradient(135deg,#1a3a5c,#0d4a3a);
+  color:#8affd8;border:1px solid #2ee6a8;
+  border-radius:12px;font-size:14px;font-weight:600;min-height:44px;
 }
 .install-btn.hidden{display:none}
 
@@ -80,17 +80,17 @@ h2 span{font-size:18px}
 
 label{display:block;color:var(--muted);font-size:12px;margin:14px 0 6px}
 input[type=text],select{
-width:100%;padding:12px 14px;min-height:46px;
-color:var(--text);background:#0f1623;
-border:1px solid var(--border);border-radius:10px;
-font-size:15px;font-family:inherit;color-scheme:dark;
+  width:100%;padding:12px 14px;min-height:46px;
+  color:var(--text);background:#0f1623;
+  border:1px solid var(--border);border-radius:10px;
+  font-size:15px;font-family:inherit;color-scheme:dark;
 }
 input:focus,select:focus{outline:none;border-color:var(--green)}
 button{
-font-family:inherit;font-size:14px;font-weight:600;
-min-height:46px;padding:11px 12px;border:0;border-radius:11px;
-cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
-transition:filter .15s,transform .1s;
+  font-family:inherit;font-size:14px;font-weight:600;
+  min-height:46px;padding:11px 12px;border:0;border-radius:11px;
+  cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  transition:filter .15s,transform .1s;
 }
 button:active{filter:brightness(.85);transform:scale(.98)}
 button:disabled{opacity:.45}
@@ -98,9 +98,9 @@ button:disabled{opacity:.45}
 .floor-scroll{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .floor-scroll::-webkit-scrollbar{display:none}
 .floor-btn{
-flex:0 0 auto;min-width:52px;padding:10px 14px;
-color:var(--text);background:#1e2838;border:1px solid var(--border);
-border-radius:10px;font-size:14px;
+  flex:0 0 auto;min-width:52px;padding:10px 14px;
+  color:var(--text);background:#1e2838;border:1px solid var(--border);
+  border-radius:10px;font-size:14px;
 }
 .floor-btn.active{color:#8affd8;background:var(--green-dark);border-color:var(--green)}
 
@@ -124,8 +124,8 @@ border-radius:10px;font-size:14px;
 .addrow button{width:72px;background:var(--blue);color:#b8dcff;min-height:42px}
 .steps{list-style:none;margin:10px 0 0}
 .steps li{
-display:flex;align-items:center;gap:8px;padding:9px 12px;margin-bottom:6px;
-background:#0f1623;border:1px solid var(--border);border-radius:9px;font-size:13px;
+  display:flex;align-items:center;gap:8px;padding:9px 12px;margin-bottom:6px;
+  background:#0f1623;border:1px solid var(--border);border-radius:9px;font-size:13px;
 }
 .steps li span{flex:1;overflow-wrap:anywhere}
 .steps li button{min-height:32px;padding:3px 10px;background:var(--danger);color:var(--danger-text);font-size:12px}
@@ -142,16 +142,16 @@ background:#0f1623;border:1px solid var(--border);border-radius:9px;font-size:13
 .pin{font-size:26px;text-align:center;line-height:34px;filter:drop-shadow(0 1px 2px #000)}
 .me{position:relative;width:16px;height:16px;border-radius:50%;background:#2d8cff;border:3px solid #fff;box-shadow:0 0 0 2px #2d8cff88}
 .cone{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;pointer-events:none;
-background:conic-gradient(from -28deg,rgba(45,140,255,.65) 0deg,rgba(45,140,255,0) 56deg,transparent 56deg);
--webkit-mask-image:radial-gradient(circle,#000 18%,transparent 70%);mask-image:radial-gradient(circle,#000 18%,transparent 70%)}
+  background:conic-gradient(from -28deg,rgba(45,140,255,.65) 0deg,rgba(45,140,255,0) 56deg,transparent 56deg);
+  -webkit-mask-image:radial-gradient(circle,#000 18%,transparent 70%);mask-image:radial-gradient(circle,#000 18%,transparent 70%)}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .grid3 button{padding:11px 4px;font-size:13px}
 .secondary.on{background:var(--green-dark);color:#8affd8}
 input[type=range]{width:100%;accent-color:#2ee6a8;margin:6px 0}
 
 .compass{
-width:170px;height:170px;border:2px solid var(--border);border-radius:50%;
-margin:14px auto;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0f1623;
+  width:170px;height:170px;border:2px solid var(--border);border-radius:50%;
+  margin:14px auto;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0f1623;
 }
 #arrow{font-size:60px;color:var(--green);line-height:1.15;transition:opacity .2s}
 #arrow.dim{opacity:.28}
@@ -171,9 +171,9 @@ margin:14px auto;display:flex;flex-direction:column;align-items:center;justify-c
 footer{text-align:center;color:#5a6a7e;font-size:11px;line-height:1.7;margin-top:8px}
 
 .modal-mask{
-position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:10000;
-display:flex;align-items:center;justify-content:center;padding:20px;
-opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s;
+  position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:10000;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s;
 }
 .modal-mask.show{opacity:1;visibility:visible}
 .modal{background:#161e2c;border:1px solid #2a364a;border-radius:16px;padding:22px;max-width:340px;width:100%}
@@ -186,1209 +186,1242 @@ opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s;
 <body>
 
 <div id="loader">
-<div class="xyx"><span>X</span><span>Y</span><span>X</span></div>
-<div class="loader-bar"></div>
-<div class="loader-text">璆菟�蠘�頠𠹺�</div>
+  <div class="xyx"><span>X</span><span>Y</span><span>X</span></div>
+  <div class="loader-bar"></div>
+  <div class="loader-text">極速記車位</div>
 </div>
 
 <div class="modal-mask" id="installModal">
-<div class="modal">
-<h3 id="modalTitle">�惩��𧢲�獢屸𢒰</h3>
-<div id="modalContent"></div>
-<button type="button" class="close-btn" id="closeModal">�𤑳䰻�㮖�</button>
-</div>
+  <div class="modal">
+    <h3 id="modalTitle">加到手機桌面</h3>
+    <div id="modalContent"></div>
+    <button type="button" class="close-btn" id="closeModal">我知道了</button>
+  </div>
 </div>
 
 <header>
-<div class="logo">��</div>
-<h1>璆菟�蠘�頠𠹺�</h1>
-<div class="sub">3.0嚚𨅯��硋惜�啣��餃�雿漤俈頝喲��餃�隞賡���</div>
-<button type="button" class="install-btn" id="installBtn">�搻 �惩��𧢲�獢屸𢒰嚗�㭘敺𡢅�</button>
+  <div class="logo">🚗</div>
+  <h1>極速記車位</h1>
+  <div class="sub">2.9｜多圖層地圖・朝向・跟隨</div>
+  <button type="button" class="install-btn" id="installBtn">📲 加到手機桌面（捷徑）</button>
 </header>
 
 <section class="card">
-<h2><span>��</span> 閮㗛��𡏭�雿滨蔭</h2>
+  <h2><span>📍</span> 記錄停車位置</h2>
 
-<label>璅枏惜嚗��憭吔��∠��潭蕪瘜ｇ��嗡�嚗萘�摮鞉蕪瘜ｇ�</label>
-<div class="floor-scroll" id="floorScroll"></div>
+  <label>樓層（戶外＝卡爾曼濾波，其他＝粒子濾波）</label>
+  <div class="floor-scroll" id="floorScroll"></div>
 
-<label>���蠘�頠𠹺�</label>
-<div class="grid2">
-<select id="areaSel"></select>
-<select id="spotSel"></select>
-</div>
-<label for="zone">�芾������頠𠹺�嚗��憛恬�</label>
-<input id="zone" type="text" maxlength="100" placeholder="靘见�嚗䥪3-128����脫�摮鞉�">
+  <label>區域與車位</label>
+  <div class="grid2">
+    <select id="areaSel"></select>
+    <select id="spotSel"></select>
+  </div>
+  <label for="zone">自訂區域或車位（選填）</label>
+  <input id="zone" type="text" maxlength="100" placeholder="例如：P3-128、紅色柱子旁">
 
-<label for="note">�躰酉</label>
-<input id="note" type="text" maxlength="200" placeholder="靘见�嚗𡁻𤓖璇舀����餈穃枂��">
+  <label for="note">備註</label>
+  <input id="note" type="text" maxlength="200" placeholder="例如：電梯旁、靠近出口">
 
-<div class="collapse-header" id="stepToggle">
-<label style="margin:0">頝舐��唳�嚗��頠𠹺�韏啣��箏藁嚗�</label>
-<span id="stepToggleText">撅閖� ��</span>
-</div>
-<div class="collapse-body" id="stepBody">
-<div class="addrow">
-<input id="stepInput" type="text" maxlength="80" placeholder="靘见�嚗𡁜�蝬㰘𠧧�勗�韏�">
-<button type="button" id="addStepBtn">�惩�</button>
-</div>
-<ol class="steps" id="stepList"></ol>
-</div>
+  <div class="collapse-header" id="stepToggle">
+    <label style="margin:0">路線地標（從車位走到出口）</label>
+    <span id="stepToggleText">展開 ▾</span>
+  </div>
+  <div class="collapse-body" id="stepBody">
+    <div class="addrow">
+      <input id="stepInput" type="text" maxlength="80" placeholder="例如：往綠色柱子走">
+      <button type="button" id="addStepBtn">加入</button>
+    </div>
+    <ol class="steps" id="stepList"></ol>
+  </div>
 
-<label for="photo">�齿�頠𠹺��抒�嚗��憛恬�</label>
-<input id="photo" type="file" accept="image/*" capture="environment">
-<img id="photoPreview" alt="�抒��鞱汗">
+  <label for="photo">拍攝車位照片（選填）</label>
+  <input id="photo" type="file" accept="image/*" capture="environment">
+  <img id="photoPreview" alt="照片預覽">
 
-<button type="button" class="primary" id="saveBtn" style="margin-top:18px">�� 閮㗛��桀�雿滨蔭</button>
-<div id="status" role="status" aria-live="polite"></div>
+  <button type="button" class="primary" id="saveBtn" style="margin-top:18px">📍 記錄目前位置</button>
+  <div id="status" role="status" aria-live="polite"></div>
 </section>
 
 <section class="card">
-<h2><span>�妣</span> 撠贝�撠舘⏛</h2>
+  <h2><span>🧭</span> 尋車導航</h2>
 
-<div class="seg">
-<button type="button" class="active" id="modeGps">�摱 GPS 蝞剝�</button>
-<button type="button" id="modeRoute">�噡儭� �唳�頝舐�</button>
-</div>
+  <div class="seg">
+    <button type="button" class="active" id="modeGps">📡 GPS 箭頭</button>
+    <button type="button" id="modeRoute">🏷️ 地標路線</button>
+  </div>
 
-<div class="gps" id="gpsInfo">
-<span>蝎曉漲 <b id="gAcc">--</b></span>
-<span>�湔鰵 <b id="gAge">--</b></span>
-<span>�臭縑摨� <b id="gTrust">--</b></span>
-</div>
-<p class="small" id="filterInfo" style="margin-bottom:12px">摰帋�瞈暹郭嚗𡁜��芸���</p>
+  <div class="gps" id="gpsInfo">
+    <span>精度 <b id="gAcc">--</b></span>
+    <span>更新 <b id="gAge">--</b></span>
+    <span>可信度 <b id="gTrust">--</b></span>
+  </div>
+  <p class="small" id="filterInfo" style="margin-bottom:12px">定位濾波：尚未啟動</p>
 
-<div id="gpsBox">
-<div id="map" role="img" aria-label="�𡏭�雿滨蔭�啣�"></div>
-<div class="grid3">
-<button type="button" class="secondary" id="layerBtn">�㚰儭� 銵烾�</button>
-<button type="button" class="secondary on" id="followBtn">�� 頝罸辶 ��</button>
-<button type="button" class="secondary" id="fitBtn">�㴓 �券�</button>
-</div>
-<button type="button" class="secondary" id="planBtn" style="margin-top:8px">�䲰儭� �𠰴��𡏭��游像�Ｗ�</button>
-<input type="file" id="planFile" accept="image/*" hidden>
-<div id="planCtl" hidden style="margin-top:8px">
-<div class="grid3">
-<button type="button" class="secondary" id="planSmall">嚗� 蝮桀�</button>
-<button type="button" class="secondary" id="planBig">嚗� �曉之</button>
-<button type="button" class="danger" id="planDel" style="margin-top:0">蝘駁膄</button>
-</div>
-<label for="planOp">撟喲𢒰�㚚�𤩺�摨�</label>
-<input type="range" id="planOp" min="10" max="100" value="60">
-<p class="small">�𡝗𠗊�啣�銝羓� �� 璅躰�蝘餃�撟喲𢒰�吔��滨鍂蝮格𦆮撠齿��栞楝�硋遣蝭剹��</p>
-</div>
-<p class="small" id="mapHint" style="margin:8px 0 4px"></p>
-<div class="compass">
-<div id="arrow" class="dim">��</div>
-<div id="distance">--</div>
-<div id="bearing">撠𡁏𧊋�见�撠舘⏛</div>
-</div>
-<p id="sensorStatus" class="small">�孵���葫�剁�撠𡁏𧊋�笔�</p>
-</div>
+  <div id="gpsBox">
+    <div id="map" role="img" aria-label="停車位置地圖"></div>
+    <div class="grid3">
+      <button type="button" class="secondary" id="layerBtn">🗺️ 街道</button>
+      <button type="button" class="secondary on" id="followBtn">📍 跟隨 開</button>
+      <button type="button" class="secondary" id="fitBtn">🎯 全部</button>
+    </div>
+    <button type="button" class="secondary" id="planBtn" style="margin-top:8px">🖼️ 疊加停車場平面圖</button>
+    <input type="file" id="planFile" accept="image/*" hidden>
+    <div id="planCtl" hidden style="margin-top:8px">
+      <div class="grid3">
+        <button type="button" class="secondary" id="planSmall">－ 縮小</button>
+        <button type="button" class="secondary" id="planBig">＋ 放大</button>
+        <button type="button" class="danger" id="planDel" style="margin-top:0">移除</button>
+      </div>
+      <label for="planOp">平面圖透明度</label>
+      <input type="range" id="planOp" min="10" max="100" value="60">
+      <p class="small">拖曳地圖上的 ✥ 標記移動平面圖，再用縮放對準道路或建築。</p>
+    </div>
+    <p class="small" id="mapHint" style="margin:8px 0 4px"></p>
+    <div class="compass">
+      <div id="arrow" class="dim">↑</div>
+      <div id="distance">--</div>
+      <div id="bearing">尚未開始導航</div>
+    </div>
+    <p id="sensorStatus" class="small">方向感測器：尚未啟動</p>
+  </div>
 
-<div id="routeBox" hidden>
-<div class="small" id="routeCount"></div>
-<div id="routeStep"></div>
-<div class="grid2">
-<button type="button" class="secondary" id="prevStep">�� 銝𠹺�甇�</button>
-<button type="button" class="primary" id="nextStep">銝衤�甇� ��</button>
-</div>
-</div>
+  <div id="routeBox" hidden>
+    <div class="small" id="routeCount"></div>
+    <div id="routeStep"></div>
+    <div class="grid2">
+      <button type="button" class="secondary" id="prevStep">← 上一步</button>
+      <button type="button" class="primary" id="nextStep">下一步 →</button>
+    </div>
+  </div>
 
-<button type="button" class="primary" id="startBtn" style="margin-top:14px">�妣 �见�撠舘⏛</button>
-<button type="button" class="secondary" id="stopBtn" style="margin-top:8px">�𨀣迫摰帋�</button>
-<p id="navStatus" class="small" style="margin-top:10px">隢见�閮㗛�雿滨蔭嚗���见�撠舘⏛��</p>
-<p class="small">�孵�銝齿�����輯��𧢲��函征銝剔𧞄��8�滚��豢活嚗���𣳇𣪧�穃惇����准��</p>
+  <button type="button" class="primary" id="startBtn" style="margin-top:14px">🧭 開始導航</button>
+  <button type="button" class="secondary" id="stopBtn" style="margin-top:8px">停止定位</button>
+  <p id="navStatus" class="small" style="margin-top:10px">請先記錄位置，再開始導航。</p>
+  <p class="small">方向不準時：拿著手機在空中畫「8」字數次，再遠離金屬與喇叭。</p>
 </section>
 
 <section class="card">
-<h2><span>��儭�</span> 銝𦠜活�𡏭�蝝���</h2>
-<div id="empty" class="small">�桀�瘝埝�蝝�����</div>
+  <h2><span>🅿️</span> 上次停車紀錄</h2>
+  <div id="empty" class="small">目前沒有紀錄。</div>
 
-<div id="savedPanel" hidden>
-<div class="info-row"><span>璅枏惜</span><span id="sFloor"></span></div>
-<div class="info-row"><span>�����頠𠹺�</span><span id="sZone"></span></div>
-<div class="info-row"><span>�躰酉</span><span id="sNote"></span></div>
-<div class="info-row"><span>頝舐��唳�</span><span id="sSteps"></span></div>
-<div class="info-row"><span>���</span><span id="sTime"></span></div>
-<div class="info-row"><span>GPS 隤文榆</span><span id="sAccuracy"></span></div>
-<img id="savedPhoto" alt="�𡏭��抒�">
-<div class="btn-stack">
-<button type="button" class="secondary" id="adjustBtn">�𧶏� 敺株矽頠𠹺�雿滨蔭</button>
-<button type="button" class="secondary" id="mapsBtn">�㚰儭� Google Maps</button>
-<button type="button" class="secondary" id="copyBtn">�� 銴�ˊ蝝���</button>
-<div class="grid2">
-<button type="button" class="secondary" id="exportBtn">�𠒣 �臬枂�嗘遢</button>
-<button type="button" class="secondary" id="importBtn">�� �臬��嗘遢</button>
-</div>
-<input type="file" id="backupFile" accept="application/json,.json" hidden>
-<button type="button" class="danger" id="clearBtn">��儭� 皜�膄蝝���</button>
-</div>
-</div>
+  <div id="savedPanel" hidden>
+    <div class="info-row"><span>樓層</span><span id="sFloor"></span></div>
+    <div class="info-row"><span>區域／車位</span><span id="sZone"></span></div>
+    <div class="info-row"><span>備註</span><span id="sNote"></span></div>
+    <div class="info-row"><span>路線地標</span><span id="sSteps"></span></div>
+    <div class="info-row"><span>時間</span><span id="sTime"></span></div>
+    <div class="info-row"><span>GPS 誤差</span><span id="sAccuracy"></span></div>
+    <img id="savedPhoto" alt="停車照片">
+    <div class="btn-stack">
+      <button type="button" class="secondary" id="adjustBtn">✏️ 微調車位位置</button>
+      <button type="button" class="secondary" id="mapsBtn">🗺️ Google Maps</button>
+      <button type="button" class="secondary" id="copyBtn">📋 複製紀錄</button>
+      <button type="button" class="danger" id="clearBtn">🗑️ 清除紀錄</button>
+    </div>
+  </div>
 </section>
 
 <footer>
-蝝����摮睃銁�桀��讛汗�其葉��<br>
-�唬��𡏭��� GPS �航�憭望�嚗諹��峕�閮㗛�頠𠹺�蝺刻���𧑐璅躰��抒���
+  紀錄儲存在目前瀏覽器中。<br>
+  地下停車場 GPS 可能失效，請同時記錄車位編號、地標與照片。
 </footer>
 
 <script>
-// ===== 頛匧��閧𧞄 =====
+// ===== 載入動畫 =====
 (function hideLoader() {
-var loader = document.getElementById("loader");
-if (!loader) return;
-function doHide() {
-loader.classList.add("hide");
-setTimeout(function () {
-if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
-}, 600);
-}
-// �箏�憿舐內 3.5 蝘𡜐���𧋦頛匧�摰峕�敺𣬚� 0.8 蝘鍦停�航��鞉𡟺�梯�嚗�
-setTimeout(doHide, 3500);
+  var loader = document.getElementById("loader");
+  if (!loader) return;
+  function doHide() {
+    loader.classList.add("hide");
+    setTimeout(function () {
+      if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
+    }, 600);
+  }
+  // 固定顯示 3.5 秒（原本載入完成後約 0.8 秒就可能提早隱藏）
+  setTimeout(doHide, 3500);
 })();
 
-// ===== �惩�獢屸𢒰�瑕� =====
+// ===== 加到桌面捷徑 =====
 (function () {
-var deferredPrompt = null;
-var installBtn = document.getElementById("installBtn");
-var modal = document.getElementById("installModal");
-var modalTitle = document.getElementById("modalTitle");
-var modalContent = document.getElementById("modalContent");
-var closeModal = document.getElementById("closeModal");
+  var deferredPrompt = null;
+  var installBtn = document.getElementById("installBtn");
+  var modal = document.getElementById("installModal");
+  var modalTitle = document.getElementById("modalTitle");
+  var modalContent = document.getElementById("modalContent");
+  var closeModal = document.getElementById("closeModal");
 
-window.addEventListener("beforeinstallprompt", function (e) {
-e.preventDefault();
-deferredPrompt = e;
-installBtn.classList.remove("hidden");
-});
-window.addEventListener("appinstalled", function () {
-deferredPrompt = null;
-installBtn.classList.add("hidden");
-});
+  window.addEventListener("beforeinstallprompt", function (e) {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.classList.remove("hidden");
+  });
+  window.addEventListener("appinstalled", function () {
+    deferredPrompt = null;
+    installBtn.classList.add("hidden");
+  });
 
-function isIOS() {
-return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-(navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-}
-function isAndroid() { return /Android/i.test(navigator.userAgent); }
-function isStandalone() {
-return window.matchMedia("(display-mode: standalone)").matches ||
-window.navigator.standalone === true;
-}
-if (isStandalone()) installBtn.classList.add("hidden");
+  function isIOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  }
+  function isAndroid() { return /Android/i.test(navigator.userAgent); }
+  function isStandalone() {
+    return window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone === true;
+  }
+  if (isStandalone()) installBtn.classList.add("hidden");
 
-installBtn.addEventListener("click", function () {
-if (deferredPrompt) {
-deferredPrompt.prompt();
-deferredPrompt.userChoice.then(function (choice) {
-if (choice.outcome === "accepted") installBtn.classList.add("hidden");
-deferredPrompt = null;
-});
-return;
-}
-if (isIOS()) {
-modalTitle.textContent = "�惩� iPhone / iPad 獢屸𢒰";
-modalContent.innerHTML =
-'<p>隢衤��找誑銝𧢲郊撽��雿頣�</p><ol>' +
-'<li>暺墧�摨閖��� <b>��澈�厰�</b>嚗�䲮獢���睲�蝞剝�嚗�</li>' +
-'<li>�睲�皛穃�嚗峕𪄳�唬蒂暺鮋� <b>����乩蜓�恍𢒰��</b></li>' +
-'<li>蝣箄��滨迂敺屸�����乓��</li></ol>' +
-'<p style="color:#8affd8;font-size:13px">摰峕�敺�停�賢� App 銝�璅��獢屸𢒰�湔𦻖�见�嚗�</p>';
-modal.classList.add("show");
-return;
-}
-if (isAndroid()) {
-modalTitle.textContent = "�惩� Android 獢屸𢒰";
-modalContent.innerHTML =
-'<p>隢衤��找誑銝𧢲郊撽��雿頣�</p><ol>' +
-'<li>暺墧��讛汗�典𢰧銝𡃏��� <b>�� �詨鱓</b></li>' +
-'<li>�豢� <b>����乩蜓�恍𢒰��</b> �� <b>���鋆脲��函�撘譌��</b></li>' +
-'<li>蝣箄�敺�朖�臬���</li></ol>';
-modal.classList.add("show");
-return;
-}
-modalTitle.textContent = "閮剔��瑕�";
-modalContent.innerHTML =
-'<p>�桀��讛汗�其��舀螱銝��萄�鋆腈��</p>' +
-'<p>隢衤蝙�冽�璈毺� Chrome �� Safari嚗䔶蒂敺䂿�讛汗�券��桐葉�豢�����乩蜓�恍𢒰�齿�����唬蜓�恍𢒰�溻��</p>';
-modal.classList.add("show");
-});
+  installBtn.addEventListener("click", function () {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function (choice) {
+        if (choice.outcome === "accepted") installBtn.classList.add("hidden");
+        deferredPrompt = null;
+      });
+      return;
+    }
+    if (isIOS()) {
+      modalTitle.textContent = "加入 iPhone / iPad 桌面";
+      modalContent.innerHTML =
+        '<p>請依照以下步驟操作：</p><ol>' +
+        '<li>點擊底部的 <b>分享按鈕</b>（方框＋向上箭頭）</li>' +
+        '<li>向下滑動，找到並點選 <b>「加入主畫面」</b></li>' +
+        '<li>確認名稱後點「加入」</li></ol>' +
+        '<p style="color:#8affd8;font-size:13px">完成後就能像 App 一樣從桌面直接開啟！</p>';
+      modal.classList.add("show");
+      return;
+    }
+    if (isAndroid()) {
+      modalTitle.textContent = "加入 Android 桌面";
+      modalContent.innerHTML =
+        '<p>請依照以下步驟操作：</p><ol>' +
+        '<li>點擊瀏覽器右上角的 <b>⋮ 選單</b></li>' +
+        '<li>選擇 <b>「加入主畫面」</b> 或 <b>「安裝應用程式」</b></li>' +
+        '<li>確認後即可完成</li></ol>';
+      modal.classList.add("show");
+      return;
+    }
+    modalTitle.textContent = "設為捷徑";
+    modalContent.innerHTML =
+      '<p>目前瀏覽器不支援一鍵安裝。</p>' +
+      '<p>請使用手機的 Chrome 或 Safari，並從瀏覽器選單中選擇「加入主畫面」或「加到主畫面」。</p>';
+    modal.classList.add("show");
+  });
 
-closeModal.addEventListener("click", function () { modal.classList.remove("show"); });
-modal.addEventListener("click", function (e) { if (e.target === modal) modal.classList.remove("show"); });
+  closeModal.addEventListener("click", function () { modal.classList.remove("show"); });
+  modal.addEventListener("click", function (e) { if (e.target === modal) modal.classList.remove("show"); });
 })();
 
 window.addEventListener("error", function (e) {
-var el = document.getElementById("status");
-if (el) {
-el.textContent = "蝔见��航炊嚗�" + e.message;
-el.className = "error show";
-}
+  var el = document.getElementById("status");
+  if (el) {
+    el.textContent = "程式錯誤：" + e.message;
+    el.className = "error show";
+  }
 });
 </script>
 <script>
 (function () {
-"use strict";
-
-var KEY = "parking_v22";
-var OLD_KEYS = ["parking_v21", "parking_v3", "parking_loc"];
-var OUTDOOR = "�嗅�";
-var floor = OUTDOOR, saved = null, current = null, heading = null;
-var watchId = null, photoData = "", busy = false;
-var steps = [], mode = "gps", navIdx = 0;
-var lastFix = 0, lastHeadingAt = 0, sensorTimer = null, ticker = null;
-var usePF = false;\nvar rawFix = null, jumpCandidate = null, jumpCandidateCount = 0;
-
-function $(id) { return document.getElementById(id); } function say(m, t) { var el = $("status");
-el.textContent = m;
-el.className = (t || "") + " show";
-}
-function sayNav(m, t) { $("navStatus").className = "small " + (t || ""); }
-function sayRaw(el, m, t) { $(el).className = "small " + (t || ""); }
-
-// ---------- 璅枏惜�厰�嚗��憭𡝗𦆮���漤𢒰嚗�----------
-var FLOORS = [OUTDOOR, "B5", "B4", "B3", "B2", "B1", "1F", "2F", "3F", "4F", "5F", "6F", "7F", "8F", "�嗡�"];
-var floorScroll = $("floorScroll");
-FLOORS.forEach(function (f) {
-var btn = document.createElement("button");
-btn.type = "button";
-btn.className = "floor-btn" + (f === OUTDOOR ? " active" : "");
-btn.textContent = f === OUTDOOR ? "��儭� �嗅�" : f;
-btn.dataset.floor = f;
-btn.addEventListener("click", function () {
-document.querySelectorAll(".floor-btn").forEach(function (b) { b.classList.remove("active"); });
-btn.classList.add("active");
-floor = f;
-say(f === OUTDOOR ? "�嗅�嚗帋蝙�典㨃�暹垈瞈暹郭��" : "�桀��豢�璅枏惜嚗�" + f + "嚗�蝙�函�摮鞉蕪瘜ｇ�", "good");
-});
-floorScroll.appendChild(btn);
-});
-
-function chooseFloor(v) {
-floor = v;
-document.querySelectorAll(".floor-btn").forEach(function (b) {
-b.classList.toggle("active", b.dataset.floor === v);
-});
-}
-
-var areas = [["", "������詨‵嚗�"]];
-"ABCDEFGHIJKL".split("").forEach(function (c) { areas.push([c, c + " ��"]); });
-areas.forEach(function (it) {
-var o = document.createElement("option");
-o.value = it[0]; o.textContent = it[1];
-$("areaSel").appendChild(o); }); var spots = [["", "頠𠹺��毺Ⅳ"]]; for (var n = 1; n <= 200; n++) spots.push([String(n), n + " ��"]); spots.forEach(function (it) { var o = document.createElement("option"); o.value = it[0]; o.textContent = it[1]; $("spotSel").appendChild(o);
-});
-
-function zoneText() {
-var a = $("areaSel").value, n = $("spotSel").value, c = $("zone").value.trim();
-return [a ? a + " ��" : "", n ? n + " ��" : "", c].filter(Boolean).join(" ");
-}
-
-function validPoint(d) {
-return d && typeof d.lat === "number" && typeof d.lng === "number" &&
-Number.isFinite(d.lat) && Number.isFinite(d.lng) &&
-Math.abs(d.lat) <= 90 && Math.abs(d.lng) <= 180;
-}
-function underground(f) { return /^B/.test(f || ""); }
-function outdoor(f) { return f === OUTDOOR; }
-
-// ---------- GPS �臭縑摨� ----------
-function trust(acc, ageSec) {
-if (!Number.isFinite(acc)) return { t: "�芰䰻", c: "warn" };
-if (ageSec > 30) return { t: "�擧�", c: "error" };
-if (acc <= 15) return { t: "擃�", c: "good" };
-if (acc <= 50) return { t: "銝�", c: "warn" };
-return { t: "雿�", c: "error" };
-}
-function refreshGpsInfo() {
-if (!current || !lastFix) {
-$("gAge").textContent = "--"; $("gTrust").textContent = "--"; return; } var age = Math.round((Date.now() - lastFix) / 1000); var tr = trust(current.accuracy, age); 
-
-$("gAcc").textContent = "簣" + Math.round(current.accuracy) + " m";
-$("gAge").textContent = age + " 蝘�";
-$("gTrust").textContent = tr.t;
-$("gTrust").className = tr.c;
-}
-function gpsReliable() {
-return current && lastFix && Number.isFinite(current.accuracy) &&
-current.accuracy <= 50 && (Date.now() - lastFix) < 30000;
-}
-
-// ---------- �唳��箇� ----------
-$("stepToggle").addEventListener("click", function () { var open = $("stepBody").classList.toggle("open");
-$("stepToggleText").textContent = open ? "�嗅� ��" : "撅閖� ��";
-});
-
-function renderSteps() {
-var ol = $("stepList"); ol.innerHTML = ""; steps.forEach(function (text, i) { var li = document.createElement("li"); var sp = document.createElement("span"); sp.textContent = (i + 1) + ". " + text; var del = document.createElement("button"); del.type = "button"; del.textContent = "�芷膄"; del.addEventListener("click", function () { steps.splice(i, 1); renderSteps(); }); li.appendChild(sp); li.appendChild(del); ol.appendChild(li); }); } function addStep() { var v = 
-
-$("stepInput").value.trim();
-if (!v) return;
-if (steps.length >= 20) { say("��憭� 20 �见𧑐璅踺��", "error"); return; }
-steps.push(v);
-$("stepInput").value = ""; renderSteps(); } 
-
-$("addStepBtn").addEventListener("click", addStep);
-$("stepInput").addEventListener("keydown", function (e) {
-if (e.key === "Enter") { e.preventDefault(); addStep(); }
-});
-
-function routeBack() { return saved && saved.steps ? saved.steps.slice().reverse() : []; }
-function showRoute() {
-var list = routeBack();
-if (!list.length) {
-$("routeCount").textContent = ""; $("routeStep").textContent = "瘝埝�頝舐��唳����靘脲�撅扎���雿滨楊�笔��抒�撠贝���";
-$("prevStep").disabled = $("nextStep").disabled = true;
-return;
-}
-navIdx = Math.max(0, Math.min(navIdx, list.length));
-$("prevStep").disabled = navIdx === 0; if (navIdx >= list.length) { $("routeCount").textContent = "頝舐�摰峕�";
-$("routeStep").textContent = "�㕑府撌脣��� " + (saved.floor || "") + " " + (saved.zone || "") + "嚗諹��詨�頠𠹺�蝺刻��𣇉�����"; $("nextStep").disabled = true;
-} else {
-$("routeCount").textContent = "敺𧼮枂��粥�噼�雿㵪�蝚� " + (navIdx + 1) + " / " + list.length + " 甇�"; $("routeStep").textContent = "敺𠺶��" + (navIdx === 0 ? "�箏藁" : list[navIdx - 1]) + "�𨧀� �滚���" + list[navIdx] + "��";
-$("nextStep").disabled = false; } } $("prevStep").addEventListener("click", function () { navIdx--; showRoute(); });
-$("nextStep").addEventListener("click", function () { navIdx++; showRoute(); });
-
-// ---------- 璅∪� ----------
-function setMode(m) {
-mode = m;
-$("modeRoute").classList.toggle("active", m === "route");
-$("routeBox").hidden = m !== "route";
-if (m === "route") showRoute(); else updateNavigation();
-if (m === "gps" && map) setTimeout(function () { map.invalidateSize(); }, 60);
-}
-$("modeRoute").addEventListener("click", function () { setMode("route"); });
-
-// ---------- �脣� / 頛匧� ----------
-function persist(d) {
-try { localStorage.setItem(KEY, JSON.stringify(d)); saved = d; return true; }
-catch (e) { say("�脣�憭望�嚗�虾�賣糓�讛汗�函征�㮖�頞喋��", "error"); return false; }
-}
-
-function render(d) {
-saved = d;
-$("savedPanel").hidden = false;
-$("sZone").textContent = d.zone || "�芸‵撖�";
-$("sSteps").textContent = d.steps && d.steps.length ? d.steps.length + " ��" : "��";
-$("sAccuracy").textContent = d.adjusted ? "�见�敺株矽" : Number.isFinite(d.accuracy) ? "蝝� " + Math.round(d.accuracy) + " �砍偕" : "�芰䰻";
-$("savedPhoto").src = d.photo || "";
-$("savedPhoto").style.display = d.photo ? "block" : "none";
-var parts = ("zoneArea" in d) || ("zoneSpot" in d) || ("zoneCustom" in d);
-$("spotSel").value = parts ? (d.zoneSpot || "") : "";
-$("note").value = d.note || "";
-steps = (d.steps || []).slice(); renderSteps();
-chooseFloor(d.floor || OUTDOOR);
-updateMap(true);
-}
-
-function loadSaved() {
-try {
-var raw = localStorage.getItem(KEY);
-for (var i = 0; !raw && i < OLD_KEYS.length; i++) raw = localStorage.getItem(OLD_KEYS[i]);
-if (!raw) return;
-var d = JSON.parse(raw);
-if (!d || typeof d !== "object") return;
-d.floor = String(d.floor || OUTDOOR);
-d.zone = String(d.zone || "");
-d.note = String(d.note || "");
-d.photo = typeof d.photo === "string" ? d.photo : "";
-d.steps = Array.isArray(d.steps) ? d.steps.map(String) : [];
-if (!validPoint(d)) { d.lat = null; d.lng = null; }
-render(d);
-say("撌脰��乩�甈∪�頠羓�����", "good");
-} catch (e) { say("�⊥�霈��𤥁�蝝�����臭誑�齿鰵閮㗛���"); }
-}
-
-$("photo").addEventListener("change", function (ev) { var f = ev.target.files && ev.target.files[0]; if (!f) return; if (!f.type || f.type.indexOf("image/") !== 0) { say("隢钅��������𣇉���", "error"); return; } if (f.size > 12 * 1024 * 1024) { say("�抒�憭芸之嚗諹��豢� 12 MB 隞乩��������", "error"); return; } var r = new FileReader(); r.onload = function () { photoData = r.result; 
-
-$("photoPreview").src = photoData;
-$("photoPreview").style.display = "block";
-say("�抒��鞱汗�𣂼���", "good");
-};
-r.onerror = function () { say("�抒�霈��硋仃�𨰜��", "error"); };
-r.readAsDataURL(f);
-});
-
-function saveRecord(pos) {
-var now = Date.now();
-var d = {
-lat: pos ? pos.coords.latitude : (saved ? saved.lat : null),
-lng: pos ? pos.coords.longitude : (saved ? saved.lng : null),
-accuracy: pos ? pos.coords.accuracy : (saved ? saved.accuracy : null),
-floor: floor,
-zone: zoneText(),
-zoneArea: $("areaSel").value, zoneSpot: $("spotSel").value,
-zoneCustom: $("zone").value.trim(), note: $("note").value.trim(),
-steps: steps.slice(),
-timestamp: now,
-time: new Date(now).toLocaleString("zh-TW"),
-photo: photoData || (saved && saved.photo ? saved.photo : "")
-};
-if (pos && !validPoint(d)) { say("�硋��� GPS 摨扳��⊥���", "error"); return; }
-if (!validPoint(d)) { d.lat = null; d.lng = null; d.accuracy = null; }
-if (!persist(d)) return;
-render(d);
-
-if (validPoint(d)) {
-current = { lat: d.lat, lng: d.lng, accuracy: d.accuracy };
-lastFix = now; refreshGpsInfo();
-if (underground(d.floor)) {
-say("撌脣�摮塩��𧑐銝𧢲�撅� GPS 銝滚虾�𩤃�撱箄降鋆靝��唳�頝舐��������", "warn");
-} else if (d.accuracy > 50) {
-say("撌脣�摮矋�雿� GPS 隤文榆頛�之嚗諹�蝣箄�頠𠹺��抒���", "error");
-} else {
-say("�𡏭�蝝���歇�脣�嚗�", "good");
-}
-} else {
-say("撌脣�摮䀹�撅扎����麄��𧑐璅坔��抒�嚗䔶�瘝埝� GPS 摨扳���", "good");
-}
-}
-
-// ---------- �𨀣迫�菜葫 ----------
-var motion = { got: false, mag: [] };
-function motionHandler(e) {
-var a = e.accelerationIncludingGravity;
-if (!a || a.x == null || a.y == null || a.z == null) return;
-var now = Date.now();
-motion.got = true;
-motion.mag.push([now, Math.sqrt(a.x * a.x + a.y * a.y + a.z * a.z)]);
-motion.mag = motion.mag.filter(function (r) { return r[0] > now - 1500; });
-}
-function isMoving() {
-if (!motion.got || motion.mag.length < 5) return null;
-var vals = motion.mag.map(function (r) { return r[1]; });
-var avg = vals.reduce(function (x, y) { return x + y; }, 0) / vals.length;
-var sd = Math.sqrt(vals.reduce(function (x, y) { return x + (y - avg) * (y - avg); }, 0) / vals.length);
-return sd > 0.8;
-}
-function startMotion(cb) {
-motion = { got: false, mag: [] };
-var D = window.DeviceMotionEvent;
-function bind() {
-window.removeEventListener("devicemotion", motionHandler);
-window.addEventListener("devicemotion", motionHandler);
-}
-if (D && typeof D.requestPermission === "function") {
-D.requestPermission().then(function (r) { if (r === "granted") bind(); cb(); })
-.catch(function () { cb(); });
-} else {
-if (D) bind();
-cb();
-}
-}
-function stopMotion() { window.removeEventListener("devicemotion", motionHandler); }
-
-function sampleBest(onTick, done) {
-var best = null, start = Date.now(), id = null, finished = false, lastErr = null, tk = null, samples = [];
-function finish() {
-if (finished) return;
-finished = true;
-if (id !== null) navigator.geolocation.clearWatch(id);
-clearInterval(tk);
-done(best, lastErr, samples);
-}
-tk = setInterval(function () {
-var sec = Math.round((Date.now() - start) / 1000);
-onTick(sec, best);
-var acc = best ? best.coords.accuracy : Infinity;
-if ((acc <= 5 && sec >= 3) || (sec >= 10 && acc <= 15) || sec >= 20) finish();
-}, 500);
-id = navigator.geolocation.watchPosition(
-function (p) {
-samples.push({ coords: p.coords, mv: isMoving() === true, t: p.timestamp || Date.now() });
-if (!best || p.coords.accuracy < best.coords.accuracy) best = p;
-},
-function (e) { lastErr = e; if (e.code === 1) finish(); },
-{ enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
-);
-}
-
-$("saveBtn").addEventListener("click", function () { if (busy) return; if (!navigator.geolocation || !window.isSecureContext) { saveRecord(null); say("撌脣�摮䀹��閧�����迨�啣��⊥�雿輻鍂 GPS嚗諹�靘嘥𧑐璅躰��抒��曇���", "good"); return; } busy = true; $("saveBtn").disabled = true; say("甇�銁�硋� GPS�色�西�蝡嗵帘銝滩�韏啣�");
-startMotion(function () {
-sampleBest(
-function (sec, best) {
-var moving = isMoving() === true;
-var m = "�𡝗見摰帋�銝� " + sec + " 蝘�" + (best ? "嚚𦦵𤌍�齿�雿� 簣" + Math.round(best.coords.accuracy) + " m" : "嚚𦦵�敺���麨��");
-if (moving) m += "嚚𡏭�蝡嗵帘銝滩�韏啣�";
-else if (sec >= 10 && best && best.coords.accuracy > 15) m += "嚚𦦵移摨虫�頞喉�撱園𩑈�𡝗見銝凌��";
-say(m, moving ? "warn" : "");
-},
-function (best, err, samples) {
-stopMotion();
-busy = false; $("saveBtn").disabled = false; if (best) { try { // �嗅�嚗𡁜�甈𠰴像����嗡�璅枏惜嚗𡁶�摮鞉蕪瘜� var avg = outdoor(floor) ? averagePos(samples, best) : pfAverage(samples, best); saveRecord(avg); var extra = "嚗�" + avg.coords.n + " 蝑��璅��" + avg.coords.method + "嚗諹炊撌桃� 簣" + Math.round(avg.coords.accuracy) + " m嚗�"; if (avg.coords.accuracy > 15) { extra += " GPS 隤文榆�誩之嚗諹�隞亦����頠𠹺�蝺刻��箸���"; if ($("status").className.indexOf("error") === -1) $("status").className = "warn show"; } $("status").textContent += extra;
-} catch (e) { say("�脣���䔄�罸𥲤隤歹�" + e.message, "error"); }
-} else {
-saveRecord(null);
-var m = err && err.code === 1 ? "摰帋�甈𢠃��剜�蝯�" : "�⊥��硋� GPS嚗��暹�嚗�";
-say(m + "嚗�歇靽萘��见��𡏭�蝝�����", "error");
-}
-}
-);
-});
-});
-
-// ---------- 閮�� ----------
-function distance(a, b) {
-var r = Math.PI / 180, dLat = (b.lat - a.lat) * r, dLng = (b.lng - a.lng) * r;
-var h = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(dLng / 2) ** 2;
-return 6371000 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
-}
-function bearing(a, b) {
-var r = Math.PI / 180, l1 = a.lat * r, l2 = b.lat * r, dLng = (b.lng - a.lng) * r;
-var y = Math.sin(dLng) * Math.cos(l2);
-var x = Math.cos(l1) * Math.sin(l2) - Math.sin(l1) * Math.cos(l2) * Math.cos(dLng);
-return (Math.atan2(y, x) / r + 360) % 360;
-}
-
-// ===== �嗅�嚗𡁜�甈𠰴像���閮㗛�嚗㚁��∠��潭蕪瘜ｇ�撠舘⏛嚗�=====
-function averagePos(samples, best) {
-var still = samples.filter(function (p) { return !p.mv; });
-if (still.length >= 3) samples = still;
-var bestAcc = Math.max(best.coords.accuracy, 1);
-var cutoff = Math.max(bestAcc * 3, 10);
-var kept = samples.filter(function (p) { return p.coords.accuracy <= cutoff; });
-if (!kept.length) kept = [best];
-
-function mean(list) {
-var sw = 0, la = 0, ln = 0;
-list.forEach(function (p) {
-var w = 1 / Math.pow(Math.max(p.coords.accuracy, 1), 2);
-sw += w; la += w * p.coords.latitude; ln += w * p.coords.longitude;
-});
-return { lat: la / sw, lng: ln / sw, sw: sw };
-}
-
-var m = mean(kept);
-var maxOff = Math.max(15, bestAcc * 2);
-var inliers = kept.filter(function (p) {
-return distance(m, { lat: p.coords.latitude, lng: p.coords.longitude }) <= maxOff;
-});
-if (inliers.length >= 1 && inliers.length < kept.length) { kept = inliers; m = mean(kept); }
-
-var acc = Math.max(bestAcc * 0.8, 1 / Math.sqrt(m.sw));
-return { coords: { latitude: m.lat, longitude: m.lng, accuracy: acc, n: kept.length, method: "�䭾�撟喳�" } };
-}
-
-var kf = null;
-function filterFix(p) {
-var lat = p.coords.latitude, lng = p.coords.longitude;
-var acc = Math.max(p.coords.accuracy, 1), t = p.timestamp || Date.now();
-function out() { return { lat: kf.lat, lng: kf.lng, accuracy: Math.max(Math.sqrt(kf.v), acc * 0.5) }; }
-
-if (!kf) { kf = { lat: lat, lng: lng, v: acc * acc, t: t, jump: 0 }; return out(); }
-
-var dt = Math.max((t - kf.t) / 1000, 0);
-kf.v += dt * 9;
-var d = distance({ lat: kf.lat, lng: kf.lng }, { lat: lat, lng: lng });
-var maxMove = Math.max(dt * 5, 5) + Math.sqrt(kf.v) + acc;
-
-if (d > maxMove && kf.jump < 3) { kf.jump++; kf.t = t; return out(); }
-if (d > maxMove) { kf = { lat: lat, lng: lng, v: acc * acc, t: t, jump: 0 }; return out(); }
-
-var K = kf.v / (kf.v + acc * acc);
-if (d < Math.max(2, acc * 0.25)) K *= 0.3;
-kf.lat += K * (lat - kf.lat);
-kf.lng += K * (lng - kf.lng);
-kf.v = (1 - K) * kf.v;
-kf.t = t; kf.jump = 0;
-return out();
-}
-
-// ===== 摰文�嚗誩𧑐銝页�蝎鍦�瞈暹郭 =====
-// �� N �卝��虾�賭�蝵柴�滢誨銵其�蝣箏��扼���甈⊥鰵摰帋�嚗�
-// 1) �鞉葫嚗𡁶�摮鞾辶璈蠘粥銝�撠𤩺郊 2) �䭾�嚗朞��亥��𤩺葫�潭��滩�擃�
-// 嚗��皜祆芋�见鉄�屸𣪧蝢扎�齿�����嗥䔄��之頝喲�銝齿��𦠜㟲�条�摮鞉�韏堆�蝎曉漲頞𠰴榆��蔣�輯�撠𧶏�
-// 3) �齿繧璅��瘛䀹掠雿擧��滨�摮琜�銴�ˊ擃䀹��滨�摮�
-var PF_N = 200;
-var pf = null;
-
-function gauss() {
-var u = 1 - Math.random(), v = Math.random();
-return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
-}
-function pfNew(lat, lng, acc, t) {
-var s = Math.max(acc, 3) * 0.7, ps = [];
-for (var i = 0; i < PF_N; i++) ps.push({ x: gauss() * s, y: gauss() * s, w: 1 / PF_N });
-return { lat0: lat, lng0: lng, ky: 111320, kx: 111320 * Math.cos(lat * Math.PI / 180), ps: ps, t: t };
-}
-function pfEst(S) {
-var mx = 0, my = 0, vx = 0, vy = 0;
-S.ps.forEach(function (p) { mx += p.w * p.x; my += p.w * p.y; });
-S.ps.forEach(function (p) { vx += p.w * (p.x - mx) * (p.x - mx); vy += p.w * (p.y - my) * (p.y - my); });
-return { lat: S.lat0 + my / S.ky, lng: S.lng0 + mx / S.kx, sd: Math.sqrt(vx + vy) };
-}
-function pfUpdate(S, lat, lng, acc, t, moveStd) {
-var ps = S.ps, i;
-S.t = t;
-// �鞉葫
-for (i = 0; i < ps.length; i++) { ps[i].x += gauss() * moveStd; ps[i].y += gauss() * moveStd; }
-// �䭾�
-var zx = (lng - S.lng0) * S.kx, zy = (lat - S.lat0) * S.ky;
-var sg = Math.max(acc, 3), big = 4 * sg + 30, eps = 0.1, sum = 0;
-for (i = 0; i < ps.length; i++) {
-var dx = ps[i].x - zx, dy = ps[i].y - zy, d2 = dx * dx + dy * dy;
-var like = (1 - eps) * Math.exp(-d2 / (2 * sg * sg)) / (sg * sg) +
-eps * Math.exp(-d2 / (2 * big * big)) / (big * big);
-ps[i].w *= like; sum += ps[i].w;
-}
-if (!(sum > 1e-300)) { // �券�蝎鍦��賭����嚗帋誑�蹱活�𤩺葫�齿鰵�垍�摮�
-var fresh = pfNew(lat, lng, acc, t);
-S.lat0 = fresh.lat0; S.lng0 = fresh.lng0; S.kx = fresh.kx; S.ky = fresh.ky; S.ps = fresh.ps;
-return;
-}
-var ess = 0;
-for (i = 0; i < ps.length; i++) { ps[i].w /= sum; ess += ps[i].w * ps[i].w; }
-ess = 1 / ess;
-// �齿繧璅���㗇�蝎鍦��詨云撠烐�嚗�
-if (ess < ps.length / 2) {
-var out = [], step = 1 / ps.length, u = Math.random() * step, c = ps[0].w, k = 0;
-for (i = 0; i < ps.length; i++) {
-var target = u + i * step;
-while (target > c && k < ps.length - 1) { k++; c += ps[k].w; }
-out.push({ x: ps[k].x + gauss() * 0.3, y: ps[k].y + gauss() * 0.3, w: 1 / ps.length });
-}
-// 瘜典�蝝� 5% �啁�摮𣂼��祆活�𤩺葫���嚗朞𥅾韏琿��賊𥲤嚗�蘨閬��敺𣬚�摰帋�敶潭迨銝��湛�撠梯�鋡恍�嗘�蝎鍦��匧�
-var inject = Math.max(2, Math.round(ps.length * 0.05));
-for (i = 0; i < inject; i++) {
-out[out.length - 1 - i] = { x: zx + gauss() * sg, y: zy + gauss() * sg, w: 1 / ps.length };
-}
-S.ps = out;
-}
-}
-
-// 閮㗛�頠𠹺��剁�隞交�雿喳�璅��銝剖�撱箇�蝎鍦�嚗䔶�摨誯今�交��匧�璅���𨀣迫嚗𣬚宏�閖�閮𠰴�撠𧶏�
-function pfAverage(samples, best) {
-var still = samples.filter(function (p) { return !p.mv; });
-if (still.length >= 3) samples = still;
-var bestAcc = Math.max(best.coords.accuracy, 1);
-var list = samples.length ? samples : [{ coords: best.coords, t: Date.now() }];
-function med(arr) {
-var a = arr.slice().sort(function (x, y) { return x - y; });
-return a[Math.floor(a.length / 2)];
-}
-var mLat = med(list.map(function (p) { return p.coords.latitude; }));
-var mLng = med(list.map(function (p) { return p.coords.longitude; }));
-var mAcc = med(list.map(function (p) { return p.coords.accuracy; }));
-// 韏琿��其葉雿齿彍嚗���堒��賊𣪧蝢日�敶梢𣳽嚗㚁��嘥�����亙之�潔��祈炊撌�
-var S = pfNew(mLat, mLng, Math.max(mAcc, bestAcc) * 1.5, Date.now());
-list.forEach(function (p) {
-pfUpdate(S, p.coords.latitude, p.coords.longitude, p.coords.accuracy, p.t, 0.2);
-});
-var e = pfEst(S);
-return { coords: { latitude: e.lat, longitude: e.lng, accuracy: Math.max(e.sd, bestAcc * 0.8), n: list.length, method: "蝎鍦�瞈暹郭" } };
-}
-
-// 撠舘⏛�剁�瘥𤩺活�啣�雿齿凒�啁�摮琜��𧼮�隡啗�雿滨蔭
-function filterPF(p) {
-var lat = p.coords.latitude, lng = p.coords.longitude;
-var acc = Math.max(p.coords.accuracy, 1), t = p.timestamp || Date.now();
-if (!pf) pf = pfNew(lat, lng, acc, t);
-var dt = Math.min(Math.max((t - pf.t) / 1000, 0.2), 5);
-pfUpdate(pf, lat, lng, acc, t, 1.2 * dt); // 甇亥��笔漲蝝� 1.2 m/s
-var e = pfEst(pf);
-return { lat: e.lat, lng: e.lng, accuracy: Math.max(e.sd, acc * 0.5) };
-}
-
-// ---------- GPS 頝喲��脰風 ----------
-function acceptRawFix(p) {
-var c = p.coords, now = p.timestamp || Date.now();
-if (!Number.isFinite(c.latitude) || !Number.isFinite(c.longitude) ||
-!Number.isFinite(c.accuracy) || c.accuracy < 0 ||
-Math.abs(c.latitude) > 90 || Math.abs(c.longitude) > 180) return false;
-if (!rawFix) {
-rawFix = { lat: c.latitude, lng: c.longitude, t: now, acc: c.accuracy };
-return true;
-}
-var dt = Math.max(0.2, (now - rawFix.t) / 1000);
-var d = distance(rawFix, { lat: c.latitude, lng: c.longitude });
-var limit = Math.max(35, dt * 8 + rawFix.acc + c.accuracy);
-if (d > limit) {
-var cand = { lat: c.latitude, lng: c.longitude, t: now, acc: c.accuracy };
-if (jumpCandidate && distance(jumpCandidate, cand) <= Math.max(25, c.accuracy)) {
-jumpCandidateCount++;
-} else {
-jumpCandidate = cand;
-jumpCandidateCount = 1;
-}
-if (jumpCandidateCount < 3) {
-sayNav("撌脣蕭�乩�甈∩������ GPS 頝喲�嚗𣬚�敺�帘摰𡁜�雿𨧀�色��", "warn");
-return false;
-}
-// 銝㗇活���摰帋��質氜�冽鰵雿滨蔭���嚗峕���迂�齿鰵摰帋�嚗屸��齿偶銋�㨃�刻�暺�
-}
-rawFix = { lat: c.latitude, lng: c.longitude, t: now, acc: c.accuracy };
-jumpCandidate = null;
-jumpCandidateCount = 0;
-return true;
-}
-
-// ---------- �啣� ----------
-var map = null, carMk = null, meMk = null, meCircle = null, line = null;
-var adjusting = false, fitted = false, follow = true, nearZoomed = false;
-var anim = null, lastMe = null, layerIdx = 0, layerObjs = [];
-var plan = null, planOv = null, planMk = null;
-
-// �硋惜嚗𡁜��笔�蝤𡁏�擃睃� native 蝝𡄯��齿𦆮憭批蘨���蝟𠺪�銝齿��箇𣶹�游�蝝啁�嚗�
-var LAYERS = [
-{ name: "�㚰儭� 銵烾�", url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", native: 19, attr: "穢 OpenStreetMap" },
-{ name: "�篅�剏 �𧢲葫��", url: "https://wmts.nlsc.gov.tw/wmts/EMAP/default/GoogleMapsCompatible/{z}/{y}/{x}", native: 18, attr: "穢 �扳錇�典���葫蝜芯葉敹�" },
-{ name: "�𤌴儭� 銵𥟇�", url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", native: 18, attr: "Esri" },
-{ name: "�𤌴儭� �𧢲葫敶勗�", url: "https://wmts.nlsc.gov.tw/wmts/PHOTO2/default/GoogleMapsCompatible/{z}/{y}/{x}", native: 18, attr: "穢 �扳錇�典���葫蝜芯葉敹�" }
- ];
-
-function setLayer(i) {
-if (!map) return;
-i = ((i % LAYERS.length) + LAYERS.length) % LAYERS.length;
-if (layerObjs[layerIdx] && map.hasLayer(layerObjs[layerIdx])) map.removeLayer(layerObjs[layerIdx]);
-var def = LAYERS[i];
-if (!layerObjs[i]) {
-var lyr = L.tileLayer(def.url, { maxZoom: 21, maxNativeZoom: def.native, attribution: def.attr });
-var ok = 0, bad = 0;
-lyr.on("tileload", function () { ok++; });
-lyr.on("tileerror", function () {
-bad++;
-if (bad >= 6 && ok === 0 && i !== 0) { // 銝�撘菟�頛劐��堆��芸����銵烾���
-bad = 0;
-say(def.name + " 頛匧�憭望�嚗�歇���銵烾��硔��", "warn");
-setLayer(0);
-}
-});
-layerObjs[i] = lyr;
-}
-layerObjs[i].addTo(map);
-layerIdx = i;
-$("layerBtn").textContent = def.name;
-try { localStorage.setItem("parking_layer", String(i)); } catch (e) {}
-}
-
-function initMap() {
-if (map) return;
-if (!window.L) {
-$("mapHint").textContent = "�啣��⊥�頛匧�嚗��閬�雯頝荔�����Ｕ��悌�剛��唳�頝舐�隞滚虾雿輻鍂��";
-return;
-}
-map = L.map("map", { maxZoom: 21 }).setView([23.7, 121], 7);
-var idx = 0;
-try { idx = parseInt(localStorage.getItem("parking_layer"), 10) || 0; } catch (e) {}
-setLayer(idx);
-map.on("dragstart", function () { // �见��𡝗𠗊�啣�撠望麱�𡏭���
-if (follow) { follow = false; showFollow(); }
-});
-loadPlan();
-}
-
-function showFollow() {
-$("followBtn").classList.toggle("on", follow);
-}
-
-function updateCone() {
-if (!meMk || !meMk.getElement) return;
-var el = meMk.getElement(), c = el && el.querySelector(".cone");
-if (!c) return;
-if (heading === null) { c.style.display = "none"; }
-else { c.style.display = "block"; c.style.transform = "rotate(" + heading + "deg)"; }
-}
-
-// �漤��典�甈∪�雿滢��枏像皛𤑳宏�𤏪�銝齿�銝��潔��潸歲
-function animateMe(target) {
-if (anim) cancelAnimationFrame(anim);
-var from = meMk.getLatLng(), t0 = performance.now(), dur = 700;
-var carPos = carMk ? carMk.getLatLng() : null;
-function step(now) {
-var k = Math.min((now - t0) / dur, 1);
-var lat = from.lat + (target[0] - from.lat) * k, lng = from.lng + (target[1] - from.lng) * k;
-meMk.setLatLng([lat, lng]); meCircle.setLatLng([lat, lng]);
-if (line && carPos) line.setLatLngs([[lat, lng], carPos]);
-anim = k < 1 ? requestAnimationFrame(step) : null;
-}
-anim = requestAnimationFrame(step);
-}
-
-function updateMap(fit) {
-if (!map) return;
-var hasCar = saved && validPoint(saved);
-var hasMe = watchId !== null && current && validPoint(current);
-var cl = hasCar ? [saved.lat, saved.lng] : null;
-var ml = hasMe ? [current.lat, current.lng] : null;
-
-if (hasCar) {
-if (!carMk) {
-carMk = L.marker(cl, {
-icon: L.divIcon({ className: "", html: '<div class="pin">��</div>', iconSize: [34, 34], iconAnchor: [17, 17] }),
-draggable: adjusting
-}).addTo(map);
-carMk.on("dragend", function () {
-if (!saved) return;
-var p = carMk.getLatLng();
-saved.lat = p.lat; saved.lng = p.lng; saved.adjusted = true;
-persist(saved);
-$("sAccuracy").textContent = "�见�敺株矽";
-updateNavigation();
-});
-} else carMk.setLatLng(cl);
-} else if (carMk) { map.removeLayer(carMk); carMk = null; }
-
-if (hasMe) {
-if (!meMk) {
-meMk = L.marker(ml, {
-icon: L.divIcon({ className: "", html: '<div class="me"><div class="cone"></div></div>', iconSize: [16, 16], iconAnchor: [8, 8] }),
-interactive: false
-}).addTo(map);
-meCircle = L.circle(ml, { radius: current.accuracy, color: "#2d8cff", weight: 1, fillOpacity: 0.12 }).addTo(map);
-lastMe = ml;
-} else if (!lastMe || lastMe[0] !== ml[0] || lastMe[1] !== ml[1]) {
-animateMe(ml); lastMe = ml;
-}
-meCircle.setRadius(current.accuracy);
-updateCone();
-} else {
-if (anim) { cancelAnimationFrame(anim); anim = null; }
-if (meMk) { map.removeLayer(meMk); meMk = null; }
-if (meCircle) { map.removeLayer(meCircle); meCircle = null; }
-lastMe = null;
-}
-
-if (hasCar && hasMe) {
-if (!line) line = L.polyline([ml, cl], { color: "#2ee6a8", weight: 3, dashArray: "6 8" }).addTo(map);
-} else if (line) { map.removeLayer(line); line = null; }
-
-$("mapHint").textContent = hasCar
-? "�� 頠𠹺����漤�嚗苷�嚗��敶ｇ��Ｗ�嚗剹��瘛箄����GPS 隤文榆���𤤿�嚗萘凒蝺朞���"
-: "撠𡁶�頠𠹺�摨扳�������蝵桀���＊蝷箏銁�啣�銝𨳍��";
-
-if (fit) {
-if (hasCar && hasMe) map.fitBounds(L.latLngBounds([ml, cl]), { padding: [40, 40], maxZoom: 19 });
-else if (hasCar) map.setView(cl, 18);
-} else if (hasCar && hasMe && fitted && !adjusting) {
-if (!nearZoomed && distance(current, saved) < 25) { // �㰘�頠𠹺�嚗朞䌊�閙𦆮憭批��𧢲�璆𡁜𪂹��
-nearZoomed = true;
-map.fitBounds(L.latLngBounds([ml, cl]), { padding: [60, 60], maxZoom: 20 });
-} else if (follow && !map.getBounds().pad(-0.25).contains(ml)) {
-map.panTo(ml); // 韏啣枂�恍𢒰銝剖亢�����頝蠘�蝘餃�
-}
-}
-}
-
-$("followBtn").addEventListener("click", function () {
-follow = !follow; showFollow();
-if (follow && meMk && map) map.panTo(meMk.getLatLng());
-});
-$("fitBtn").addEventListener("click", function () { updateMap(true); });
-
-// ---------- �𡏭��游像�Ｗ��𠰴� ----------
-function planBounds() {
-var kx = 111320 * Math.cos(plan.lat * Math.PI / 180);
-var hw = plan.w / 2 / kx, hh = plan.w * plan.aspect / 2 / 111320;
-return [[plan.lat - hh, plan.lng - hw], [plan.lat + hh, plan.lng + hw]];
-}
-function savePlan() {
-try { localStorage.setItem("parking_plan", JSON.stringify(plan)); return true; }
-catch (e) { say("撟喲𢒰�硋云憭改��⊥��脣�嚗�𧋦甈∩��臭蝙�剁���", "warn"); return false; }
-}
-function applyPlan() {
-if (!map) return;
-if (planOv) { map.removeLayer(planOv); planOv = null; }
-if (planMk) { map.removeLayer(planMk); planMk = null; }
-$("planCtl").hidden = !plan; if (!plan) return; planOv = L.imageOverlay(plan.img, planBounds(), { opacity: plan.opacity, interactive: false }).addTo(map); planMk = L.marker([plan.lat, plan.lng], { draggable: true, icon: L.divIcon({ className: "", html: '<div class="pin" style="font-size:22px">��</div>', iconSize: [34, 34], iconAnchor: [17, 17] }) }).addTo(map); planMk.on("dragend", function () { var p = planMk.getLatLng(); plan.lat = p.lat; plan.lng = p.lng; planOv.setBounds(planBounds()); savePlan(); }); $("planOp").value = Math.round(plan.opacity * 100);
-}
-function loadPlan() {
-try {
-var raw = localStorage.getItem("parking_plan");
-if (raw) {
-var p = JSON.parse(raw);
-if (p && typeof p.img === "string" && Number.isFinite(p.lat) && Number.isFinite(p.lng) &&
-Number.isFinite(p.w) && Number.isFinite(p.aspect)) {
-p.opacity = Number.isFinite(p.opacity) ? p.opacity : 0.6;
-plan = p;
-}
-}
-} catch (e) { plan = null; }
-applyPlan();
-}
-
-$("planBtn").addEventListener("click", function () { if (!map) { say("�啣��芾��伐��⊥��𠰴�撟喲𢒰�硔��", "error"); return; } $("planFile").click();
-});
-$("planFile").addEventListener("change", function (ev) { var f = ev.target.files && ev.target.files[0]; if (!f) return; if (!f.type || f.type.indexOf("image/") !== 0) { say("隢钅���������", "error"); return; } var r = new FileReader(); r.onload = function () { var im = new Image(); im.onload = function () { var sc = Math.min(1, 1200 / Math.max(im.width, im.height)); var cv = document.createElement("canvas"); cv.width = Math.round(im.width * sc); cv.height = Math.round(im.height * sc); cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height); var c = carMk ? carMk.getLatLng() : map.getCenter(); plan = { img: cv.toDataURL("image/jpeg", 0.8), w: 80, aspect: cv.height / cv.width, lat: c.lat, lng: c.lng, opacity: 0.6 }; savePlan(); applyPlan(); map.setView([plan.lat, plan.lng], 19); say("撌脩��惩像�Ｗ�嚗𡁏��� �� 蝘餃�嚗𣬚鍂蝮格𦆮撠齿��栞楝�硋遣蝭剹��", "good"); }; im.onerror = function () { say("�𣇉�霈��硋仃�𨰜��", "error"); }; im.src = r.result; }; r.readAsDataURL(f); ev.target.value = ""; }); function resizePlan(k) { if (!plan || !planOv) return; plan.w = Math.max(10, Math.min(1000, plan.w * k)); planOv.setBounds(planBounds()); savePlan(); } $("planBig").addEventListener("click", function () { resizePlan(1.15); });
-$("planSmall").addEventListener("click", function () { resizePlan(1 / 1.15); }); $("planDel").addEventListener("click", function () {
-plan = null;
-try { localStorage.removeItem("parking_plan"); } catch (e) {}
-applyPlan();
-say("撌脩宏�文像�Ｗ���", "good");
-});
-$("planOp").addEventListener("input", function () { if (!plan || !planOv) return; plan.opacity = this.value / 100; planOv.setOpacity(plan.opacity); }); $("planOp").addEventListener("change", function () { if (plan) savePlan(); });
-
-$("adjustBtn").addEventListener("click", function () { if (!map || !carMk) { say("瘝埝�頠𠹺�摨扳��臬凝隤踴��", "error"); return; } adjusting = !adjusting; if (adjusting) { carMk.dragging.enable(); setMode("gps"); map.setView(carMk.getLatLng(), 19); $("map").scrollIntoView({ behavior: "smooth", block: "center" });
-$("adjustBtn").textContent = "�� 摰峕�敺株矽"; say("隢见銁�啣�銝𦠜��� �� �唳迤蝣箔�蝵柴��", "warn"); } else { carMk.dragging.disable(); $("adjustBtn").textContent = "�𧶏� 敺株矽頠𠹺�雿滨蔭";
-say("撌脣��𣂼凝隤踴��", "good");
-}
-});
-
-function updateNavigation() {
-updateMap(false);
-var arrow = $("arrow"); if (!saved || !validPoint(saved) || !current || !validPoint(current)) { $("distance").textContent = "--";
-$("bearing").textContent = "瘝埝��㗇�摨扳�"; arrow.classList.add("dim"); return; } var d = distance(current, saved), b = bearing(current, saved); $("distance").textContent = d < 1000 ? Math.round(d) + " m" : (d / 1000).toFixed(2) + " km";
-refreshGpsInfo();
-
-var ok = gpsReliable() && !underground(saved.floor);
-if (heading === null) {
-$("bearing").textContent = "�格��嫣� " + Math.round(b) + "簞"; arrow.classList.add("dim"); } else { arrow.style.transform = "rotate(" + ((b - heading + 360) % 360) + "deg)"; $("bearing").textContent = "�嫣� " + Math.round(b) + "簞";
-arrow.classList.toggle("dim", !ok);
-}
-
-if (underground(saved.floor)) {
-sayNav("頠𠰴銁�唬�璅枏惜嚗鎭PS ��悌�剖�靘𥕦����隢𧢲㺿�具��𧑐璅躰楝蝺𠾼�溻��", "warn");
-} else if (!gpsReliable()) {
-sayNav("GPS 蝎曉漲銝滩雲�硋歇�擧�嚗𣬚悌�剖歇瘛∪�嚗諹�靘嘥𧑐璅躰��抒�蝣箄���", "error");
-} else if (heading === null) {
-sayNav("撠𡁶��孵�鞈��嚗�蘨�賡＊蝷箄��Ｕ����� 8 摮埈嵗甇���", "warn");
-} else if (d < 8) {
-sayNav("撌脫𦻖餈𤏸���漣璅辷�銝齿糓蝣箄�頠𦠜聢嚗㚁�隢𧢲瓲撠滩�雿滨楊����抒���", "good");
-} else {
-sayNav("蝞剝�����渡��孵�嚗䔶�隞�”�航�韏啗楝蝺𠾼��");
-}
-}
-
-function orientationHandler(e) {
-var v = null;
-if (Number.isFinite(e.webkitCompassHeading)) {
-v = e.webkitCompassHeading;
-} else if (e.absolute && Number.isFinite(e.alpha)) {
-var ang = screen.orientation ? screen.orientation.angle || 0 : 0;
-v = (360 - e.alpha + ang + 360) % 360;
-}
-if (v !== null) {
-heading = (v + 360) % 360;
-lastHeadingAt = Date.now();
-var acc = e.webkitCompassAccuracy;
-if (Number.isFinite(acc) && (acc < 0 || acc > 25)) {
-sayRaw("sensorStatus", "�孵���葫�剁�蝎曉漲撌殷�隢讠𧞄 8 摮埈嵗甇���", "warn");
-} else {
-sayRaw("sensorStatus", "�孵���葫�剁�甇�虜", "good");
-}
-updateNavigation();
-}
-}
-
-function startSensors() {
-function bind() {
-window.removeEventListener("deviceorientation", orientationHandler);
-window.removeEventListener("deviceorientationabsolute", orientationHandler);
-window.addEventListener("deviceorientation", orientationHandler);
-window.addEventListener("deviceorientationabsolute", orientationHandler);
-sayRaw("sensorStatus", "�孵���葫�剁�蝑匧�鞈���色��");
-clearTimeout(sensorTimer);
-sensorTimer = setTimeout(function () {
-if (!lastHeadingAt) {
-sayRaw("sensorStatus", "甇方�蝵格��讛汗�冽��㗇�靘𥟇䲮�𤏸��辷�隢𧢲㺿�具��𧑐璅躰楝蝺𠾼�溻��", "error");
-}
-}, 3000);
-}
-var DOE = window.DeviceOrientationEvent;
-if (DOE && typeof DOE.requestPermission === "function") {
-DOE.requestPermission().then(function (s) {
-if (s === "granted") bind();
-else sayRaw("sensorStatus", "�孵�甈𢠃�鋡急�蝯𤏪�隢𧢲㺿�具��𧑐璅躰楝蝺𠾼�溻��", "error");
-}).catch(function () {
-sayRaw("sensorStatus", "�⊥��硋��孵�甈𢠃���", "error");
-});
-} else {
-bind();
-}
-}
-
-function stopSensors() {
-window.removeEventListener("deviceorientation", orientationHandler);
-window.removeEventListener("deviceorientationabsolute", orientationHandler);
-clearTimeout(sensorTimer);
-heading = null; lastHeadingAt = 0;
-}
-
-$("startBtn").addEventListener("click", function () {
-if (!saved) { sayNav("隢见�閮㗛�雿滨蔭��", "error"); return; }
-
-var noGps = !validPoint(saved);
-var ug = underground(saved.floor);
-var hasRoute = saved.steps && saved.steps.length;
-
-if ((noGps || ug) && hasRoute) {
-setMode("route"); navIdx = 0; showRoute();
-sayNav(noGps ? "瘝埝� GPS 摨扳�嚗�歇����箏𧑐璅躰楝蝺𠾼��" : "�唬�璅枏惜嚗�歇����箏𧑐璅躰楝蝺𠾼��", "warn");
-} else if (noGps) {
-setMode("route");
-sayNav("瘝埝� GPS 摨扳�銋���匧𧑐璅辷�隢衤�璅枏惜���雿滨楊�笔��抒�撠贝���", "error");
-return;
-} else {
-setMode("gps");
-}
-
-if (noGps) return;
-if (!navigator.geolocation || !window.isSecureContext) {
-sayNav("�桀��啣�銝齿𣈲�� GPS����� HTTPS 蝬脩�皜祈岫��", "error");
-return;
-}
-
-try {
-usePF = !outdoor(saved.floor);
-$("filterInfo").textContent = "摰帋�瞈暹郭嚗�" + (usePF ? "蝎鍦�瞈暹郭嚗�" + PF_N + " 蝎鍦�嚗�恕�改��唬�嚗�" : "�∠��潭蕪瘜ｇ��嗅�嚗�");
-startSensors();
-if (watchId !== null) navigator.geolocation.clearWatch(watchId);
-fitted = false;
-kf = null; pf = null;
-nearZoomed = false; follow = true; showFollow(); lastMe = null;
-watchId = navigator.geolocation.watchPosition(
-function (p) {
-if (!acceptRawFix(p)) return;
-current = usePF ? filterPF(p) : filterFix(p);
-lastFix = Date.now();
-updateNavigation();
-if (!fitted) { fitted = true; updateMap(true); }
-},
-function () { sayNav("摰帋�憭望�嚗諹�瑼Ｘ䰻甈𢠃��� GPS 閮𡃏���", "error"); },
-{ enableHighAccuracy: true, maximumAge: 1000, timeout: 20000 }
-);
-clearInterval(ticker);
-ticker = setInterval(function () {
-refreshGpsInfo();
-if (lastHeadingAt && Date.now() - lastHeadingAt > 15000) {
-heading = null;
-sayRaw("sensorStatus", "�孵�鞈��撌脤����隢贝��閙�璈���寧鍂�唳�頝舐���", "warn");
-}
-if (mode === "gps") updateNavigation();
-}, 1000);
-if (mode === "gps") sayNav("甇�銁�湔鰵�桀�雿滨蔭�色��");
-} catch (e) { sayNav("�⊥��笔�撠舘⏛嚗�" + e.message, "error"); }
-});
-
-$("stopBtn").addEventListener("click", function () { if (watchId !== null && navigator.geolocation) { navigator.geolocation.clearWatch(watchId); watchId = null; } clearInterval(ticker); stopSensors(); $("arrow").classList.add("dim");
-updateMap(false);
-$("filterInfo").textContent = "摰帋�瞈暹郭嚗𡁜��芸���";
-sayRaw("sensorStatus", "�孵���葫�剁�撌脣�甇�");
-sayNav("撌脣�甇Ｗ朖���雿溻��");
-});
-
-$("mapsBtn").addEventListener("click", function () {
-if (!saved || !validPoint(saved)) { say("�嗵�蝝������ GPS 摨扳�嚗諹�靘嘥𧑐璅躰��抒�撠贝���", "error"); return; }
-window.open("https://www.google.com/maps/dir/?api=1&destination=" +
-encodeURIComponent(saved.lat + "," + saved.lng) + "&travelmode=walking", "_blank");
-});
-
-$("copyBtn").addEventListener("click", function () {
-if (!saved) return;
-var lines = [
-"璆菟�蠘�頠𠹺�",
-"璅枏惜嚗�" + saved.floor,
-"�����" + (saved.zone || "�芸‵撖�"),
-"�躰酉嚗�" + (saved.note || "��"),
-"���嚗�" + (saved.time || "")
- ];
-if (saved.steps && saved.steps.length) {
-lines.push("頝舐�嚗��雿𨧀��箏藁嚗㚁�" + saved.steps.join(" �� "));
-}
-lines.push(validPoint(saved) ? "摨扳�嚗�" + saved.lat + "," + saved.lng : "�� GPS 摨扳�");
-var text = lines.join("\n");
-
-var a = document.createElement("textarea");
-a.value = text; a.style.position = "fixed"; a.style.left = "-9999px";
-document.body.appendChild(a); a.select();
-var ok = false;
-try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
-a.remove();
-if (ok) say("撌脰�鋆賢�頠𡃏�閮𨳍��", "good");
-else window.prompt("隢钅𩑈�劐誑銝𧢲�摮𦯀蒂銴�ˊ嚗�", text);
-});
-
-// ---------- �嗘遢嚗誯�����𡏭�蝝����撟喲𢒰�吔� ----------
-$("exportBtn").addEventListener("click", function () {
-try {
-var data = {
-app: "璆菟�蠘�頠𠹺�",
-version: 3,
-exportedAt: new Date().toISOString(),
-record: saved,
-plan: plan,
-layer: layerIdx
-};
-var blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json;charset=utf-8" });
-var url = URL.createObjectURL(blob);
-var a = document.createElement("a");
-a.href = url;
-a.download = "璆菟�蠘�頠𠹺��嗘遢_" + new Date().toISOString().slice(0,10) + ".json";
-document.body.appendChild(a); a.click(); a.remove();
-setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
-say("�嗘遢瑼𥪜歇�臬枂���憒亙�靽嘥� JSON 瑼𢛵��", "good");
-} catch (e) { say("�臬枂憭望�嚗�" + e.message, "error"); }
-});
-$("importBtn").addEventListener("click", function () { $("backupFile").click(); });
-$("backupFile").addEventListener("change", function (ev) {
-var f = ev.target.files && ev.target.files[0];
-if (!f) return;
-if (f.size > 15 * 1024 * 1024) { say("�嗘遢瑼𥪜云憭改�隢钅��� 15 MB 隞乩��� JSON��", "error"); ev.target.value = ""; return; }
-var reader = new FileReader();
-reader.onload = function () {
-try {
-var data = JSON.parse(String(reader.result || ""));
-var d = data && (data.record || data.saved);
-if (!data || typeof data !== "object" || (d && typeof d !== "object")) throw new Error("�澆�銝齿迤蝣�");
-if (d) {
-d.floor = String(d.floor || OUTDOOR);
-d.zone = String(d.zone || "");
-d.note = String(d.note || "");
-d.photo = typeof d.photo === "string" ? d.photo : "";
-d.steps = Array.isArray(d.steps) ? d.steps.map(String).slice(0,20) : [];
-if (!validPoint(d)) { d.lat = null; d.lng = null; d.accuracy = null; }
-if (!persist(d)) throw new Error("�⊥�撖怠��祆��脣�蝛粹�");
-render(d);
-} else {
-saved = null;
-try { localStorage.removeItem(KEY); } catch (e) {}
-$("savedPanel").hidden = true;
-}
-if (data.plan && typeof data.plan.img === "string" &&
-Number.isFinite(data.plan.lat) && Number.isFinite(data.plan.lng) &&
-Number.isFinite(data.plan.w) && Number.isFinite(data.plan.aspect)) {
-plan = data.plan;
-plan.opacity = Number.isFinite(plan.opacity) ? Math.max(0.1, Math.min(1, plan.opacity)) : 0.6;
-savePlan();
-applyPlan();
-} else if (Object.prototype.hasOwnProperty.call(data, "plan")) {
-plan = null;
-try { localStorage.removeItem("parking_plan"); } catch (e) {}
-applyPlan();
-}
-if (Number.isInteger(data.layer) && data.layer >= 0 && data.layer < LAYERS.length) setLayer(data.layer);
-if (saved && validPoint(saved)) {
-current = { lat: saved.lat, lng: saved.lng, accuracy: Number.isFinite(saved.accuracy) ? saved.accuracy : 100 };
-lastFix = Date.now();
-}
-updateMap(true);
-say("�嗘遢���摰峕����蝣箄�頠𠹺�鞈�������糓�行迤蝣箝��", "good");
-} catch (e) { say("�臬�憭望�嚗帋��舀����璆菟�蠘�頠𠹺��嗘遢嚗峕�瑼娍��批捆�㕑炊��", "error"); }
-ev.target.value = "";
-};
-reader.onerror = function () { say("霈��硋�隞賣�憭望���", "error"); ev.target.value = ""; };
-reader.readAsText(f);
-});
-
-$("clearBtn").addEventListener("click", function () { if (!window.confirm("蝣箏�閬���文�頠羓����嚗�")) return; try { localStorage.removeItem(KEY); OLD_KEYS.forEach(function (k) { localStorage.removeItem(k); }); saved = null; current = null; photoData = ""; steps = []; lastFix = 0; renderSteps(); refreshGpsInfo(); updateMap(false); 
-
-$("savedPanel").hidden = true; $("photoPreview").style.display = "none";
-$("photo").value = ""; $("note").value = "";
-$("spotSel").value = "";
-chooseFloor(OUTDOOR);
-$("bearing").textContent = "撠𡁏𧊋�见�撠舘⏛";
-$("arrow").classList.add("dim");
-updateMap(false);
-setMode("gps");
-say("蝝���歇皜�膄��", "good");
-} catch (e) { say("皜�膄憭望�嚗諹�瑼Ｘ䰻�讛汗�典�摮䁅身摰𠾼��", "error"); }
-});
-
-chooseFloor(OUTDOOR);
-initMap();
-loadSaved();
-updateMap(true);
-say("蝔见�撌脫迤撣詨��𤏪��臭誑�滢���", "good");
+  "use strict";
+
+  var KEY = "parking_v22";
+  var OLD_KEYS = ["parking_v21", "parking_v3", "parking_loc"];
+  var OUTDOOR = "戶外";
+  var floor = OUTDOOR, saved = null, current = null, heading = null;
+  var watchId = null, photoData = "", busy = false;
+  var steps = [], mode = "gps", navIdx = 0;
+  var lastFix = 0, lastHeadingAt = 0, sensorTimer = null, ticker = null;
+  var usePF = false;
+
+  function $(id) { return document.getElementById(id); }
+  function say(m, t) {
+    var el = $("status");
+    el.textContent = m;
+    el.className = (t || "") + " show";
+  }
+  function sayNav(m, t) { $("navStatus").textContent = m; $("navStatus").className = "small " + (t || ""); }
+  function sayRaw(el, m, t) { $(el).textContent = m; $(el).className = "small " + (t || ""); }
+
+  // ---------- 樓層按鈕（戶外放最前面）----------
+  var FLOORS = [OUTDOOR, "B5", "B4", "B3", "B2", "B1", "1F", "2F", "3F", "4F", "5F", "6F", "7F", "8F", "其他"];
+  var floorScroll = $("floorScroll");
+  FLOORS.forEach(function (f) {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "floor-btn" + (f === OUTDOOR ? " active" : "");
+    btn.textContent = f === OUTDOOR ? "☀️ 戶外" : f;
+    btn.dataset.floor = f;
+    btn.addEventListener("click", function () {
+      document.querySelectorAll(".floor-btn").forEach(function (b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+      floor = f;
+      say(f === OUTDOOR ? "戶外：使用卡爾曼濾波。" : "目前選擇樓層：" + f + "（使用粒子濾波）", "good");
+    });
+    floorScroll.appendChild(btn);
+  });
+
+  function chooseFloor(v) {
+    floor = v;
+    document.querySelectorAll(".floor-btn").forEach(function (b) {
+      b.classList.toggle("active", b.dataset.floor === v);
+    });
+  }
+
+  var areas = [["", "區域（選填）"]];
+  "ABCDEFGHIJKL".split("").forEach(function (c) { areas.push([c, c + " 區"]); });
+  areas.forEach(function (it) {
+    var o = document.createElement("option");
+    o.value = it[0]; o.textContent = it[1];
+    $("areaSel").appendChild(o);
+  });
+  var spots = [["", "車位號碼"]];
+  for (var n = 1; n <= 200; n++) spots.push([String(n), n + " 號"]);
+  spots.forEach(function (it) {
+    var o = document.createElement("option");
+    o.value = it[0]; o.textContent = it[1];
+    $("spotSel").appendChild(o);
+  });
+
+  function zoneText() {
+    var a = $("areaSel").value, n = $("spotSel").value, c = $("zone").value.trim();
+    return [a ? a + " 區" : "", n ? n + " 號" : "", c].filter(Boolean).join(" ");
+  }
+
+  function validPoint(d) {
+    return d && typeof d.lat === "number" && typeof d.lng === "number" &&
+      Number.isFinite(d.lat) && Number.isFinite(d.lng) &&
+      Math.abs(d.lat) <= 90 && Math.abs(d.lng) <= 180;
+  }
+  function underground(f) { return /^B/.test(f || ""); }
+  function outdoor(f) { return f === OUTDOOR; }
+
+  // ---------- GPS 可信度 ----------
+  function trust(acc, ageSec) {
+    if (!Number.isFinite(acc)) return { t: "未知", c: "warn" };
+    if (ageSec > 30) return { t: "過期", c: "error" };
+    if (acc <= 15) return { t: "高", c: "good" };
+    if (acc <= 50) return { t: "中", c: "warn" };
+    return { t: "低", c: "error" };
+  }
+  function refreshGpsInfo() {
+    if (!current || !lastFix) {
+      $("gAcc").textContent = "--"; $("gAge").textContent = "--"; $("gTrust").textContent = "--";
+      return;
+    }
+    var age = Math.round((Date.now() - lastFix) / 1000);
+    var tr = trust(current.accuracy, age);
+    $("gAcc").textContent = "±" + Math.round(current.accuracy) + " m";
+    $("gAge").textContent = age + " 秒前";
+    $("gTrust").textContent = tr.t;
+    $("gTrust").className = tr.c;
+  }
+  function gpsReliable() {
+    return current && lastFix && Number.isFinite(current.accuracy) &&
+      current.accuracy <= 50 && (Date.now() - lastFix) < 30000;
+  }
+
+  // ---------- 地標摺疊 ----------
+  $("stepToggle").addEventListener("click", function () {
+    var open = $("stepBody").classList.toggle("open");
+    $("stepToggleText").textContent = open ? "收合 ▴" : "展開 ▾";
+  });
+
+  function renderSteps() {
+    var ol = $("stepList");
+    ol.innerHTML = "";
+    steps.forEach(function (text, i) {
+      var li = document.createElement("li");
+      var sp = document.createElement("span");
+      sp.textContent = (i + 1) + ". " + text;
+      var del = document.createElement("button");
+      del.type = "button"; del.textContent = "刪除";
+      del.addEventListener("click", function () { steps.splice(i, 1); renderSteps(); });
+      li.appendChild(sp); li.appendChild(del);
+      ol.appendChild(li);
+    });
+  }
+  function addStep() {
+    var v = $("stepInput").value.trim();
+    if (!v) return;
+    if (steps.length >= 20) { say("最多 20 個地標。", "error"); return; }
+    steps.push(v);
+    $("stepInput").value = "";
+    renderSteps();
+  }
+  $("addStepBtn").addEventListener("click", addStep);
+  $("stepInput").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); addStep(); }
+  });
+
+  function routeBack() { return saved && saved.steps ? saved.steps.slice().reverse() : []; }
+  function showRoute() {
+    var list = routeBack();
+    if (!list.length) {
+      $("routeCount").textContent = "";
+      $("routeStep").textContent = "沒有路線地標。請依樓層、車位編號和照片尋車。";
+      $("prevStep").disabled = $("nextStep").disabled = true;
+      return;
+    }
+    navIdx = Math.max(0, Math.min(navIdx, list.length));
+    $("prevStep").disabled = navIdx === 0;
+    if (navIdx >= list.length) {
+      $("routeCount").textContent = "路線完成";
+      $("routeStep").textContent = "應該已到達 " + (saved.floor || "") + " " + (saved.zone || "") + "，請核對車位編號或照片。";
+      $("nextStep").disabled = true;
+    } else {
+      $("routeCount").textContent = "從出口走回車位｜第 " + (navIdx + 1) + " / " + list.length + " 步";
+      $("routeStep").textContent = "從「" + (navIdx === 0 ? "出口" : list[navIdx - 1]) + "」→ 前往「" + list[navIdx] + "」";
+      $("nextStep").disabled = false;
+    }
+  }
+  $("prevStep").addEventListener("click", function () { navIdx--; showRoute(); });
+  $("nextStep").addEventListener("click", function () { navIdx++; showRoute(); });
+
+  // ---------- 模式 ----------
+  function setMode(m) {
+    mode = m;
+    $("modeGps").classList.toggle("active", m === "gps");
+    $("modeRoute").classList.toggle("active", m === "route");
+    $("gpsBox").hidden = m !== "gps";
+    $("routeBox").hidden = m !== "route";
+    if (m === "route") showRoute(); else updateNavigation();
+    if (m === "gps" && map) setTimeout(function () { map.invalidateSize(); }, 60);
+  }
+  $("modeGps").addEventListener("click", function () { setMode("gps"); });
+  $("modeRoute").addEventListener("click", function () { setMode("route"); });
+
+  // ---------- 儲存 / 載入 ----------
+  function persist(d) {
+    try { localStorage.setItem(KEY, JSON.stringify(d)); saved = d; return true; }
+    catch (e) { say("儲存失敗，可能是瀏覽器空間不足。", "error"); return false; }
+  }
+
+  function render(d) {
+    saved = d;
+    $("empty").hidden = true; $("savedPanel").hidden = false;
+    $("sFloor").textContent = d.floor || "未知";
+    $("sZone").textContent = d.zone || "未填寫";
+    $("sNote").textContent = d.note || "無";
+    $("sSteps").textContent = d.steps && d.steps.length ? d.steps.length + " 個" : "無";
+    $("sTime").textContent = d.timestamp ? new Date(d.timestamp).toLocaleString("zh-TW") : (d.time || "未知");
+    $("sAccuracy").textContent = d.adjusted ? "手動微調" : Number.isFinite(d.accuracy) ? "約 " + Math.round(d.accuracy) + " 公尺" : "未知";
+    $("savedPhoto").style.display = d.photo ? "block" : "none";
+    if (d.photo) $("savedPhoto").src = d.photo;
+    var parts = ("zoneArea" in d) || ("zoneSpot" in d) || ("zoneCustom" in d);
+    $("areaSel").value = parts ? (d.zoneArea || "") : "";
+    $("spotSel").value = parts ? (d.zoneSpot || "") : "";
+    $("zone").value = parts ? (d.zoneCustom || "") : (d.zone || "");
+    $("note").value = d.note || "";
+    steps = (d.steps || []).slice(); renderSteps();
+    chooseFloor(d.floor || OUTDOOR);
+    updateMap(true);
+  }
+
+  function loadSaved() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      for (var i = 0; !raw && i < OLD_KEYS.length; i++) raw = localStorage.getItem(OLD_KEYS[i]);
+      if (!raw) return;
+      var d = JSON.parse(raw);
+      if (!d || typeof d !== "object") return;
+      d.floor = String(d.floor || OUTDOOR);
+      d.zone = String(d.zone || "");
+      d.note = String(d.note || "");
+      d.photo = typeof d.photo === "string" ? d.photo : "";
+      d.steps = Array.isArray(d.steps) ? d.steps.map(String) : [];
+      if (!validPoint(d)) { d.lat = null; d.lng = null; }
+      render(d);
+      say("已載入上次停車紀錄。", "good");
+    } catch (e) { say("無法讀取舊紀錄，可以重新記錄。"); }
+  }
+
+  $("photo").addEventListener("change", function (ev) {
+    var f = ev.target.files && ev.target.files[0];
+    if (!f) return;
+    if (!f.type || f.type.indexOf("image/") !== 0) { say("請選擇有效的圖片。", "error"); return; }
+    if (f.size > 12 * 1024 * 1024) { say("照片太大，請選擇 12 MB 以下的圖片。", "error"); return; }
+    var r = new FileReader();
+    r.onload = function () {
+      photoData = r.result;
+      $("photoPreview").src = photoData;
+      $("photoPreview").style.display = "block";
+      say("照片預覽成功。", "good");
+    };
+    r.onerror = function () { say("照片讀取失敗。", "error"); };
+    r.readAsDataURL(f);
+  });
+
+  function saveRecord(pos) {
+    var now = Date.now();
+    var d = {
+      lat: pos ? pos.coords.latitude : (saved ? saved.lat : null),
+      lng: pos ? pos.coords.longitude : (saved ? saved.lng : null),
+      accuracy: pos ? pos.coords.accuracy : (saved ? saved.accuracy : null),
+      floor: floor,
+      zone: zoneText(),
+      zoneArea: $("areaSel").value,
+      zoneSpot: $("spotSel").value,
+      zoneCustom: $("zone").value.trim(),
+      note: $("note").value.trim(),
+      steps: steps.slice(),
+      timestamp: now,
+      time: new Date(now).toLocaleString("zh-TW"),
+      photo: photoData || (saved && saved.photo ? saved.photo : "")
+    };
+    if (pos && !validPoint(d)) { say("取得的 GPS 座標無效。", "error"); return; }
+    if (!validPoint(d)) { d.lat = null; d.lng = null; d.accuracy = null; }
+    if (!persist(d)) return;
+    render(d);
+
+    if (validPoint(d)) {
+      current = { lat: d.lat, lng: d.lng, accuracy: d.accuracy };
+      lastFix = now; refreshGpsInfo();
+      if (underground(d.floor)) {
+        say("已儲存。地下樓層 GPS 不可靠，建議補上地標路線與照片。", "warn");
+      } else if (d.accuracy > 50) {
+        say("已儲存，但 GPS 誤差較大，請確認車位照片。", "error");
+      } else {
+        say("停車紀錄已儲存！", "good");
+      }
+    } else {
+      say("已儲存樓層、區域、地標和照片，但沒有 GPS 座標。", "good");
+    }
+  }
+
+  // ---------- 靜止偵測 ----------
+  var motion = { got: false, mag: [] };
+  function motionHandler(e) {
+    var a = e.accelerationIncludingGravity;
+    if (!a || a.x == null || a.y == null || a.z == null) return;
+    var now = Date.now();
+    motion.got = true;
+    motion.mag.push([now, Math.sqrt(a.x * a.x + a.y * a.y + a.z * a.z)]);
+    motion.mag = motion.mag.filter(function (r) { return r[0] > now - 1500; });
+  }
+  function isMoving() {
+    if (!motion.got || motion.mag.length < 5) return null;
+    var vals = motion.mag.map(function (r) { return r[1]; });
+    var avg = vals.reduce(function (x, y) { return x + y; }, 0) / vals.length;
+    var sd = Math.sqrt(vals.reduce(function (x, y) { return x + (y - avg) * (y - avg); }, 0) / vals.length);
+    return sd > 0.8;
+  }
+  function startMotion(cb) {
+    motion = { got: false, mag: [] };
+    var D = window.DeviceMotionEvent;
+    function bind() { window.addEventListener("devicemotion", motionHandler); }
+    if (D && typeof D.requestPermission === "function") {
+      D.requestPermission().then(function (r) { if (r === "granted") bind(); cb(); })
+        .catch(function () { cb(); });
+    } else {
+      if (D) bind();
+      cb();
+    }
+  }
+  function stopMotion() { window.removeEventListener("devicemotion", motionHandler); }
+
+  function sampleBest(onTick, done) {
+    var best = null, start = Date.now(), id = null, finished = false, lastErr = null, tk = null, samples = [];
+    function finish() {
+      if (finished) return;
+      finished = true;
+      if (id !== null) navigator.geolocation.clearWatch(id);
+      clearInterval(tk);
+      done(best, lastErr, samples);
+    }
+    tk = setInterval(function () {
+      var sec = Math.round((Date.now() - start) / 1000);
+      onTick(sec, best);
+      var acc = best ? best.coords.accuracy : Infinity;
+      if ((acc <= 5 && sec >= 3) || (sec >= 10 && acc <= 15) || sec >= 20) finish();
+    }, 500);
+    id = navigator.geolocation.watchPosition(
+      function (p) {
+        samples.push({ coords: p.coords, mv: isMoving() === true, t: p.timestamp || Date.now() });
+        if (!best || p.coords.accuracy < best.coords.accuracy) best = p;
+      },
+      function (e) { lastErr = e; if (e.code === 1) finish(); },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
+  }
+
+  $("saveBtn").addEventListener("click", function () {
+    if (busy) return;
+    if (!navigator.geolocation || !window.isSecureContext) {
+      saveRecord(null);
+      say("已儲存手動紀錄。此環境無法使用 GPS，請依地標與照片找車。", "good");
+      return;
+    }
+    busy = true; $("saveBtn").disabled = true; say("正在取得 GPS……請站穩不要走動");
+    startMotion(function () {
+      sampleBest(
+        function (sec, best) {
+          var moving = isMoving() === true;
+          var m = "取樣定位中 " + sec + " 秒" + (best ? "｜目前最佳 ±" + Math.round(best.coords.accuracy) + " m" : "｜等待訊號…");
+          if (moving) m += "｜請站穩不要走動";
+          else if (sec >= 10 && best && best.coords.accuracy > 15) m += "｜精度不足，延長取樣中…";
+          say(m, moving ? "warn" : "");
+        },
+        function (best, err, samples) {
+          stopMotion();
+          busy = false; $("saveBtn").disabled = false;
+          if (best) {
+            try {
+              // 戶外：加權平均；其他樓層：粒子濾波
+              var avg = outdoor(floor) ? averagePos(samples, best) : pfAverage(samples, best);
+              saveRecord(avg);
+              var extra = "（" + avg.coords.n + " 筆取樣，" + avg.coords.method + "，誤差約 ±" + Math.round(avg.coords.accuracy) + " m）";
+              if (avg.coords.accuracy > 15) {
+                extra += " GPS 誤差偏大，請以照片和車位編號為準。";
+                if ($("status").className.indexOf("error") === -1) $("status").className = "warn show";
+              }
+              $("status").textContent += extra;
+            } catch (e) { say("儲存時發生錯誤：" + e.message, "error"); }
+          } else {
+            saveRecord(null);
+            var m = err && err.code === 1 ? "定位權限遭拒絕" : "無法取得 GPS（逾時）";
+            say(m + "，已保留手動停車紀錄。", "error");
+          }
+        }
+      );
+    });
+  });
+
+  // ---------- 計算 ----------
+  function distance(a, b) {
+    var r = Math.PI / 180, dLat = (b.lat - a.lat) * r, dLng = (b.lng - a.lng) * r;
+    var h = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(dLng / 2) ** 2;
+    return 6371000 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+  }
+  function bearing(a, b) {
+    var r = Math.PI / 180, l1 = a.lat * r, l2 = b.lat * r, dLng = (b.lng - a.lng) * r;
+    var y = Math.sin(dLng) * Math.cos(l2);
+    var x = Math.cos(l1) * Math.sin(l2) - Math.sin(l1) * Math.cos(l2) * Math.cos(dLng);
+    return (Math.atan2(y, x) / r + 360) % 360;
+  }
+
+  // ===== 戶外：加權平均（記錄）＋卡爾曼濾波（導航）=====
+  function averagePos(samples, best) {
+    var still = samples.filter(function (p) { return !p.mv; });
+    if (still.length >= 3) samples = still;
+    var bestAcc = Math.max(best.coords.accuracy, 1);
+    var cutoff = Math.max(bestAcc * 3, 10);
+    var kept = samples.filter(function (p) { return p.coords.accuracy <= cutoff; });
+    if (!kept.length) kept = [best];
+
+    function mean(list) {
+      var sw = 0, la = 0, ln = 0;
+      list.forEach(function (p) {
+        var w = 1 / Math.pow(Math.max(p.coords.accuracy, 1), 2);
+        sw += w; la += w * p.coords.latitude; ln += w * p.coords.longitude;
+      });
+      return { lat: la / sw, lng: ln / sw, sw: sw };
+    }
+
+    var m = mean(kept);
+    var maxOff = Math.max(15, bestAcc * 2);
+    var inliers = kept.filter(function (p) {
+      return distance(m, { lat: p.coords.latitude, lng: p.coords.longitude }) <= maxOff;
+    });
+    if (inliers.length >= 1 && inliers.length < kept.length) { kept = inliers; m = mean(kept); }
+
+    var acc = Math.max(bestAcc * 0.8, 1 / Math.sqrt(m.sw));
+    return { coords: { latitude: m.lat, longitude: m.lng, accuracy: acc, n: kept.length, method: "加權平均" } };
+  }
+
+  var kf = null;
+  function filterFix(p) {
+    var lat = p.coords.latitude, lng = p.coords.longitude;
+    var acc = Math.max(p.coords.accuracy, 1), t = p.timestamp || Date.now();
+    function out() { return { lat: kf.lat, lng: kf.lng, accuracy: Math.max(Math.sqrt(kf.v), acc * 0.5) }; }
+
+    if (!kf) { kf = { lat: lat, lng: lng, v: acc * acc, t: t, jump: 0 }; return out(); }
+
+    var dt = Math.max((t - kf.t) / 1000, 0);
+    kf.v += dt * 9;
+    var d = distance({ lat: kf.lat, lng: kf.lng }, { lat: lat, lng: lng });
+    var maxMove = Math.max(dt * 5, 5) + Math.sqrt(kf.v) + acc;
+
+    if (d > maxMove && kf.jump < 3) { kf.jump++; kf.t = t; return out(); }
+    if (d > maxMove) { kf = { lat: lat, lng: lng, v: acc * acc, t: t, jump: 0 }; return out(); }
+
+    var K = kf.v / (kf.v + acc * acc);
+    if (d < Math.max(2, acc * 0.25)) K *= 0.3;
+    kf.lat += K * (lat - kf.lat);
+    kf.lng += K * (lng - kf.lng);
+    kf.v = (1 - K) * kf.v;
+    kf.t = t; kf.jump = 0;
+    return out();
+  }
+
+  // ===== 室內／地下：粒子濾波 =====
+  // 用 N 個「可能位置」代表不確定性。每次新定位：
+  // 1) 預測：粒子隨機走一小步  2) 加權：越接近量測值權重越高
+  //    （量測模型含「離群」成分，偶發的大跳點不會把整團粒子拖走；精度越差、影響越小）
+  // 3) 重採樣：淘汰低權重粒子，複製高權重粒子
+  var PF_N = 200;
+  var pf = null;
+
+  function gauss() {
+    var u = 1 - Math.random(), v = Math.random();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+  function pfNew(lat, lng, acc, t) {
+    var s = Math.max(acc, 3) * 0.7, ps = [];
+    for (var i = 0; i < PF_N; i++) ps.push({ x: gauss() * s, y: gauss() * s, w: 1 / PF_N });
+    return { lat0: lat, lng0: lng, ky: 111320, kx: 111320 * Math.cos(lat * Math.PI / 180), ps: ps, t: t };
+  }
+  function pfEst(S) {
+    var mx = 0, my = 0, vx = 0, vy = 0;
+    S.ps.forEach(function (p) { mx += p.w * p.x; my += p.w * p.y; });
+    S.ps.forEach(function (p) { vx += p.w * (p.x - mx) * (p.x - mx); vy += p.w * (p.y - my) * (p.y - my); });
+    return { lat: S.lat0 + my / S.ky, lng: S.lng0 + mx / S.kx, sd: Math.sqrt(vx + vy) };
+  }
+  function pfUpdate(S, lat, lng, acc, t, moveStd) {
+    var ps = S.ps, i;
+    S.t = t;
+    // 預測
+    for (i = 0; i < ps.length; i++) { ps[i].x += gauss() * moveStd; ps[i].y += gauss() * moveStd; }
+    // 加權
+    var zx = (lng - S.lng0) * S.kx, zy = (lat - S.lat0) * S.ky;
+    var sg = Math.max(acc, 3), big = 4 * sg + 30, eps = 0.1, sum = 0;
+    for (i = 0; i < ps.length; i++) {
+      var dx = ps[i].x - zx, dy = ps[i].y - zy, d2 = dx * dx + dy * dy;
+      var like = (1 - eps) * Math.exp(-d2 / (2 * sg * sg)) / (sg * sg) +
+                 eps * Math.exp(-d2 / (2 * big * big)) / (big * big);
+      ps[i].w *= like; sum += ps[i].w;
+    }
+    if (!(sum > 1e-300)) {               // 全部粒子都不合理：以這次量測重新撒粒子
+      var fresh = pfNew(lat, lng, acc, t);
+      S.lat0 = fresh.lat0; S.lng0 = fresh.lng0; S.kx = fresh.kx; S.ky = fresh.ky; S.ps = fresh.ps;
+      return;
+    }
+    var ess = 0;
+    for (i = 0; i < ps.length; i++) { ps[i].w /= sum; ess += ps[i].w * ps[i].w; }
+    ess = 1 / ess;
+    // 重採樣（有效粒子數太少時）
+    if (ess < ps.length / 2) {
+      var out = [], step = 1 / ps.length, u = Math.random() * step, c = ps[0].w, k = 0;
+      for (i = 0; i < ps.length; i++) {
+        var target = u + i * step;
+        while (target > c && k < ps.length - 1) { k++; c += ps[k].w; }
+        out.push({ x: ps[k].x + gauss() * 0.3, y: ps[k].y + gauss() * 0.3, w: 1 / ps.length });
+      }
+      // 注入約 5% 新粒子到本次量測附近：若起點選錯，只要之後的定位彼此一致，就能被這些粒子拉回
+      var inject = Math.max(2, Math.round(ps.length * 0.05));
+      for (i = 0; i < inject; i++) {
+        out[out.length - 1 - i] = { x: zx + gauss() * sg, y: zy + gauss() * sg, w: 1 / ps.length };
+      }
+      S.ps = out;
+    }
+  }
+
+  // 記錄車位用：以最佳取樣為中心建立粒子，依序餵入所有取樣（靜止，移動雜訊很小）
+  function pfAverage(samples, best) {
+    var still = samples.filter(function (p) { return !p.mv; });
+    if (still.length >= 3) samples = still;
+    var bestAcc = Math.max(best.coords.accuracy, 1);
+    var list = samples.length ? samples : [{ coords: best.coords, t: Date.now() }];
+    function med(arr) {
+      var a = arr.slice().sort(function (x, y) { return x - y; });
+      return a[Math.floor(a.length / 2)];
+    }
+    var mLat = med(list.map(function (p) { return p.coords.latitude; }));
+    var mLng = med(list.map(function (p) { return p.coords.longitude; }));
+    var mAcc = med(list.map(function (p) { return p.coords.accuracy; }));
+    // 起點用中位數（不受少數離群點影響），初始散布略大於一般誤差
+    var S = pfNew(mLat, mLng, Math.max(mAcc, bestAcc) * 1.5, Date.now());
+    list.forEach(function (p) {
+      pfUpdate(S, p.coords.latitude, p.coords.longitude, p.coords.accuracy, p.t, 0.2);
+    });
+    var e = pfEst(S);
+    return { coords: { latitude: e.lat, longitude: e.lng, accuracy: Math.max(e.sd, bestAcc * 0.8), n: list.length, method: "粒子濾波" } };
+  }
+
+  // 導航用：每次新定位更新粒子，回傳估計位置
+  function filterPF(p) {
+    var lat = p.coords.latitude, lng = p.coords.longitude;
+    var acc = Math.max(p.coords.accuracy, 1), t = p.timestamp || Date.now();
+    if (!pf) pf = pfNew(lat, lng, acc, t);
+    var dt = Math.min(Math.max((t - pf.t) / 1000, 0.2), 5);
+    pfUpdate(pf, lat, lng, acc, t, 1.2 * dt);   // 步行速度約 1.2 m/s
+    var e = pfEst(pf);
+    return { lat: e.lat, lng: e.lng, accuracy: Math.max(e.sd, acc * 0.5) };
+  }
+
+  // ---------- 地圖 ----------
+  var map = null, carMk = null, meMk = null, meCircle = null, line = null;
+  var adjusting = false, fitted = false, follow = true, nearZoomed = false;
+  var anim = null, lastMe = null, layerIdx = 0, layerObjs = [];
+  var plan = null, planOv = null, planMk = null;
+
+  // 圖層：原生圖磚最高到 native 級，再放大只會變糊（不會出現更多細節）
+  var LAYERS = [
+    { name: "🗺️ 街道", url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", native: 19, attr: "© OpenStreetMap" },
+    { name: "🇹🇼 國測圖", url: "https://wmts.nlsc.gov.tw/wmts/EMAP/default/GoogleMapsCompatible/{z}/{y}/{x}", native: 18, attr: "© 內政部國土測繪中心" },
+    { name: "🛰️ 衛星", url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", native: 18, attr: "Esri" },
+    { name: "🛰️ 國測影像", url: "https://wmts.nlsc.gov.tw/wmts/PHOTO2/default/GoogleMapsCompatible/{z}/{y}/{x}", native: 18, attr: "© 內政部國土測繪中心" }
+  ];
+
+  function setLayer(i) {
+    if (!map) return;
+    i = ((i % LAYERS.length) + LAYERS.length) % LAYERS.length;
+    if (layerObjs[layerIdx] && map.hasLayer(layerObjs[layerIdx])) map.removeLayer(layerObjs[layerIdx]);
+    var def = LAYERS[i];
+    if (!layerObjs[i]) {
+      var lyr = L.tileLayer(def.url, { maxZoom: 21, maxNativeZoom: def.native, attribution: def.attr });
+      var ok = 0, bad = 0;
+      lyr.on("tileload", function () { ok++; });
+      lyr.on("tileerror", function () {
+        bad++;
+        if (bad >= 6 && ok === 0 && i !== 0) {   // 一張都載不到：自動切回街道圖
+          bad = 0;
+          say(def.name + " 載入失敗，已切回街道圖。", "warn");
+          setLayer(0);
+        }
+      });
+      layerObjs[i] = lyr;
+    }
+    layerObjs[i].addTo(map);
+    layerIdx = i;
+    $("layerBtn").textContent = def.name;
+    try { localStorage.setItem("parking_layer", String(i)); } catch (e) {}
+  }
+
+  function initMap() {
+    if (map) return;
+    if (!window.L) {
+      $("map").hidden = true;
+      $("mapHint").textContent = "地圖無法載入（需要網路）。距離、箭頭與地標路線仍可使用。";
+      return;
+    }
+    map = L.map("map", { maxZoom: 21 }).setView([23.7, 121], 7);
+    var idx = 0;
+    try { idx = parseInt(localStorage.getItem("parking_layer"), 10) || 0; } catch (e) {}
+    setLayer(idx);
+    map.on("dragstart", function () {          // 手動拖曳地圖就暫停跟隨
+      if (follow) { follow = false; showFollow(); }
+    });
+    loadPlan();
+  }
+
+  function showFollow() {
+    $("followBtn").textContent = follow ? "📍 跟隨 開" : "📍 跟隨 關";
+    $("followBtn").classList.toggle("on", follow);
+  }
+
+  function updateCone() {
+    if (!meMk || !meMk.getElement) return;
+    var el = meMk.getElement(), c = el && el.querySelector(".cone");
+    if (!c) return;
+    if (heading === null) { c.style.display = "none"; }
+    else { c.style.display = "block"; c.style.transform = "rotate(" + heading + "deg)"; }
+  }
+
+  // 藍點在兩次定位之間平滑移動，不會一格一格跳
+  function animateMe(target) {
+    if (anim) cancelAnimationFrame(anim);
+    var from = meMk.getLatLng(), t0 = performance.now(), dur = 700;
+    var carPos = carMk ? carMk.getLatLng() : null;
+    function step(now) {
+      var k = Math.min((now - t0) / dur, 1);
+      var lat = from.lat + (target[0] - from.lat) * k, lng = from.lng + (target[1] - from.lng) * k;
+      meMk.setLatLng([lat, lng]); meCircle.setLatLng([lat, lng]);
+      if (line && carPos) line.setLatLngs([[lat, lng], carPos]);
+      anim = k < 1 ? requestAnimationFrame(step) : null;
+    }
+    anim = requestAnimationFrame(step);
+  }
+
+  function updateMap(fit) {
+    if (!map) return;
+    var hasCar = saved && validPoint(saved);
+    var hasMe = watchId !== null && current && validPoint(current);
+    var cl = hasCar ? [saved.lat, saved.lng] : null;
+    var ml = hasMe ? [current.lat, current.lng] : null;
+
+    if (hasCar) {
+      if (!carMk) {
+        carMk = L.marker(cl, {
+          icon: L.divIcon({ className: "", html: '<div class="pin">🚗</div>', iconSize: [34, 34], iconAnchor: [17, 17] }),
+          draggable: adjusting
+        }).addTo(map);
+        carMk.on("dragend", function () {
+          if (!saved) return;
+          var p = carMk.getLatLng();
+          saved.lat = p.lat; saved.lng = p.lng; saved.adjusted = true;
+          persist(saved);
+          $("sAccuracy").textContent = "手動微調";
+          updateNavigation();
+        });
+      } else carMk.setLatLng(cl);
+    } else if (carMk) { map.removeLayer(carMk); carMk = null; }
+
+    if (hasMe) {
+      if (!meMk) {
+        meMk = L.marker(ml, {
+          icon: L.divIcon({ className: "", html: '<div class="me"><div class="cone"></div></div>', iconSize: [16, 16], iconAnchor: [8, 8] }),
+          interactive: false
+        }).addTo(map);
+        meCircle = L.circle(ml, { radius: current.accuracy, color: "#2d8cff", weight: 1, fillOpacity: 0.12 }).addTo(map);
+        lastMe = ml;
+      } else if (!lastMe || lastMe[0] !== ml[0] || lastMe[1] !== ml[1]) {
+        animateMe(ml); lastMe = ml;
+      }
+      meCircle.setRadius(current.accuracy);
+      updateCone();
+    } else {
+      if (anim) { cancelAnimationFrame(anim); anim = null; }
+      if (meMk) { map.removeLayer(meMk); meMk = null; }
+      if (meCircle) { map.removeLayer(meCircle); meCircle = null; }
+      lastMe = null;
+    }
+
+    if (hasCar && hasMe) {
+      if (!line) line = L.polyline([ml, cl], { color: "#2ee6a8", weight: 3, dashArray: "6 8" }).addTo(map);
+    } else if (line) { map.removeLayer(line); line = null; }
+
+    $("mapHint").textContent = hasCar
+      ? "🚗 車位　藍點＝你（扇形＝面向）　淺藍圈＝GPS 誤差　虛線＝直線距離"
+      : "尚無車位座標。記錄位置後會顯示在地圖上。";
+
+    if (fit) {
+      if (hasCar && hasMe) map.fitBounds(L.latLngBounds([ml, cl]), { padding: [40, 40], maxZoom: 19 });
+      else if (hasCar) map.setView(cl, 18);
+    } else if (hasCar && hasMe && fitted && !adjusting) {
+      if (!nearZoomed && distance(current, saved) < 25) {      // 靠近車位：自動放大到看清楚周圍
+        nearZoomed = true;
+        map.fitBounds(L.latLngBounds([ml, cl]), { padding: [60, 60], maxZoom: 20 });
+      } else if (follow && !map.getBounds().pad(-0.25).contains(ml)) {
+        map.panTo(ml);                                          // 走出畫面中央區域才跟著移動
+      }
+    }
+  }
+
+  $("layerBtn").addEventListener("click", function () { setLayer(layerIdx + 1); });
+  $("followBtn").addEventListener("click", function () {
+    follow = !follow; showFollow();
+    if (follow && meMk && map) map.panTo(meMk.getLatLng());
+  });
+  $("fitBtn").addEventListener("click", function () { updateMap(true); });
+
+  // ---------- 停車場平面圖疊加 ----------
+  function planBounds() {
+    var kx = 111320 * Math.cos(plan.lat * Math.PI / 180);
+    var hw = plan.w / 2 / kx, hh = plan.w * plan.aspect / 2 / 111320;
+    return [[plan.lat - hh, plan.lng - hw], [plan.lat + hh, plan.lng + hw]];
+  }
+  function savePlan() {
+    try { localStorage.setItem("parking_plan", JSON.stringify(plan)); return true; }
+    catch (e) { say("平面圖太大，無法儲存（本次仍可使用）。", "warn"); return false; }
+  }
+  function applyPlan() {
+    if (!map) return;
+    if (planOv) { map.removeLayer(planOv); planOv = null; }
+    if (planMk) { map.removeLayer(planMk); planMk = null; }
+    $("planCtl").hidden = !plan;
+    if (!plan) return;
+    planOv = L.imageOverlay(plan.img, planBounds(), { opacity: plan.opacity, interactive: false }).addTo(map);
+    planMk = L.marker([plan.lat, plan.lng], {
+      draggable: true,
+      icon: L.divIcon({ className: "", html: '<div class="pin" style="font-size:22px">✥</div>', iconSize: [34, 34], iconAnchor: [17, 17] })
+    }).addTo(map);
+    planMk.on("dragend", function () {
+      var p = planMk.getLatLng();
+      plan.lat = p.lat; plan.lng = p.lng;
+      planOv.setBounds(planBounds()); savePlan();
+    });
+    $("planOp").value = Math.round(plan.opacity * 100);
+  }
+  function loadPlan() {
+    try {
+      var raw = localStorage.getItem("parking_plan");
+      if (raw) {
+        var p = JSON.parse(raw);
+        if (p && typeof p.img === "string" && Number.isFinite(p.lat) && Number.isFinite(p.lng) &&
+            Number.isFinite(p.w) && Number.isFinite(p.aspect)) {
+          p.opacity = Number.isFinite(p.opacity) ? p.opacity : 0.6;
+          plan = p;
+        }
+      }
+    } catch (e) { plan = null; }
+    applyPlan();
+  }
+
+  $("planBtn").addEventListener("click", function () {
+    if (!map) { say("地圖未載入，無法疊加平面圖。", "error"); return; }
+    $("planFile").click();
+  });
+  $("planFile").addEventListener("change", function (ev) {
+    var f = ev.target.files && ev.target.files[0];
+    if (!f) return;
+    if (!f.type || f.type.indexOf("image/") !== 0) { say("請選擇圖片檔。", "error"); return; }
+    var r = new FileReader();
+    r.onload = function () {
+      var im = new Image();
+      im.onload = function () {
+        var sc = Math.min(1, 1200 / Math.max(im.width, im.height));
+        var cv = document.createElement("canvas");
+        cv.width = Math.round(im.width * sc); cv.height = Math.round(im.height * sc);
+        cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height);
+        var c = carMk ? carMk.getLatLng() : map.getCenter();
+        plan = { img: cv.toDataURL("image/jpeg", 0.8), w: 80, aspect: cv.height / cv.width, lat: c.lat, lng: c.lng, opacity: 0.6 };
+        savePlan(); applyPlan();
+        map.setView([plan.lat, plan.lng], 19);
+        say("已疊加平面圖：拖曳 ✥ 移動，用縮放對準道路或建築。", "good");
+      };
+      im.onerror = function () { say("圖片讀取失敗。", "error"); };
+      im.src = r.result;
+    };
+    r.readAsDataURL(f);
+    ev.target.value = "";
+  });
+  function resizePlan(k) {
+    if (!plan || !planOv) return;
+    plan.w = Math.max(10, Math.min(1000, plan.w * k));
+    planOv.setBounds(planBounds()); savePlan();
+  }
+  $("planBig").addEventListener("click", function () { resizePlan(1.15); });
+  $("planSmall").addEventListener("click", function () { resizePlan(1 / 1.15); });
+  $("planDel").addEventListener("click", function () {
+    plan = null;
+    try { localStorage.removeItem("parking_plan"); } catch (e) {}
+    applyPlan();
+    say("已移除平面圖。", "good");
+  });
+  $("planOp").addEventListener("input", function () {
+    if (!plan || !planOv) return;
+    plan.opacity = this.value / 100; planOv.setOpacity(plan.opacity);
+  });
+  $("planOp").addEventListener("change", function () { if (plan) savePlan(); });
+
+  $("adjustBtn").addEventListener("click", function () {
+    if (!map || !carMk) { say("沒有車位座標可微調。", "error"); return; }
+    adjusting = !adjusting;
+    if (adjusting) {
+      carMk.dragging.enable();
+      setMode("gps");
+      map.setView(carMk.getLatLng(), 19);
+      $("map").scrollIntoView({ behavior: "smooth", block: "center" });
+      $("adjustBtn").textContent = "✅ 完成微調";
+      say("請在地圖上拖曳 🚗 到正確位置。", "warn");
+    } else {
+      carMk.dragging.disable();
+      $("adjustBtn").textContent = "✏️ 微調車位位置";
+      say("已完成微調。", "good");
+    }
+  });
+
+  function updateNavigation() {
+    updateMap(false);
+    var arrow = $("arrow");
+    if (!saved || !validPoint(saved) || !current || !validPoint(current)) {
+      $("distance").textContent = "--";
+      $("bearing").textContent = "沒有有效座標";
+      arrow.classList.add("dim");
+      return;
+    }
+    var d = distance(current, saved), b = bearing(current, saved);
+    $("distance").textContent = d < 1000 ? Math.round(d) + " m" : (d / 1000).toFixed(2) + " km";
+    refreshGpsInfo();
+
+    var ok = gpsReliable() && !underground(saved.floor);
+    if (heading === null) {
+      $("bearing").textContent = "目標方位 " + Math.round(b) + "°";
+      arrow.classList.add("dim");
+    } else {
+      arrow.style.transform = "rotate(" + ((b - heading + 360) % 360) + "deg)";
+      $("bearing").textContent = "方位 " + Math.round(b) + "°";
+      arrow.classList.toggle("dim", !ok);
+    }
+
+    if (underground(saved.floor)) {
+      sayNav("車在地下樓層：GPS 與箭頭僅供參考，請改用「地標路線」。", "warn");
+    } else if (!gpsReliable()) {
+      sayNav("GPS 精度不足或已過期，箭頭已淡化，請依地標與照片確認。", "error");
+    } else if (heading === null) {
+      sayNav("尚無方向資料，只能顯示距離。請畫 8 字校正。", "warn");
+    } else if (d < 8) {
+      sayNav("已接近記錄座標（不是確認車格），請核對車位編號或照片。", "good");
+    } else {
+      sayNav("箭頭指向直線方向，不代表可行走路線。");
+    }
+  }
+
+  function orientationHandler(e) {
+    var v = null;
+    if (Number.isFinite(e.webkitCompassHeading)) {
+      v = e.webkitCompassHeading;
+    } else if (e.absolute && Number.isFinite(e.alpha)) {
+      var ang = screen.orientation ? screen.orientation.angle || 0 : 0;
+      v = (360 - e.alpha + ang + 360) % 360;
+    }
+    if (v !== null) {
+      heading = (v + 360) % 360;
+      lastHeadingAt = Date.now();
+      var acc = e.webkitCompassAccuracy;
+      if (Number.isFinite(acc) && (acc < 0 || acc > 25)) {
+        sayRaw("sensorStatus", "方向感測器：精度差，請畫 8 字校正。", "warn");
+      } else {
+        sayRaw("sensorStatus", "方向感測器：正常", "good");
+      }
+      updateNavigation();
+    }
+  }
+
+  function startSensors() {
+    function bind() {
+      window.addEventListener("deviceorientation", orientationHandler);
+      window.addEventListener("deviceorientationabsolute", orientationHandler);
+      sayRaw("sensorStatus", "方向感測器：等待資料……");
+      clearTimeout(sensorTimer);
+      sensorTimer = setTimeout(function () {
+        if (!lastHeadingAt) {
+          sayRaw("sensorStatus", "此裝置或瀏覽器沒有提供方向資料，請改用「地標路線」。", "error");
+        }
+      }, 3000);
+    }
+    var DOE = window.DeviceOrientationEvent;
+    if (DOE && typeof DOE.requestPermission === "function") {
+      DOE.requestPermission().then(function (s) {
+        if (s === "granted") bind();
+        else sayRaw("sensorStatus", "方向權限被拒絕，請改用「地標路線」。", "error");
+      }).catch(function () {
+        sayRaw("sensorStatus", "無法取得方向權限。", "error");
+      });
+    } else {
+      bind();
+    }
+  }
+
+  function stopSensors() {
+    window.removeEventListener("deviceorientation", orientationHandler);
+    window.removeEventListener("deviceorientationabsolute", orientationHandler);
+    clearTimeout(sensorTimer);
+    heading = null; lastHeadingAt = 0;
+  }
+
+  $("startBtn").addEventListener("click", function () {
+    if (!saved) { sayNav("請先記錄位置。", "error"); return; }
+
+    var noGps = !validPoint(saved);
+    var ug = underground(saved.floor);
+    var hasRoute = saved.steps && saved.steps.length;
+
+    if ((noGps || ug) && hasRoute) {
+      setMode("route"); navIdx = 0; showRoute();
+      sayNav(noGps ? "沒有 GPS 座標，已切換為地標路線。" : "地下樓層，已切換為地標路線。", "warn");
+    } else if (noGps) {
+      setMode("route");
+      sayNav("沒有 GPS 座標也沒有地標，請依樓層、車位編號和照片尋車。", "error");
+      return;
+    } else {
+      setMode("gps");
+    }
+
+    if (noGps) return;
+    if (!navigator.geolocation || !window.isSecureContext) {
+      sayNav("目前環境不支援 GPS。請用 HTTPS 網站測試。", "error");
+      return;
+    }
+
+    try {
+      usePF = !outdoor(saved.floor);
+      $("filterInfo").textContent = "定位濾波：" + (usePF ? "粒子濾波（" + PF_N + " 粒子，室內／地下）" : "卡爾曼濾波（戶外）");
+      startSensors();
+      if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+      fitted = false;
+      kf = null; pf = null;
+      nearZoomed = false; follow = true; showFollow(); lastMe = null;
+      watchId = navigator.geolocation.watchPosition(
+        function (p) {
+          current = usePF ? filterPF(p) : filterFix(p);
+          lastFix = Date.now();
+          updateNavigation();
+          if (!fitted) { fitted = true; updateMap(true); }
+        },
+        function () { sayNav("定位失敗，請檢查權限或 GPS 訊號。", "error"); },
+        { enableHighAccuracy: true, maximumAge: 1000, timeout: 20000 }
+      );
+      clearInterval(ticker);
+      ticker = setInterval(function () { refreshGpsInfo(); if (mode === "gps") updateNavigation(); }, 1000);
+      if (mode === "gps") sayNav("正在更新目前位置……");
+    } catch (e) { sayNav("無法啟動導航：" + e.message, "error"); }
+  });
+
+  $("stopBtn").addEventListener("click", function () {
+    if (watchId !== null && navigator.geolocation) {
+      navigator.geolocation.clearWatch(watchId); watchId = null;
+    }
+    clearInterval(ticker);
+    stopSensors();
+    $("arrow").classList.add("dim");
+    updateMap(false);
+    $("filterInfo").textContent = "定位濾波：尚未啟動";
+    sayRaw("sensorStatus", "方向感測器：已停止");
+    sayNav("已停止即時定位。");
+  });
+
+  $("mapsBtn").addEventListener("click", function () {
+    if (!saved || !validPoint(saved)) { say("這筆紀錄沒有 GPS 座標，請依地標與照片尋車。", "error"); return; }
+    window.open("https://www.google.com/maps/dir/?api=1&destination=" +
+      encodeURIComponent(saved.lat + "," + saved.lng) + "&travelmode=walking", "_blank");
+  });
+
+  $("copyBtn").addEventListener("click", function () {
+    if (!saved) return;
+    var lines = [
+      "極速記車位",
+      "樓層：" + saved.floor,
+      "區域：" + (saved.zone || "未填寫"),
+      "備註：" + (saved.note || "無"),
+      "時間：" + (saved.time || "")
+    ];
+    if (saved.steps && saved.steps.length) {
+      lines.push("路線（車位→出口）：" + saved.steps.join(" → "));
+    }
+    lines.push(validPoint(saved) ? "座標：" + saved.lat + "," + saved.lng : "無 GPS 座標");
+    var text = lines.join("\n");
+
+    var a = document.createElement("textarea");
+    a.value = text; a.style.position = "fixed"; a.style.left = "-9999px";
+    document.body.appendChild(a); a.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    a.remove();
+    if (ok) say("已複製停車資訊。", "good");
+    else window.prompt("請長按以下文字並複製：", text);
+  });
+
+  $("clearBtn").addEventListener("click", function () {
+    if (!window.confirm("確定要清除停車紀錄嗎？")) return;
+    try {
+      localStorage.removeItem(KEY);
+      OLD_KEYS.forEach(function (k) { localStorage.removeItem(k); });
+      saved = null; current = null; photoData = ""; steps = []; lastFix = 0;
+      renderSteps(); refreshGpsInfo(); updateMap(false);
+      $("savedPanel").hidden = true; $("empty").hidden = false;
+      $("photoPreview").style.display = "none";
+      $("savedPhoto").style.display = "none";
+      $("photo").value = ""; $("zone").value = ""; $("note").value = "";
+      $("areaSel").value = ""; $("spotSel").value = "";
+      chooseFloor(OUTDOOR);
+      $("distance").textContent = "--";
+      $("bearing").textContent = "尚未開始導航";
+      $("arrow").style.transform = "rotate(0deg)";
+      $("arrow").classList.add("dim");
+      updateMap(false);
+      setMode("gps");
+      say("紀錄已清除。", "good");
+    } catch (e) { say("清除失敗，請檢查瀏覽器儲存設定。", "error"); }
+  });
+
+  chooseFloor(OUTDOOR);
+  initMap();
+  loadSaved();
+  updateMap(true);
+  say("程式已正常啟動，可以操作。", "good");
 })();
 </script>
 </body>
-  </html>
+ </html>
